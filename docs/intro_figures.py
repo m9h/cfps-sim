@@ -70,17 +70,17 @@ def build_figures(output="figures"):
     plt.close(fig)
 
     fig, ax = canvas(5.1)
-    box(ax, 0.15, 3.45, 2.15, 1.15, "Evidence", "recipes and constructs\nsource / units / batch metadata")
-    box(ax, 2.7, 3.45, 2.15, 1.15, "Feasibility", "stock transfers and final pools\nfixed base and volume limits")
+    box(ax, 0.15, 3.45, 2.15, 1.15, "Evidence", "recipes, constructs, stock prices\nsource / units / batch metadata")
+    box(ax, 2.7, 3.45, 2.15, 1.15, "Feasibility and cost", "stock transfers and cost ledger\nfixed base and volume limits")
     box(ax, 5.25, 3.45, 2.15, 1.15, "Model hypotheses", "mechanistic states\nuncertain effective parameters")
-    box(ax, 7.8, 3.45, 2.05, 1.15, "Select a batch", "empirical / mechanistic\ncompare equal well budgets", GREEN)
+    box(ax, 7.8, 3.45, 2.05, 1.15, "Select a batch", "minimize USD/g or USD/U\ncompare equal well budgets", GREEN)
     for start, end in [(2.3, 2.7), (4.85, 5.25), (7.4, 7.8)]:
         arrow(ax, (start, 4.0), (end, 4.0))
     ax.text(5.05, 4.88, "Recipe-to-model mapping and calibrated selection remain to be implemented.",
             ha="center", fontsize=8.5, color=INK)
     box(ax, 7.8, 0.8, 2.05, 1.3, "Experiment", "randomized module swaps\nreplicates and common controls", AMBER)
     box(ax, 4.15, 0.8, 2.9, 1.3, "Calibrate and test", "train on complete conditions\nwithhold recipes / independent batches", AMBER)
-    box(ax, 0.15, 0.8, 3.25, 1.3, "Confirm conclusions", "independent winner retests\nerror, interval coverage, target activity", AMBER)
+    box(ax, 0.15, 0.8, 3.25, 1.3, "Confirm conclusions", "independent winner retests\neconomics, coverage, target activity", AMBER)
     arrow(ax, (8.82, 3.45), (8.82, 2.1))
     ax.text(9.15, 2.8, "planned", ha="center", fontsize=8, color=INK)
     arrow(ax, (7.8, 1.45), (7.05, 1.45))

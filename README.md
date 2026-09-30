@@ -33,9 +33,42 @@ to the dynamic loader, then recreate the environment with `uv sync --python /pat
 ```sh
 uv run cfps-sim validate examples/recipe.json
 uv run cfps-sim simulate --output results/demo
-uv run --extra bo cfps-sim bo-demo
+uv run --extra bo cfps-sim bo-cost-demo
 uv run pytest
 ```
+
+## Production economics
+
+The competition objective is **minimize specific production cost**, not maximize
+yield alone: `USD/g = reaction cost / (titer in g/L × reaction volume in L)`.
+The ledger charges all dispensed stocks, including fixed lysate, base buffer,
+DNA, and explicit water. Missing prices are reported and block a complete score.
+It currently covers dispensed reagent costs, not labor, assays, purification,
+plates, or compute. Confirm the official scoring scope and full price ledger.
+
+```sh
+uv run cfps-sim cost examples/recipe.json examples/prices.draft.json
+uv run cfps-sim score examples/recipe.json examples/prices.illustrative.json \
+  examples/yield.synthetic.json
+uv run --extra bo cfps-sim bo-cost-demo
+```
+
+The first command intentionally exits with status 2: the partial cached draft
+has no verified base-buffer price. The complete illustrative ledger assumes
+that price; its yield file is synthetic. Neither example is an official score
+or a demonstrated productive recipe. `score` accepts explicit, source-matched
+`g/L` or `U/mL` observations and keeps `USD/g` separate from `USD/U`. Apparent
+enzyme g/L requires an audited assay conversion; raw fluorescence or activity
+must not be silently treated as mass. Zero product is unscorable.
+
+`bo-cost-demo` models synthetic log titer and applies known toy reaction costs
+to both observed and candidate posterior samples. It selects expected improvement
+in `log(g/USD)` using noisy Monte Carlo acquisition. This accounts for production
+cost within the objective; the original `bo-demo` remains a yield-surface smoke
+test. Neither BO example uses experimental competition observations or an
+implemented recipe-to-model mapping. Highest yield and lowest USD/g can select
+different points. Report both raw yield and cost, retain the cost/yield Pareto
+front, and rank competition candidates by their target-specific economic score.
 
 ## Executable article
 
@@ -121,7 +154,9 @@ uv run --extra cloud modal run modal_app.py --construct constructs/competition/s
 
 The first command authenticates your account. The second builds a Linux Python
 3.11 image using the same lockfile, runs the simulator and BoTorch remotely on
-2 CPU cores with 4 GiB RAM, and saves results under `results/modal/`. This is an
+2 CPU cores with 4 GiB RAM, and saves results under `results/modal/`. The returned
+`bo_cost` result uses the synthetic cost/yield objective; `bo` preserves the
+original yield-only smoke test. This is an
 on-demand run with a 10-minute timeout. It does not require a persistent deployment.
 Modal compute is billed to your account.
 

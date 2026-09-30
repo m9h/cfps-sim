@@ -12,6 +12,7 @@ jobs:
       - run: uv sync --frozen --python python
       - run: uv run pytest
       - run: uv run cfps-sim validate examples/recipe.json
+      - run: uv run cfps-sim score examples/recipe.json examples/prices.illustrative.json examples/yield.synthetic.json
       - run: uv run cfps-sim simulate
       - run: uv run cfps-sim simulate --construct constructs/competition/sfgfp.json --output results/sfgfp
       - run: uv run cfps-sim experiments --output results/experiments

@@ -33,6 +33,92 @@ leaves the team allotment as ``10 or 20''; it is not a confirmed quota
 from proposed requests and lists missing mechanisms. No new reagent is silently
 assigned a kinetic effect in the present simulator.
 
+\subsection{A sufficient-coverage plan for the competition}
+Sufficient coverage means representing mechanisms that change feasible recipe
+rankings in confirmed USD/g or USD/U. It does not require every reaction in the
+lysate. The current core supplies sequence demand, coarse expression, ATP-only
+regeneration, and GFP maturation; it cannot distinguish most catalog energy
+substrates, model magnesium or pH, or predict enzyme activity. A larger reaction
+network alone would not resolve the unknown lysate activities. The following
+stages are proposed development gates, not implemented modules.
+
+\begin{enumerate}
+\item \textbf{Connect stocks to states and prices.} Reconcile final additions
+from lysate, fixed base, supplements, and DNA with the supplied stock definitions.
+Resolve amino-acid mixtures, counterions, polymer distributions, activity units,
+and the price ledger. Keep uncertain endogenous pools separate. Each candidate
+should either initialize a model with documented assumptions or fail with an
+explicit unsupported ingredient; it must not silently initialize every recipe
+with the same pools. The cost ledger is now implemented, but the chemical
+initialization mapping remains open.
+
+\item \textbf{Add magnesium/speciation and buffering.} Represent total versus
+free magnesium, binding to nucleotide/phosphate species, ionic contributions,
+and HEPES/phosphate buffer capacity. Solve speciation at the current totals and
+pH using matched equilibrium data; a hybrid algebraic/ODE formulation may be
+appropriate. Compare with magnesium--nucleotide interaction panels and pH
+measurements if available. Unknown initial pH, lysate buffering, and effective
+binding parameters need uncertainty ranges rather than inferred exact values.
+
+\item \textbf{Repair nucleotide and energy bookkeeping.} Replace the charging
+approximation with ATP-to-AMP/PPi accounting; track nucleotide triphosphate,
+diphosphate, and monophosphate pools, Pi, and PPi. Include transcript synthesis,
+degradation/salvage, nucleotide interconversion, and pyrophosphatase where
+supported. Add separate effective pathways for selected supplied substrates
+such as glucose, PEP, pyruvate, and acetyl phosphate, with explicit stoichiometry
+and relevant cofactors\cite{horvath,hunt}. Start with the pathways used by the
+reference panel, then expand to NMPs, nucleosides, and polymer substrates as
+their identities and capacities become auditable. An aggregate pathway capacity
+can be fitted before every endogenous enzyme is individually represented.
+
+\item \textbf{Separate expression capacities.} Replace the common dimensionless
+Machinery state with distinct active T7 transcription and translation capacities,
+each with its own inactivation behavior. Retain sequence-specific NTP and
+amino-acid demands. Charged tRNA/resource occupancy can initially use an
+effective law; explicit charging enzymes or ribosome occupancy require additional
+evidence. Transcript start/termination, mRNA abundance and decay, protein time
+courses, and target sequence constrain different parts of the model. Endpoint
+yield alone cannot identify all of those capacities.
+
+\item \textbf{Model target and assay separately.} Retain GFP maturation, then
+add synthesized, soluble, folded, and active fractions as supported for PETase
+and reteplase. For disulfide-dependent expression, couple folding to measured or
+uncertain glutathione/redox conditions and DsbC; include the resource burden of
+chaperone interventions\cite{hunt}. Map protein states to the actual fluorescence
+or enzyme assay with blanks, dilution, timing, and calibration. Assay-product
+time courses are not synthesis time courses. Cost is divided by the score's
+defined mass or activity quantity, not whichever state is easiest to simulate.
+
+\item \textbf{Add oxygen/peroxide when the chosen pathway requires them.}
+Pyruvate-oxidase/catalase interventions need oxygen supply, peroxide generation
+and removal, enzyme activity, and geometry-dependent transfer. Specify plate,
+reaction volume, mixing, seal, and incubation. Do not assume unlimited oxygen
+or use one fitted transfer coefficient across different geometries. Expand
+other inhibitory-byproduct or machinery-loss mechanisms when residuals and
+targeted interventions show their relevance.
+\end{enumerate}
+
+The minimum useful dataset is an audited recipe/price/readout table with
+replicates, common references, plate and lysate metadata, and complete-condition
+training/testing splits. Time-resolved protein plus selected mRNA, nucleotide,
+pH, and activity measurements would distinguish mechanisms much better than
+endpoints alone. These extra measurements depend on experimental access; if
+only endpoints are available, keep more parameters fixed or uncertain and fit
+few effective capacities. Literature kinetics supply contextual priors, not
+known lysate activities.
+
+Every stage should preserve chemical/element and appropriate cofactor balances,
+nonnegative states, unit conversions, resource-removal behavior, and solver
+convergence. Then test its contribution against the smaller model and a data-only
+surrogate on whole withheld recipes and batches. Report target-specific error,
+uncertainty coverage, candidate-ranking performance, and independently confirmed
+specific cost. Freeze predictions before measuring prospective panels. Retain
+new detail when it resolves a known failure or improves a predeclared validation
+criterion; do not declare chemistry ``complete'' from software tests or a single
+synthetic parameter recovery. Under a limited competition budget, a calibrated
+effective model with an empirical discrepancy term can be more useful than a
+larger unidentifiable network.
+
 \subsection{Databases for an ingredient and mechanism registry}
 \begin{center}
 \small

@@ -1,0 +1,8 @@
+{
+  "target": "sfgfp",
+  "value": 1.0,
+  "units": "g/L",
+  "readout": "illustrative calibrated mature sfGFP mass-equivalent titer",
+  "data_kind": "synthetic",
+  "provenance": {"source": "Illustrative assumed titer; not a competition measurement or simulator prediction"}
+}

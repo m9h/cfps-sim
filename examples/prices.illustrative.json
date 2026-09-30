@@ -1,0 +1,25 @@
+{
+  "currency": "USD",
+  "price_basis": "per_mL_stock",
+  "cost_scope": "dispensed_reagents_only",
+  "provenance": {
+    "source": "Illustrative ledger using the partial cached competition draft prices, with an ASSUMED base-buffer price of 0.1 USD/mL",
+    "status": "demonstration_only_not_official_scoring",
+    "snapshot_date": "2026-09-29",
+    "note": "The base-buffer price is an explicit assumption, not measured or sourced. Confirm the official complete ledger before scoring experiments."
+  },
+  "usd_per_ml": {
+    "lysate": 4.0,
+    "base_buffer": 0.1,
+    "template_sfgfp": 1.933,
+    "template_petase": 2.078,
+    "template_reteplase": 2.284,
+    "nuclease_free_water": 0.0,
+    "potassium_glutamate": 0.070,
+    "magnesium_glutamate": 0.065,
+    "atp": 1.539,
+    "ctp": 27.937,
+    "gtp": 39.343,
+    "utp": 37.846
+  }
+}

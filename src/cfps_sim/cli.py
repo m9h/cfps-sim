@@ -8,6 +8,13 @@ def main():
     commands = parser.add_subparsers(dest="command", required=True)
     validation = commands.add_parser("validate")
     validation.add_argument("recipe", type=Path)
+    costing = commands.add_parser("cost", help="Audit dispensed reagent costs; missing prices remain missing")
+    costing.add_argument("recipe", type=Path)
+    costing.add_argument("prices", type=Path)
+    scoring = commands.add_parser("score", help="Compute USD/g or USD/U from a declared yield observation")
+    scoring.add_argument("recipe", type=Path)
+    scoring.add_argument("prices", type=Path)
+    scoring.add_argument("observation", type=Path)
     simulation = commands.add_parser("simulate")
     simulation.add_argument("--output", type=Path, default=Path("results/demo"))
     simulation.add_argument("--minutes", type=float, default=240)
@@ -28,6 +35,7 @@ def main():
     imported.add_argument("--transcript-start", type=int)
     imported.add_argument("--transcript-end", type=int)
     commands.add_parser("bo-demo")
+    commands.add_parser("bo-cost-demo", help="Synthetic log-yield model with a known reaction-cost objective")
     experiments = commands.add_parser("experiments", help="Run model challenges or a synthetic calibration study")
     experiments.add_argument("--construct", type=Path, default=Path("constructs/competition/sfgfp.json"))
     experiments.add_argument("--output", type=Path, default=Path("results/experiments"))
@@ -40,6 +48,16 @@ def main():
     if args.command == "validate":
         from .recipe import validate
         print(json.dumps(validate(json.loads(args.recipe.read_text())), indent=2))
+    elif args.command in {"cost", "score"}:
+        from .economics import cost_recipe, score_recipe
+        recipe, prices = json.loads(args.recipe.read_text()), json.loads(args.prices.read_text())
+        if args.command == "score":
+            report = score_recipe(recipe, prices, json.loads(args.observation.read_text()))
+        else:
+            report = cost_recipe(recipe, prices)
+        print(json.dumps(report, indent=2))
+        if not report["complete"] or report.get("scorable") is False:
+            raise SystemExit(2)
     elif args.command == "simulate":
         import numpy as np
         from .model import simulate
@@ -79,6 +97,9 @@ def main():
         print(json.dumps(report, indent=2))
         if not report["optimizer_success"]:
             raise SystemExit("Calibration optimizer did not converge")
+    elif args.command == "bo-cost-demo":
+        from .bo import cost_demo
+        print(json.dumps(cost_demo(), indent=2))
     else:
         from .bo import demo
         print(json.dumps(demo(), indent=2))

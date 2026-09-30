@@ -1,6 +1,8 @@
 {
   "schema_version": 1,
   "status": "research_hypotheses_not_submission_recipes",
+  "primary_objective": "minimize confirmed target-specific USD/g or USD/activity unit using the official complete price ledger",
+  "economic_screen": "Require each supplement or module's confirmed output gain to justify its added cost; include fixed lysate, base-buffer, and DNA costs. Report both yield and cost and retain the Pareto front.",
   "competition_source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
   "catalog_snapshot_date": "2026-09-29",
   "note": "Existing items are from a cached draft. Proposed additions require current competition acceptance and verified commercial sourcing. Unknown stocks, chemical identifiers, and lysate activities must not be inferred.",

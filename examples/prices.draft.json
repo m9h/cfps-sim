@@ -1,0 +1,25 @@
+{
+  "currency": "USD",
+  "price_basis": "per_mL_stock",
+  "cost_scope": "dispensed_reagents_only",
+  "provenance": {
+    "source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+    "snapshot_date": "2026-09-29",
+    "status": "partial_cached_draft_not_confirmed_current_scoring_ledger",
+    "note": "Stock prices transcribed from the draft. Base-buffer price is absent here and must be verified; do not infer a zero price. Confirm all prices and scoring scope before submission."
+  },
+  "usd_per_ml": {
+    "lysate": 4.0,
+    "base_buffer": null,
+    "template_sfgfp": 1.933,
+    "template_petase": 2.078,
+    "template_reteplase": 2.284,
+    "nuclease_free_water": 0.0,
+    "potassium_glutamate": 0.070,
+    "magnesium_glutamate": 0.065,
+    "atp": 1.539,
+    "ctp": 27.937,
+    "gtp": 39.343,
+    "utp": 37.846
+  }
+}

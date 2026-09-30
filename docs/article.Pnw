@@ -13,7 +13,7 @@ for studying how formulation, sequence, and biochemical resources determine
 protein production. CFPS-Sim is a reproducible computational scaffold for the
 Fall 2026 How To Biomanufacture (Almost) Anything CFPS coopetition, situated in
 the history of CFPS and the recent OpenAI--Ginkgo autonomous-laboratory study.
-The project combines dispensing and concentration accounting, versioned DNA
+The project combines dispensing, concentration and reagent-cost accounting, versioned DNA
 constructs, a reduced Antimony/RoadRunner resource model with SBML export, and
 a BoTorch demonstration of experiment selection. The three supplied plasmids
 are checked against their source protein sequences, with GenBank import and
@@ -27,7 +27,7 @@ conservation, solver convergence, resource interactions, and uncertainty scenari
 All five numerical/structural checks pass. A two-parameter, same-model synthetic
 study recovers translation and machinery-decay rates within 3\% of their
 generating values; fitting lowers withheld-condition GFP prediction error by
-approximately 31\% relative to default parameters. Nine software tests pass,
+approximately 31\% relative to default parameters. Twelve software tests pass,
 and a sequence-aware Modal trajectory agrees numerically with local execution.
 These results establish reproducibility and fitting behavior, not biological
 predictive validity. Kinetics remain illustrative and no competition improvement
@@ -39,9 +39,12 @@ learning loop. The article reviews measured biofoundry improvements and proposes
 a staged adaptation of Joongoo Lee's POSTECH OT-2-assisted i-POPFLEX diagnostics:
 cross feasible recipe modules, calibrate assays and identifiable effective
 parameters, test withheld recipes and batches, and compare selection policies
-under equal budgets. A separate reproduction track would evaluate purified
+under equal budgets using specific production cost as the primary outcome.
+An auditable stock-price ledger and a synthetic cost/yield BO demonstration
+target USD per gram or target-specific activity unit; missing prices block
+complete scoring. A separate reproduction track would evaluate purified
 component preparation using the published protocol. Missing chemistry, ingredient
-databases, T7 resource allocation, and a provenance-focused scientific-agent
+databases, a staged chemistry-coverage plan, T7 resource allocation, and a provenance-focused scientific-agent
 project define further development. Python dependencies are locked with uv;
 tables and vector figures are generated with Pweave and compiled with Tectonic.
 \end{abstract}
@@ -73,11 +76,22 @@ also differ: sfGFP uses calibrated fluorescence, whereas the enzyme targets use
 activity assays. A recipe can therefore affect measured performance through both
 expression and target-specific folding or activity.
 
+The judging objective concerns production economics: minimize dollars per gram
+of protein, or the target's applicable dollars per activity unit. Yield and
+reaction cost must therefore be evaluated together. A higher-yield reaction can
+have worse specific cost; a cheaper reaction can also have worse specific cost
+if its output falls more than its expenditure. We use this minimization
+direction throughout the project. The cached draft contains inconsistent wording
+about ``maximizing'' specific cost; that wording is not used as our objective.
+The current complete pricing and target-specific scoring conventions must be
+confirmed against the competition's operative ledger\cite{competition_rules}.
+
 CFPS-Sim is our computational contribution to this setting. We propose to use
-recipe accounting to enforce feasibility, mechanistic simulations to organize
-resource hypotheses, and Bayesian optimization to choose informative experiments.
-The scientific question is whether these calculations improve experimental
-selection over a data-only baseline. The present executable scaffold establishes
+recipe accounting to enforce feasibility and track costs, mechanistic simulations
+to organize resource hypotheses, and Bayesian optimization to choose informative
+experiments. The scientific question is whether these calculations improve
+confirmed specific production cost over a data-only baseline under the same
+experimental budget. The present executable scaffold establishes
 the workflow; calibration and prospective experimental comparison remain future
 milestones.
 
@@ -119,7 +133,7 @@ work. It does not complete the experimental cycle shown in the figure.
 \includegraphics[width=\linewidth]{figures/intro-workflow.pdf}
 \caption{Proposed evidence-to-experiment cycle. The project implements provenance,
 recipe validation, reduced simulation, synthetic fitting, and a BoTorch
-demonstration. Audited recipe-to-model mapping, experimental calibration, and
+cost/yield demonstration. Audited recipe-to-model mapping, experimental calibration, and
 prospective model-guided selection remain future work. The lower experimental
 stages require actual measurements; synthetic recovery cannot substitute for
 them. Recipe-module interventions adapt the diagnostic logic of i-POPFLEX.}
@@ -374,6 +388,149 @@ print("Supplement magnesium glutamate (mM):", checked["supplement_mM"]["magnesiu
 print("Water (nL):", checked["volumes_nl"]["nuclease_free_water"])
 @
 
+\section{Production economics: controlling cost and increasing output}
+For a recipe $x$ with transfers $v_i$ in nL and stock prices $p_i$ in USD/mL,
+the dispensed-reagent cost and specific production cost are
+\[
+C(x)=\sum_i p_i\frac{v_i(x)}{10^6},\qquad
+S(x)=\frac{C(x)}{Y(x)V},\quad V=20\times10^{-6}\ \mathrm{L},
+\]
+where $Y$ is the applicable protein titer in g/L. Minimize $S$ in USD/g.
+Fixed lysate, base buffer, and DNA belong in the numerator along with supplements
+and any charged diluent. Fixed inputs do not disappear when comparing recipes:
+they set a cost floor and change the yield/cost tradeoff. A mixed stock is charged
+once for its transferred volume, not again for its constituent chemicals.
+For an activity concentration $A$ in U/mL, use $C/(1000VA)$ in USD/U and retain
+the assay definition. Do not pool scores from different targets or silently
+interpret activity-derived apparent g/L as measured protein mass.
+
+An intervention improves specific cost precisely when
+\[
+\frac{S_{\mathrm{new}}}{S_{\mathrm{old}}}
+=\frac{C_{\mathrm{new}}/C_{\mathrm{old}}}{Y_{\mathrm{new}}/Y_{\mathrm{old}}}<1.
+\]
+For example, a 5\% cost increase with a 15\% yield increase improves USD/g by
+about 8.7\%; a 20\% cost saving with a 10\% yield loss improves it by about
+11.1\%. Maximizing yield independently of cost is therefore not the competition
+objective. We report both quantities and their cost/yield Pareto front, while
+using the specific-cost ratio to rank eligible competition outcomes. Any extra
+minimum-yield requirement must be justified by operative rules or a separately
+stated practical objective, rather than imposed as an undocumented score change.
+
+The partial cached draft ledger lists lysate at 4 USD/mL and sfGFP DNA stock at
+1.933 USD/mL\cite{competition_rules}. Their fixed transfers alone cost 0.023866
+USD per reaction before base buffer and supplements. The listed ATP stock costs
+1.539 USD/mL, compared with 27.937, 39.343, and 37.846 USD/mL for CTP, GTP,
+and UTP stocks. These prices apply to the particular listed stocks; concentration
+and counterion definitions still matter. They motivate testing nucleotide
+allocation and salvage rather than assuming that all nucleotide additions have
+the same economics. The present model regenerates ATP only, so it cannot yet
+predict the economic benefit of NMP substitution or other salvage chemistry.
+
+The new cost ledger charges every positive transfer. Missing prices remain
+missing, and a subtotal cannot produce a complete score. The cached draft
+example has an unresolved base-buffer price; the separate illustrative ledger
+explicitly assumes 0.1 USD/mL solely for demonstration. The implemented scope is
+dispensed reagent cost, excluding labor, plates, assays, purification, and
+compute. These other expenses belong in an experimental campaign budget or a
+separate full manufacturing-cost model unless the official score includes them.
+The official price snapshot and score scope must be frozen for comparisons.
+
+\begin{Verbatim}
+uv run cfps-sim cost examples/recipe.json examples/prices.draft.json
+uv run cfps-sim score examples/recipe.json examples/prices.illustrative.json \
+  examples/yield.synthetic.json
+uv run --extra bo cfps-sim bo-cost-demo
+\end{Verbatim}
+The first command intentionally exits with status 2 because its ledger is
+incomplete. The other examples use declared assumptions and synthetic output;
+they do not score actual competition observations.
+
+<<economics, echo=False, results='tex'>>=
+from copy import deepcopy
+from cfps_sim.economics import cost_recipe, score_recipe, pareto_indices
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+prices = json.loads((root / "examples/prices.illustrative.json").read_text())
+partial = cost_recipe(recipe, json.loads((root / "examples/prices.draft.json").read_text()))
+economic_cases = []
+for label, volume, titer in [("Reference", 300, 1.0), ("Higher output", 600, 1.3), ("Economical", 150, 0.9)]:
+    candidate = deepcopy(recipe)
+    candidate["volumes_nl"].pop("nuclease_free_water", None)
+    for reagent in ["ctp", "gtp", "utp"]:
+        candidate["volumes_nl"][reagent] = volume
+        candidate["stocks_mM"][reagent] = 100
+    observation = {"target": "sfgfp", "value": titer, "units": "g/L",
+                   "readout": "assigned illustrative sfGFP mass-equivalent titer",
+                   "data_kind": "synthetic", "provenance": {"source": "Assigned illustration; not a simulated or measured yield"}}
+    economic_cases.append((label, score_recipe(candidate, prices, observation)))
+print(r"\begin{center}\begin{tabular}{lrrr}Illustrative condition & USD/reaction & g/L & USD/g\\\hline")
+for label, row in economic_cases:
+    print(f"{label} & {row['total_cost_usd']:.5f} & {row['observation']['value']:.2f} & {row['specific_cost']:.1f}" + r"\\")
+print(r"\end{tabular}\end{center}")
+front = pareto_indices([row["total_cost_usd"] for _, row in economic_cases], [row["observation"]["value"] for _, row in economic_cases])
+print("The cost/yield Pareto front contains " + ", ".join(economic_cases[i][0] for i in front) + "; the Economical illustration has the lowest USD/g.")
+print("The partial draft ledger leaves these prices unresolved: " + ", ".join(partial["missing_prices"]).replace("_", r"\_") + ".")
+fig, ax = plt.subplots(figsize=(7, 3.4))
+titer_range = np.linspace(0.6, 1.45, 50)
+for specific in [2000, 3000, 4000]:
+    ax.plot(titer_range, specific*20e-6*titer_range, linestyle="--", color="0.7", linewidth=0.8)
+    ax.text(titer_range[-1], specific*20e-6*titer_range[-1], f"{specific} USD/g", fontsize=8, ha="right", va="bottom")
+for label, row in economic_cases:
+    ax.scatter(row["observation"]["value"], row["total_cost_usd"], s=45)
+    ax.annotate(label, (row["observation"]["value"], row["total_cost_usd"]),
+                xytext=(-8, 8) if label == "Higher output" else (5, 6),
+                ha="right" if label == "Higher output" else "left",
+                textcoords="offset points", fontsize=9)
+ax.set(xlabel="Assigned titer (g/L)", ylabel="Dispensed reagent cost (USD/reaction)", title="Illustrative cost/yield tradeoff at 20 microliters")
+fig.tight_layout()
+fig.savefig("figures/economics.pdf", bbox_inches="tight")
+plt.close(fig)
+@
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.9\linewidth]{figures/economics.pdf}
+\caption{Illustrative economics using draft stock prices, an assumed base-buffer
+price, and assigned synthetic titers. Dashed lines join equal USD/g values at
+fixed volume. Highest output is not the lowest specific cost. These accounting
+examples are dispensing-feasible but are not demonstrated productive formulations;
+their titers are not predictions of the reduced model.}
+\label{fig:economics}
+\end{figure}
+
+\subsection{Cost/yield experiment selection}
+The original BO smoke test optimizes only a synthetic yield surface. The new
+\texttt{bo-cost-demo} fits log titer and selects noisy Monte Carlo expected
+improvement in $\log(YV/C)$, applying known cost to both training-baseline and
+candidate posterior samples\cite{bo_objectives}. This maximization is equivalent
+pointwise to minimizing USD/g. Expected improvement in log utility is an
+acquisition choice, not minimization of expected USD/g or a claim of risk-optimal
+manufacturing. Modeling positive titer before applying the deterministic price
+ledger keeps price changes separate from biological prediction. This avoids
+learning the known cost function or dividing a yield-only acquisition by cost.
+
+The demonstration uses toy prices, a fixed cost floor, and synthetic observations;
+it has no calibrated recipe mapping or experimental batch model. One selected
+point is an informative next experiment, not a confirmed economic winner.
+For actual data, retain failed or below-detection observations and model their
+measurement process instead of taking the logarithm of zero, dropping failures,
+or creating an arbitrarily favorable ratio. Zero measured product is currently
+reported as unscorable by the accounting command. Near-zero or uncertain outputs
+need detection limits, replicate analysis, and independent confirmation.
+Conditional GP intervals in the demo do not establish biological coverage.
+
+Evaluate recipe changes by their effect on both numerator and denominator.
+Prioritize productive use of the fixed machinery, expensive NTP additions and
+their possible salvage pathways, target-specific folding, and systematic
+reduction of supplements that show diminishing returns. Extra enzymes and
+chaperones should remain only when confirmed output gains justify their cost.
+Report raw yield, total reaction cost, specific cost, and price/yield provenance
+for every panel. Candidate uncertainty may guide exploration, while final
+ranking must use confirmed target-specific economics under a common ledger.
+
 \section{Reduced dynamical model}
 Concentrations are in mM and time is in minutes. Let $D$ denote fixed template
 concentration, $M$ active machinery, $R$ mRNA, $P$ immature protein, $F$ mature
@@ -446,11 +603,13 @@ and protein concentrations, not measured yield or fluorescence.}
 \end{figure}
 
 \section{Bayesian optimization and compute}
-The demonstration fits a single-task Gaussian process to twelve noisy synthetic
+The original yield-only demonstration fits a single-task Gaussian process to twelve noisy synthetic
 observations and uses log expected improvement to select one point on a discrete
 normalized grid. The objective is an illustrative smooth surface, not a CFPS
 surrogate. Actual selection requires a quantized feasible candidate set,
-experimental replicate noise, batch effects, and controls.
+experimental replicate noise, batch effects, and controls. The production-cost
+objective and its separate synthetic demonstration are defined in the preceding
+economics section; a yield-only smoke result is not an economic optimization.
 
 BoTorch runs on Apple Silicon using CPU double precision. This project explicitly
 uses \texttt{torch.double} and \texttt{device="cpu"}. PyTorch's MPS backend does
@@ -464,7 +623,7 @@ uv run --extra cloud modal run modal_app.py \
   --construct constructs/competition/sfgfp.json
 \end{Verbatim}
 The runner requests two CPU cores, 4 GiB RAM, and a ten-minute timeout. It returns
-the model trajectory, SBML, and synthetic BO result into \texttt{results/modal}.
+the model trajectory, SBML, and both synthetic BO demonstrations into \texttt{results/modal}.
 Compute is billed to the authenticated Modal account. Independent ensemble
 members and simulated campaigns are natural future parallel workloads.
 
@@ -669,6 +828,9 @@ a single kinetic mechanism. Repeated wells estimate technical variation;
 independent preparations or lysate lots are needed to assess reproducibility.
 The panel is our adaptation of i-POPFLEX's diagnostic strategy, not a reproduction
 of its purified-component experiment.
+Compute the full reagent ledger for each hybrid and analyze its specific cost
+alongside the target output. An expression-restoring intervention is an economic
+improvement only if its confirmed output gain offsets its added cost.
 
 \subsection{Prospective comparison under an equal experimental budget}
 Before model-guided selection, compare a data-only GP, the calibrated mechanistic
@@ -688,7 +850,7 @@ plate when possible so policy and plate effects are not confounded.
 
 Freeze each model, candidate list, and uncertainty interval before the next
 batch is measured; retrain only after that batch is returned. Predefine success
-as improvement in the best independently confirmed target readout over the
+as reduction in the best independently confirmed target-specific USD/g or USD/U over the
 competition reference per experimental budget, with a practical effect threshold
 and uncertainty. Also report learning curves and prospective interval coverage.
 Retest nominees from every policy together in independent preparations with
@@ -717,11 +879,16 @@ synthetic BoTorch demo ran locally and on a Modal Linux CPU using float64;
 both selected the normalized grid point $(0.60,0.35)$. The remote run also
 completed the RoadRunner simulation. These smoke runs verify the execution
 paths and are not tests of biological prediction or optimization performance.
-The expanded suite now passes nine tests, including synthetic recovery and
+The expanded suite now passes twelve tests, including price completeness,
+cost and mass/activity unit conversion, cost/yield tradeoffs, synthetic recovery and
 withheld-data isolation. A further Modal run used the supplied
 sfGFP artifact and all twenty amino-acid pools; its final mature-protein
 concentration agreed with the local trajectory within $2\times10^{-18}$ mM.
 This agreement checks cross-platform execution, not biological accuracy.
+The new cost/yield BO demonstration also ran locally and on Modal; both selected
+the next synthetic candidate $(0.80,0.05)$ with matching predicted economics.
+This is an exploratory acquisition result, not the known toy-surface optimum
+or a recommended competition recipe.
 The Linux RoadRunner wheel requires the shared Python 3.11 library. GitHub CI
 therefore provisions Python with \texttt{actions/setup-python} and explicitly
 selects it during \texttt{uv sync}; the initial standalone uv interpreter failed
@@ -746,13 +913,16 @@ CFPS-Sim now provides a reproducible path from audited inputs to resource-model
 simulation, software challenges, and conditional parameter fitting. Three
 supplied constructs retain sequence provenance and source-protein checks;
 sfGFP simulations account for twenty amino-acid pools and assumed transcript
-demand. Nine software tests and Linux CI pass. The computational suite passes
+demand. Twelve software tests pass; Linux CI checks the same core suite. The computational suite passes
 five numerical/structural checks, and the synthetic calibration recovers both
 generating rates within 3\%, reducing withheld GFP RMSE by approximately 31\%
 relative to default parameters. These results support the execution and fitting
 workflow. They do not establish that the model predicts experimental yield,
 that its uncertainty intervals are calibrated, or that mechanistic selection
-outperforms data-only Bayesian optimization.
+outperforms data-only Bayesian optimization. The added price ledger and synthetic
+cost/yield acquisition make specific production cost explicit, but an unresolved
+base-buffer price and the missing biological recipe mapping prevent an official
+competition-economic prediction.
 
 The main scientific gap is the connection from feasible recipes and uncertain
 lysate composition to measured target performance. An audited concentration
@@ -784,7 +954,8 @@ permits them. If matched derivatives replace actual competition references,
 include those references separately and count their wells in the budget.
 Randomize well positions and record lysate lot, incubation,
 dispensing, and assay metadata. Analyze the two module effects and their
-interaction using the actual target readout; do not infer individual enzyme
+interaction using the actual target readout and reagent ledger; rank confirmed
+outcomes by USD/g or the target's USD/U, rather than yield alone. Do not infer individual enzyme
 activities from module effects alone. Repeat the panel with an independent
 preparation or lot before claiming transferability. This initial panel tests
 module behavior and technical variation, not optimization-policy superiority.
@@ -831,12 +1002,15 @@ and thermodynamic constraints should enter versioned evidence tables with
 units, conditions, and source passages. A scientific-agent interface can help
 extract and reconcile that evidence, while deterministic tools enforce
 arithmetic and feasibility. Future evaluation should measure extraction error,
-predictive error and interval coverage, and independently confirmed improvement
+predictive error and interval coverage, and independently confirmed specific-cost reduction
 per total experimental budget. The decision to add detail should follow an
 observable failure or a discriminating experiment, rather than an assumption
 that a larger reaction network must select better recipes.
 
 \begin{thebibliography}{99}
+\bibitem{bo_objectives} BoTorch developers. Monte Carlo objectives and noisy
+expected improvement. \url{https://botorch.org/docs/objectives/}.
+\url{https://botorch.readthedocs.io/en/stable/acquisition.html}.
 \bibitem{horvath_code} Varner Lab. Kinetic CFPS model publication code and data.
 \url{https://github.com/varnerlab/Kinetic-CFPS-Model-Publication-Code}.
 \bibitem{chebi} EMBL-EBI. ChEBI: Chemical Entities of Biological Interest.
