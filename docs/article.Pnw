@@ -31,11 +31,15 @@ prospective testing of experiment-selection policies under equal budgets.
 It compares mechanistic information with an empirical baseline using withheld
 recipes and batches, uncertainty coverage, and independently confirmed winners.
 Python dependencies are locked with uv; execution is supported on Apple Silicon
-CPUs and Modal. Seven software tests pass, and a sequence-aware Modal trajectory
+CPUs and Modal. Nine software tests pass, and a sequence-aware Modal trajectory
 agrees numerically with local execution. Tables and figures are generated with
 Pweave and compiled into this article with Tectonic. Kinetics remain illustrative,
 the optimizer uses synthetic observations, and no biological calibration or
 competition improvement has yet been demonstrated.
+An executable computational challenge suite and a synthetic parameter-recovery
+study test conservation, numerical convergence, resource interactions, and the
+fitting workflow. We outline missing chemistry, ingredient data sources, T7
+resource allocation, and a provenance-focused scientific-agent project.
 \end{abstract}
 
 \section{Introduction: from autonomous laboratories to the CFPS coopetition}
@@ -415,6 +419,107 @@ the model trajectory, SBML, and synthetic BO result into \texttt{results/modal}.
 Compute is billed to the authenticated Modal account. Independent ensemble
 members and simulated campaigns are natural future parallel workloads.
 
+\section{Computational experiments and a worked calibration study}
+The command \texttt{cfps-sim experiments} runs ten reference/process/resource
+conditions, six local kinetic sensitivities, a sixteen-condition ATP/GTP grid,
+a twenty-five-condition transcription/translation grid, two assumed transcript
+boundaries, and sixty-four perturbed scenarios. It checks finite outputs,
+nonnegative trajectories, individual amino-acid balances, required-resource
+controls, and agreement with a tighter solver tolerance. Parameter and initial
+pool overrides are explicitly validated; unsupported chemistry is rejected.
+These interventions occur in model space and do not constitute feasible
+competition recipes. Removing fuel need not eliminate protein synthesis because
+initial nucleotide pools remain. Scenario quantiles use assumed independent
+lognormal perturbations, not calibrated biological uncertainty.
+
+\begin{Verbatim}
+uv run cfps-sim experiments --output results/experiments --seed 2026
+uv run cfps-sim calibrate results/experiments/synthetic/study.json \
+  results/experiments/synthetic/observations.csv --output results/refit
+\end{Verbatim}
+
+\subsection{Published example: dynamic CFPS calibration}
+Horvath et al. provide a relevant experimental example\cite{horvath}. Their
+glucose-powered CAT model fits protein and metabolite time courses, uses
+literature-bounded parameter ensembles, and challenges metabolic reaction groups.
+Their author repository contains raw measurements and fitted/random ensembles
+\cite{horvath_code}. We would first reproduce that original model and data before
+adapting mechanisms to the competition. The lesson for our simpler model is to
+align observables and units, constrain effective parameters, examine multiple
+compatible fits, and use interventions to discriminate explanations. The
+CAT system is not our sfGFP competition dataset; transferring its numerical
+parameters requires checking model definitions and experimental conditions.
+
+\subsection{Runnable example: recovery from explicitly synthetic observations}
+The implemented example generates GFP and mRNA concentrations at eight times
+in three training conditions and one withheld condition, with two replicates
+and independent Gaussian noise. Known channel SD is 5\% of the maximum
+concentration for that condition. Two effective parameters are fitted:
+translation capacity $k_{\mathrm{tl}}$ and machinery decay $k_{\mathrm{decay}}$.
+All other chemistry, transcript bounds, pools, and observation scaling are fixed.
+Bounded least squares minimizes training residuals divided by their supplied SD
+in log-parameter space. Two initializations provide a basic optimizer check.
+The fitter never reads generating parameter values or withheld measurements
+when evaluating the training objective. Tests deliberately alter withheld
+measurements to check this separation.
+
+<<computational_study, echo=False, results='tex'>>=
+from cfps_sim.experiments import run_suite, make_synthetic_study, calibrate
+import numpy as np
+study_output = Path("../results/article-experiments")
+challenge_report = run_suite("../constructs/competition/sfgfp.json", study_output, seed=2026)
+study_path = make_synthetic_study("../constructs/competition/sfgfp.json", study_output / "synthetic", seed=2026)
+fit_report = calibrate(study_path, study_path.parent / "observations.csv", study_output / "calibration")
+truth = json.loads(study_path.read_text())["synthetic_truth"]
+print(r"\begin{center}\begin{tabular}{lrr}Parameter & Generating value & Fitted value\\\hline")
+for name in truth:
+    print(name.replace("_", r"\_") + f" & {truth[name]:.5g} & {fit_report['fitted_parameters'][name]:.5g}" + r"\\")
+print(r"\end{tabular}\end{center}")
+metric = next(row for row in fit_report["metrics"] if row["split"] == "test" and row["observable"] == "GFP")
+print(f"All five computational checks pass: {challenge_report['all_checks_pass']}. "
+      f"Withheld GFP RMSE is {1000*metric['rmse_mM']:.4f} micromolar after fitting, "
+      f"compared with {1000*metric['baseline_rmse_mM']:.4f} micromolar for default parameters.")
+grid = np.genfromtxt(study_output / "atp_gtp_grid.csv", delimiter=",", names=True)
+capacity_grid = np.genfromtxt(study_output / "tx_tl_grid.csv", delimiter=",", names=True)
+with (study_output / "calibration/predictions.csv").open() as handle:
+    import csv
+    heldout = [row for row in csv.DictReader(handle) if row["split"] == "test" and row["observable"] == "GFP"]
+fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+im = axes[0].imshow(1000*grid["gfp_mM"].reshape(4, 4), origin="lower", aspect="auto")
+axes[0].set(xticks=range(4), xticklabels=[0.25, 0.75, 1.5, 3], yticks=range(4), yticklabels=[0.25, 0.75, 1.5, 3], xlabel="Initial GTP (mM)", ylabel="Initial ATP (mM)")
+fig.colorbar(im, ax=axes[0], label="GFP (micromolar)")
+im = axes[1].imshow(1000*capacity_grid["gfp_mM"].reshape(5, 5), origin="lower", aspect="auto")
+axes[1].set(xticks=range(5), xticklabels=[0.25, 0.5, 1, 2, 4], yticks=range(5), yticklabels=[0.25, 0.5, 1, 2, 4], xlabel="Translation scale", ylabel="Transcription scale")
+times = [float(row["time_min"]) for row in heldout]
+axes[2].scatter(times, [1000*float(row["value_mM"]) for row in heldout], s=12, label="Synthetic data")
+axes[2].plot(times, [1000*float(row["predicted_mM"]) for row in heldout], label="Fit")
+axes[2].plot(times, [1000*float(row["baseline_mM"]) for row in heldout], linestyle="--", label="Defaults")
+axes[2].set(xlabel="Time (min)", ylabel="GFP (micromolar)")
+axes[2].legend(fontsize=7)
+fig.tight_layout()
+fig.savefig("figures/computational-study.pdf", bbox_inches="tight")
+plt.close(fig)
+@
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/computational-study.pdf}
+\caption{Model-space resource and capacity challenges, followed by prediction
+of a withheld synthetic condition. Every panel uses the reduced uncalibrated
+model; none represents experimental competition measurements.}
+\end{figure}
+
+The reported Jacobian rank and singular values describe local identifiability
+conditional on fixed chemistry. Approximate 95\% parameter intervals use a local
+Gaussian approximation with known independent measurement SD. They exclude
+model discrepancy, batch effects, uncertain pools, and transcript uncertainty,
+and no interval-coverage claim is made. The CSV interface supports GFP, mRNA,
+ATP, GTP, CTP, and UTP concentrations in mM, with time in minutes and source
+provenance. Raw fluorescence or enzyme activity cannot be passed as protein
+concentrations without a validated observation mapping. Conditions and all their
+replicates are assigned wholly to training or testing. This same-model recovery
+exercise establishes fitting behavior; experimental calibration remains open.
+
 \section{Calibration and prospective experimental comparison}
 Lee's study offers an experimental template for this stage: swap functional
 modules, localize a failure, intervene, and compare the rebuilt system with
@@ -509,6 +614,8 @@ to estimate policy reliability. The present repository establishes execution
 and accounting; this proposed comparison requires experimental access and a
 calibrated recipe-to-model connection.
 
+\input{research-context.tex}
+
 \section{Validation and next milestones}
 The starter checks cover recipe arithmetic, dispensing increments, finite and
 nonnegative trajectories within tolerance, an amino-acid/protein balance, and
@@ -524,7 +631,8 @@ synthetic BoTorch demo ran locally and on a Modal Linux CPU using float64;
 both selected the normalized grid point $(0.60,0.35)$. The remote run also
 completed the RoadRunner simulation. These smoke runs verify the execution
 paths and are not tests of biological prediction or optimization performance.
-The expanded suite now passes seven tests. A further Modal run used the supplied
+The expanded suite now passes nine tests, including synthetic recovery and
+withheld-data isolation. A further Modal run used the supplied
 sfGFP artifact and all twenty amino-acid pools; its final mature-protein
 concentration agreed with the local trajectory within $2\times10^{-18}$ mM.
 This agreement checks cross-platform execution, not biological accuracy.
@@ -548,6 +656,35 @@ with separate folding and assay observation models. Assay product time courses
 must not be treated as expression time courses.
 
 \begin{thebibliography}{99}
+\bibitem{horvath_code} Varner Lab. Kinetic CFPS model publication code and data.
+\url{https://github.com/varnerlab/Kinetic-CFPS-Model-Publication-Code}.
+\bibitem{chebi} EMBL-EBI. ChEBI: Chemical Entities of Biological Interest.
+\url{https://www.ebi.ac.uk/chebi/}.
+\bibitem{pubchem} NCBI. PubChem PUG REST documentation.
+\url{https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest}.
+\bibitem{rhea} Rhea. Curated reaction knowledgebase.
+\url{https://www.rhea-db.org/}.
+\bibitem{sabio} SABIO-RK. Curated biochemical reaction kinetics.
+\url{https://www.sabio.h-its.org/}.
+\bibitem{brenda} BRENDA. Enzyme database data fields and experimental context.
+\url{https://www.brenda-enzymes.org/datafields.php}.
+\bibitem{equilibrator} eQuilibrator. Biochemical thermodynamics calculator.
+\url{https://equilibrator.weizmann.ac.il/}.
+\bibitem{nist} NIST. Thermodynamics of enzyme-catalyzed reactions.
+\url{https://www.nist.gov/programs-projects/thermodynamics-enzyme-catalyzed-reactions}.
+\bibitem{bionumbers} BioNumbers. Database of useful biological numbers.
+\url{https://bionumbers.hms.harvard.edu/aboutus.aspx}.
+\bibitem{biomodels} EMBL-EBI. Searching and getting data from BioModels.
+\url{https://www.ebi.ac.uk/training/online/courses/biomodels-quick-tour/searching-and-getting-data-from-biomodels/}.
+\bibitem{yang} W. C. Yang et al. Simplifying and streamlining Escherichia
+coli-based cell-free protein synthesis. Biotechnology Progress (2012).
+\url{https://doi.org/10.1002/btpr.1509}.
+\bibitem{blaiszik} Globus Labs. People: Ben Blaiszik.
+\url{https://labs.globus.org/people.html}.
+\bibitem{foundry} Globus Labs. Foundry data and model infrastructure.
+\url{https://labs.globus.org/projects/foundry.html}.
+\bibitem{osi} Open Scientific Intelligence Hackathon. October 21--22, 2026.
+Schedule accessed September 29, 2026. \url{https://llmhackathon.github.io/}.
 \bibitem{borkowski} O. Borkowski et al. Large scale active-learning-guided
 exploration for in vitro protein production optimization. Nature Communications,
 11, 1872 (2020). \url{https://doi.org/10.1038/s41467-020-15798-5}.

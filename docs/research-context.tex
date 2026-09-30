@@ -1,0 +1,124 @@
+\section{Ingredients, missing chemistry, and data resources}
+The next simulator components should be selected by whether competition
+measurements can constrain them. Our first priorities are free magnesium,
+explicit nucleotide salvage and energy chemistry, and target-specific folding.
+The linked draft catalog already contains magnesium/potassium glutamate,
+HEPES, phosphate buffers, NTPs, NMPs, nucleosides, ribose, glucose, PEP, pyruvate,
+acetyl phosphate, maltose, maltodextrin, NAD, and CoA. It also lists DsbC,
+reduced/oxidized glutathione, pyruvate oxidase, and catalase\cite{competition_rules}.
+These additions remain distinct from unknown endogenous pools. The draft's
+oxidized-glutathione description repeats the reduced abbreviation; reconcile
+chemical identity with the stated supplier product before interpreting redox.
+
+Model magnesium binding to nucleotides and phosphate before treating total
+magnesium as free magnesium. Track AMP, ADP, GDP, PPi, and Pi rather than hiding
+all energy chemistry in an ATP-regeneration term. Represent each energy substrate
+through the enzymes and cofactors that actually convert it; the abstract Fuel
+variable cannot establish that glucose and PEP are interchangeable. Add oxygen
+transfer and peroxide removal when considering the pyruvate-oxidase/catalase
+module. For enzyme targets, distinguish synthesized, soluble, folded, and active
+protein. DsbC and glutathione are already catalog options; chaperone systems such
+as DnaK/DnaJ/GrpE and GroEL/GroES are possible additional requests, motivated
+by published CFPS folding work\cite{hunt}. Test functional yield and assay-matrix
+effects rather than assume that brighter GFP establishes better enzyme production.
+
+Other possible requests are nucleoside-diphosphate kinase, adenylate kinase, and
+inorganic pyrophosphatase, to test nucleotide replenishment and pyrophosphate
+removal. These are proposed modules, not validated improvements. Sourcing,
+stock activity, storage formulation, and competition acceptance need verification.
+The draft allows requests for additional commercially available reagents but
+leaves the team allotment as ``10 or 20''; it is not a confirmed quota
+\cite{competition_rules}. The machine-readable
+\texttt{examples/research\_priorities.json} separates current draft examples
+from proposed requests and lists missing mechanisms. No new reagent is silently
+assigned a kinetic effect in the present simulator.
+
+\subsection{Databases for an ingredient and mechanism registry}
+\begin{center}
+\small
+\begin{tabular}{p{0.24\linewidth}p{0.65\linewidth}}
+Resource & Use in this project\\\hline
+ChEBI and PubChem & Normalize identities, structures, synonyms, and salt forms;
+retain stock-specific composition and units\cite{chebi,pubchem}.\\
+Rhea & Retrieve curated biochemical reaction participants and stoichiometry
+using ChEBI identifiers\cite{rhea}.\\
+SABIO-RK and BRENDA & Find kinetic laws, constants, enzyme context, and measurement
+conditions; use matched values as uncertain priors\cite{sabio,brenda}.\\
+eQuilibrator and NIST & Check biochemical thermodynamics and dependence on pH,
+ionic conditions, and concentrations\cite{equilibrator,nist}.\\
+BioNumbers & Find cited biological scales and parameter ranges, retaining entry
+identifiers and underlying references\cite{bionumbers}.\\
+BioModels and author repositories & Retrieve executable models and reproduce
+original observations before importing mechanisms\cite{biomodels,horvath_code}.\\
+\end{tabular}
+\end{center}
+
+These resources describe chemistry and mechanisms, not competition efficacy.
+The competition catalog and measurements remain the authority for feasible
+formulations and observed performance. For every datum, retain source/version,
+organism and enzyme identity, substrate, pH, temperature, ionic conditions,
+units, uncertainty, and access/reuse terms. A purified-enzyme turnover number
+is not a lysate $V_{\max}$ without an active enzyme concentration. Distinguish
+measured constants from estimates and inferred values. Represent salts,
+counterions, hydrates, enzyme activity units, mixed amino-acid stocks, and polymer
+distributions explicitly; molecular-weight lookup alone cannot convert every
+stock into one meaningful molarity.
+
+\subsection{What the choice of T7 tells us}
+The draft specifies T7-driven supplied circular templates and an internally
+produced BL21 Star (DE3) lysate, with IPTG used during fermentation to induce T7
+RNA polymerase\cite{competition_rules}. Thus T7 polymerase is expected to be
+provided by the extract; its active concentration in the final reaction is still
+unknown. The supplied promoter is not an adjustable competition variable, and
+an additional polymerase supplement is not automatically needed.
+
+T7 offers promoter-specific transcription with a dedicated phage polymerase,
+making transcription capacity a useful module to distinguish from native
+translation capacity\cite{yang}. A strong transcription system does not guarantee
+maximum protein output: mRNA production consumes NTPs and can exceed translation
+capacity. Magnesium and nucleotide conditions can affect both processes. The
+computed transcription/translation grid probes this resource-allocation hypothesis
+in our reduced model; it cannot measure actual T7 activity. Separating polymerase
+and ribosome resources is a future improvement over the shared Machinery state.
+Calibrate transcript production and decay where available, then protein synthesis
+and maturation, instead of absorbing every discrepancy into one transcription rate.
+
+The promoter motif supports an assumed transcription start, not a measured
+termination boundary on the circular plasmid. Readthrough changes NTP demand
+while CDS amino-acid demand stays the same; our boundary scenario makes this
+uncertainty visible. Borkowski et al.'s study uses a constitutive-promoter reporter
+\cite{borkowski}, so its fitted transcription behavior cannot be imported unchanged
+into our T7 system. Recipe-design lessons transfer as hypotheses; promoter-specific
+rates need their own evidence.
+
+\section{Argonne, scientific data infrastructure, and the October hackathon}
+The researcher is Ben Blaiszik, affiliated with Globus, Data Science and Learning
+at the University of Chicago and Argonne National Laboratory\cite{blaiszik}.
+His data-ecosystem work links the Materials Data Facility and DLHub; Globus Labs'
+Foundry adds standardized dataset metadata and structures for discovering and
+connecting data with models\cite{foundry}. Here ``Foundry'' denotes data
+infrastructure and is distinct from Illinois' iBioFAB wet-laboratory biofoundry.
+The applicable lesson is to make measurements, processing steps, models, and
+benchmarks independently discoverable and reproducible. A materials database
+is not a ready-made source of validated CFPS recipes.
+
+The shared event is now the \emph{Open Scientific Intelligence Hackathon},
+formerly the LLM Hackathon for Materials Science and Chemistry. The official
+site announces October 21--22, 2026, as a free hybrid international event covering
+agents, datasets, benchmarks, models, and scientific software\cite{osi}.
+Its scope has expanded to physical sciences and mathematics, so a CFPS project
+should explain its biochemical mechanism and data/benchmark contribution;
+we have not assumed acceptance or registered a project.
+
+Our proposed contribution is an evidence-grounded CFPS recipe and calibration
+assistant. It would extract literature recipes and kinetic evidence into a
+structured registry with source passages, normalize chemical identities and
+units, validate feasibility, and call versioned simulation/calibration tools.
+Benchmark extraction on manually checked documents, conversion on known stocks,
+and predictions on withheld experiments. Measure unsupported ingredient claims
+and incorrect concentration conversions alongside scientific utility. An LLM
+can suggest candidates for review, while numerical tools enforce actual stock
+and dispensing constraints. Present an end-to-end example that retains evidence
+and fails explicitly when facts are missing. This is a proposed hackathon project;
+no agent-based extraction, remote data publication, or experimental scheduling
+is implemented by the present suite.

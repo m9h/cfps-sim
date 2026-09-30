@@ -28,6 +28,14 @@ def main():
     imported.add_argument("--transcript-start", type=int)
     imported.add_argument("--transcript-end", type=int)
     commands.add_parser("bo-demo")
+    experiments = commands.add_parser("experiments", help="Run model challenges or a synthetic calibration study")
+    experiments.add_argument("--construct", type=Path, default=Path("constructs/competition/sfgfp.json"))
+    experiments.add_argument("--output", type=Path, default=Path("results/experiments"))
+    experiments.add_argument("--seed", type=int, default=2026)
+    calibration = commands.add_parser("calibrate", help="Fit supported concentration observations with declared study provenance")
+    calibration.add_argument("study", type=Path)
+    calibration.add_argument("observations", type=Path)
+    calibration.add_argument("--output", type=Path, default=Path("results/calibration"))
     args = parser.parse_args()
     if args.command == "validate":
         from .recipe import validate
@@ -56,6 +64,21 @@ def main():
         else:
             record = import_genbank(args.input, args.id, args.target, args.transcript_start, args.transcript_end)
             args.output.write_text(json.dumps(record, indent=2)+"\n")
+    elif args.command == "experiments":
+        from .experiments import run_suite, make_synthetic_study, calibrate
+        checks = run_suite(args.construct, args.output, args.seed)
+        study = make_synthetic_study(args.construct, args.output/"synthetic", args.seed)
+        fitted = calibrate(study, study.parent/"observations.csv", args.output/"calibration")
+        print(json.dumps({"output": str(args.output), "checks": checks["checks"], "calibration_data": fitted["data_kind"],
+                          "fitted_parameters": fitted["fitted_parameters"], "metrics": fitted["metrics"]}, indent=2))
+        if not checks["all_checks_pass"] or not fitted["optimizer_success"]:
+            raise SystemExit("Computational challenge or fitting check failed")
+    elif args.command == "calibrate":
+        from .experiments import calibrate
+        report = calibrate(args.study, args.observations, args.output)
+        print(json.dumps(report, indent=2))
+        if not report["optimizer_success"]:
+            raise SystemExit("Calibration optimizer did not converge")
     else:
         from .bo import demo
         print(json.dumps(demo(), indent=2))

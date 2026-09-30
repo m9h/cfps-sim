@@ -142,6 +142,30 @@ polymers, activity units, counterions, and volume fractions need explicit mappin
 they must not be silently interpreted as molar stocks. Unknown reagents are listed
 in the output rather than inferred.
 
+## Computational experiments and calibration
+
+```sh
+uv run cfps-sim experiments --output results/experiments --seed 2026
+uv run cfps-sim calibrate results/experiments/synthetic/study.json \
+  results/experiments/synthetic/observations.csv --output results/refit
+```
+
+This runs resource/process knockouts, conservation and solver checks, local
+sensitivity, ATP/GTP and transcription/translation grids, transcript-boundary
+scenarios, and a 64-member uncertainty exercise. The synthetic calibration fits
+two effective parameters to three conditions and predicts a withheld condition;
+it does not fit real competition observations. Outputs retain inputs, provenance,
+units, seeds, predictions, and diagnostic statistics.
+[Experiment instructions](experiments/README.md) document the data schema and
+limitations. The article includes an executable worked example and a published
+calibration precedent from Horvath et al.
+
+[Research priorities](examples/research_priorities.json) distinguish draft-catalog
+ingredients from proposed requests and mechanisms still absent from the model.
+The article also covers T7 resource allocation, chemical/kinetic databases, and
+lessons from Ben Blaiszik's Argonne/Chicago data ecosystem and the October
+21–22, 2026 [Open Scientific Intelligence Hackathon](https://llmhackathon.github.io/).
+
 ## Model boundaries
 
 The reduced model includes individual NTP consumption in transcription, mRNA

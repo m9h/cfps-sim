@@ -1,6 +1,7 @@
 """Reduced, uncalibrated resource model. Concentrations: mM; time: minutes."""
 import antimony
 import roadrunner
+import math
 from .construct import AMINO_ACIDS, demands
 
 # Illustrative effective parameters, not extracted from or fitted to competition data.
@@ -31,7 +32,11 @@ end
 """
 
 
-def load_model(construct=None):
+PARAMETERS = {"dna_template", "k_tx", "k_tl", "k_mrna", "k_mat", "k_decay", "regen", "K_nt", "K_aa", "K_fuel"}
+INITIAL_SPECIES = {"ATP", "ADP", "GTP", "GDP", "CTP", "UTP", "Fuel", "mRNA", "Protein", "GFP", "Machinery"}
+
+
+def load_model(construct=None, parameters=None, initial=None):
     model = MODEL
     derived = None
     if construct is not None:
@@ -52,6 +57,16 @@ def load_model(construct=None):
         for base, count in derived["ntp_per_transcript"].items():
             model = model.replace(f"nt_{base.lower()}=180", f"nt_{base.lower()}={count}")
         model = model.replace("aa_length=240", f"aa_length={derived['protein_aa']}")
+    allowed_initial = INITIAL_SPECIES | ({f"aa_{aa}" for aa in AMINO_ACIDS} if construct else {"AA"})
+    for values, allowed, kind in [(parameters or {}, PARAMETERS, "parameter"), (initial or {}, allowed_initial, "initial species")]:
+        for name, value in values.items():
+            if name not in allowed:
+                raise ValueError(f"Unknown {kind}: {name}; chemistry absent from this model cannot be inferred")
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+                raise ValueError(f"{name} must be finite and nonnegative")
+            if name.startswith("K_") and value == 0:
+                raise ValueError("Saturation constants must be positive")
+            model = model.replace("end\n", f"  {name}={value:.17g};\nend\n")
     antimony.clearPreviousLoads()
     if antimony.loadAntimonyString(model) < 0:
         raise RuntimeError(antimony.getLastError())
@@ -61,10 +76,10 @@ def load_model(construct=None):
     return rr
 
 
-def simulate(minutes=240, points=241, construct=None):
+def simulate(minutes=240, points=241, construct=None, parameters=None, initial=None):
     if minutes <= 0 or points < 2:
         raise ValueError("Positive duration and at least two time points are required")
-    rr = load_model(construct)
+    rr = load_model(construct, parameters, initial)
     selections = ["time", "ATP", "GTP", "CTP", "UTP", "AA", "Fuel", "mRNA", "Protein", "GFP", "Machinery"]
     if construct is not None:
         selections += [f"aa_{aa}" for aa in AMINO_ACIDS]
