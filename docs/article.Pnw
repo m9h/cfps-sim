@@ -379,6 +379,12 @@ The expanded suite now passes seven tests. A further Modal run used the supplied
 sfGFP artifact and all twenty amino-acid pools; its final mature-protein
 concentration agreed with the local trajectory within $2\times10^{-18}$ mM.
 This agreement checks cross-platform execution, not biological accuracy.
+The Linux RoadRunner wheel requires the shared Python 3.11 library. GitHub CI
+therefore provisions Python with \texttt{actions/setup-python} and explicitly
+selects it during \texttt{uv sync}; the initial standalone uv interpreter failed
+to load \texttt{libpython3.11.so.1.0}. Modal's system interpreter supplies this
+library. A Linux installation must make its shared Python library available to
+the dynamic loader before importing RoadRunner.
 
 Repository instructions require updating this Pweave source and rebuilding its
 tracked PDF when scientific behavior, inputs, assumptions, workflows, or

@@ -24,6 +24,11 @@ uv uses the Python 3.11 version specified in `.python-version`; it can download
 that interpreter if necessary. `uv.lock` pins dependencies. Native wheels are
 used where available; no global Python packages are needed. COPASI is an optional
 GUI for inspecting the exported SBML, not a runtime requirement.
+On Linux, RoadRunner's wheel requires the shared Python 3.11 library. The CI
+workflow provisions Python with `actions/setup-python` before `uv sync`; Modal's
+system Python already supplies it. If a standalone interpreter reports missing
+`libpython3.11.so.1.0`, use a Python installation with its shared library available
+to the dynamic loader, then recreate the environment with `uv sync --python /path/to/python3.11`.
 
 ```sh
 uv run cfps-sim validate examples/recipe.json
