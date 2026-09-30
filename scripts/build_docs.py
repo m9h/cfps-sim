@@ -18,7 +18,7 @@ if __name__ == "__main__":
     subprocess.run(["pweave", "-f", "tex", "article.Pnw"], cwd=DOCS, env=env, check=True)
     if "Traceback" in (DOCS / "article.tex").read_text():
         raise SystemExit("A documentation code chunk failed; inspect docs/article.tex")
-    for name in ["trajectory.pdf", "computational-study.pdf"]:
+    for name in ["intro-resources.pdf", "intro-workflow.pdf", "trajectory.pdf", "computational-study.pdf"]:
         if not (DOCS / "figures" / name).is_file():
             raise SystemExit(f"Pweave did not generate {name}")
     subprocess.run(["tectonic", "article.tex"], cwd=DOCS, env=env, check=True)

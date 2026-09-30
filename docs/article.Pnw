@@ -22,24 +22,28 @@ sequence-derived nucleotide demands and twenty individual amino-acid pools;
 transcript boundaries remain explicit assumptions. PETase and reteplase support
 sequence accounting but require separate folding and activity observation models.
 
-The article connects POSTECH's OT-2-assisted i-POPFLEX module-exchange experiments
-to a proposed calibration and prospective comparison strategy, and reviews
-measured improvements from CFPS active learning and Illinois biofoundry
-optimization with their distinct targets and baselines. The proposed evaluation
-separates assay calibration, identifiable effective-parameter fitting, and
-prospective testing of experiment-selection policies under equal budgets.
-It compares mechanistic information with an empirical baseline using withheld
-recipes and batches, uncertainty coverage, and independently confirmed winners.
-Python dependencies are locked with uv; execution is supported on Apple Silicon
-CPUs and Modal. Nine software tests pass, and a sequence-aware Modal trajectory
-agrees numerically with local execution. Tables and figures are generated with
-Pweave and compiled into this article with Tectonic. Kinetics remain illustrative,
-the optimizer uses synthetic observations, and no biological calibration or
-competition improvement has yet been demonstrated.
-An executable computational challenge suite and a synthetic parameter-recovery
-study test conservation, numerical convergence, resource interactions, and the
-fitting workflow. We outline missing chemistry, ingredient data sources, T7
-resource allocation, and a provenance-focused scientific-agent project.
+An executable challenge suite tests resource removal, individual amino-acid
+conservation, solver convergence, resource interactions, and uncertainty scenarios.
+All five numerical/structural checks pass. A two-parameter, same-model synthetic
+study recovers translation and machinery-decay rates within 3\% of their
+generating values; fitting lowers withheld-condition GFP prediction error by
+approximately 31\% relative to default parameters. Nine software tests pass,
+and a sequence-aware Modal trajectory agrees numerically with local execution.
+These results establish reproducibility and fitting behavior, not biological
+predictive validity. Kinetics remain illustrative and no competition improvement
+has been demonstrated.
+
+Conceptual figures connect sequence-dependent resource demand to target-specific
+readouts and distinguish the implemented scaffold from the planned experimental
+learning loop. The article reviews measured biofoundry improvements and proposes
+a staged adaptation of Joongoo Lee's POSTECH OT-2-assisted i-POPFLEX diagnostics:
+cross feasible recipe modules, calibrate assays and identifiable effective
+parameters, test withheld recipes and batches, and compare selection policies
+under equal budgets. A separate reproduction track would evaluate purified
+component preparation using the published protocol. Missing chemistry, ingredient
+databases, T7 resource allocation, and a provenance-focused scientific-agent
+project define further development. Python dependencies are locked with uv;
+tables and vector figures are generated with Pweave and compiled with Tectonic.
 \end{abstract}
 
 \section{Introduction: from autonomous laboratories to the CFPS coopetition}
@@ -76,6 +80,51 @@ The scientific question is whether these calculations improve experimental
 selection over a data-only baseline. The present executable scaffold establishes
 the workflow; calibration and prospective experimental comparison remain future
 milestones.
+
+Figure~\ref{fig:intro-resources} summarizes the central modeling problem:
+sequence fixes substrate demand, while available machinery and competing
+resources determine its dynamics. The experimental observable adds a separate
+layer. Mature GFP, total protein, and active enzyme are different outputs;
+improving one does not establish improvement in the others. The current model
+represents an aggregate expression capacity, rather than independently measured
+T7 polymerase and ribosome pools. Magnesium binding, pH, oxygen transfer, and
+target-specific folding are priorities for subsequent extensions.
+
+<<intro_concepts, echo=False, results='hidden'>>=
+import runpy
+runpy.run_path("intro_figures.py", run_name="__main__")
+@
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/intro-resources.pdf}
+\caption{Conceptual resource map for CFPS-Sim. Sequence-derived transcript and
+protein demands connect template expression to shared nucleotide and amino-acid
+pools. GFP maturation is implemented; enzyme activity requires a separate
+observation model. Dashed modules show proposed chemistry, not simulated or
+measured mechanisms. Arrow widths do not encode reaction flux.}
+\label{fig:intro-resources}
+\end{figure}
+
+Figure~\ref{fig:intro-workflow} places this scaffold within an experimental
+learning cycle. Known stock additions must be separated from unknown lysate
+pools before recipes can initialize a mechanistic model. Calibration should
+then be judged on withheld complete conditions; prospective comparisons should
+count controls and confirmation wells as part of the experimental budget.
+The present synthetic study tests that data separation and numerical fitting
+work. It does not complete the experimental cycle shown in the figure.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/intro-workflow.pdf}
+\caption{Proposed evidence-to-experiment cycle. The project implements provenance,
+recipe validation, reduced simulation, synthetic fitting, and a BoTorch
+demonstration. Audited recipe-to-model mapping, experimental calibration, and
+prospective model-guided selection remain future work. The lower experimental
+stages require actual measurements; synthetic recovery cannot substitute for
+them. Recipe-module interventions adapt the diagnostic logic of i-POPFLEX.}
+\label{fig:intro-workflow}
+\end{figure}
 
 \subsection{Historical foundations: from translation biochemistry to engineering}
 CFPS began as a way to dissect protein synthesis. Work with cell fractions in
@@ -479,6 +528,12 @@ metric = next(row for row in fit_report["metrics"] if row["split"] == "test" and
 print(f"All five computational checks pass: {challenge_report['all_checks_pass']}. "
       f"Withheld GFP RMSE is {1000*metric['rmse_mM']:.4f} micromolar after fitting, "
       f"compared with {1000*metric['baseline_rmse_mM']:.4f} micromolar for default parameters.")
+print(r"\begin{center}\begin{tabular}{lr}Computational result & Value\\\hline")
+print(f"Maximum amino-acid balance error (mM) & {challenge_report['maximum_aa_balance_error_mM']:.2e}" + r"\\")
+print(f"Relative endpoint difference after solver refinement & {challenge_report['solver_relative_endpoint_difference']:.2e}" + r"\\")
+print(f"Conditional parameter Jacobian rank & {fit_report['jacobian_rank']} of 2" + r"\\")
+print(f"Withheld GFP RMSE reduction versus defaults & {100*(1-metric['rmse_mM']/metric['baseline_rmse_mM']):.1f}" + r"\%\\")
+print(r"\end{tabular}\end{center}")
 grid = np.genfromtxt(study_output / "atp_gtp_grid.csv", delimiter=",", names=True)
 capacity_grid = np.genfromtxt(study_output / "tx_tl_grid.csv", delimiter=",", names=True)
 with (study_output / "calibration/predictions.csv").open() as handle:
@@ -490,12 +545,15 @@ axes[0].set(xticks=range(4), xticklabels=[0.25, 0.75, 1.5, 3], yticks=range(4), 
 fig.colorbar(im, ax=axes[0], label="GFP (micromolar)")
 im = axes[1].imshow(1000*capacity_grid["gfp_mM"].reshape(5, 5), origin="lower", aspect="auto")
 axes[1].set(xticks=range(5), xticklabels=[0.25, 0.5, 1, 2, 4], yticks=range(5), yticklabels=[0.25, 0.5, 1, 2, 4], xlabel="Translation scale", ylabel="Transcription scale")
+fig.colorbar(im, ax=axes[1], label="GFP (micromolar)")
 times = [float(row["time_min"]) for row in heldout]
 axes[2].scatter(times, [1000*float(row["value_mM"]) for row in heldout], s=12, label="Synthetic data")
 axes[2].plot(times, [1000*float(row["predicted_mM"]) for row in heldout], label="Fit")
 axes[2].plot(times, [1000*float(row["baseline_mM"]) for row in heldout], linestyle="--", label="Defaults")
 axes[2].set(xlabel="Time (min)", ylabel="GFP (micromolar)")
 axes[2].legend(fontsize=7)
+for ax, title in zip(axes, ["A. Nucleotide pools", "B. Effective capacities", "C. Withheld condition"]):
+    ax.set_title(title, fontsize=10)
 fig.tight_layout()
 fig.savefig("figures/computational-study.pdf", bbox_inches="tight")
 plt.close(fig)
@@ -507,7 +565,35 @@ plt.close(fig)
 \caption{Model-space resource and capacity challenges, followed by prediction
 of a withheld synthetic condition. Every panel uses the reduced uncalibrated
 model; none represents experimental competition measurements.}
+\label{fig:computational-study}
 \end{figure}
+
+\subsection{Interpretation of the computational results}
+The checks establish that removing a required resource or expression process
+blocks the corresponding output, that amino-acid consumption matches sequence
+demand, and that tightening solver tolerances leaves the reference endpoint
+essentially unchanged. Fuel removal is a distinct intervention: initial NTPs
+remain available and can support expression without regeneration. Absence of
+mature GFP after disabling maturation also does not imply absence of translated
+protein. These controls distinguish model behavior from assay interpretation.
+
+The two response grids in Figure~\ref{fig:computational-study} explore nucleotide
+availability and expression-capacity balance within the reduced equations.
+Neither grid estimates optimal reagent concentrations or measured T7 activity.
+Local sensitivities apply near the reference state, while the sixty-four-draw
+ensemble describes spread under declared perturbation assumptions. Transcript
+boundary changes alter nucleotide demand even when their endpoint effect is
+small under the chosen pools. Experimental transcript lengths and lysate
+composition would be needed to decide which scenario is appropriate.
+
+The synthetic fit has a full-rank two-parameter local Jacobian and improves
+withheld GFP error relative to defaults. This is conditional identifiability
+with fixed pools, kinetics, observation scaling, and known error SD, rather
+than evidence that the same two parameters can be resolved from competition
+endpoints. Both the generating and fitted models have the same reaction
+structure. Missing chemistry therefore cannot be diagnosed by this recovery
+exercise; an experimental fit must additionally examine systematic residuals,
+independent batches, and performance against an empirical baseline.
 
 The reported Jacobian rank and singular values describe local identifiability
 conditional on fixed chemistry. Approximate 95\% parameter intervals use a local
@@ -654,6 +740,101 @@ Evaluate whole held-out recipes and batches against an empirical baseline before
 using mechanistic predictions in experiment selection. Add PETase and reteplase
 with separate folding and assay observation models. Assay product time courses
 must not be treated as expression time courses.
+
+\section{Conclusions and future work}
+CFPS-Sim now provides a reproducible path from audited inputs to resource-model
+simulation, software challenges, and conditional parameter fitting. Three
+supplied constructs retain sequence provenance and source-protein checks;
+sfGFP simulations account for twenty amino-acid pools and assumed transcript
+demand. Nine software tests and Linux CI pass. The computational suite passes
+five numerical/structural checks, and the synthetic calibration recovers both
+generating rates within 3\%, reducing withheld GFP RMSE by approximately 31\%
+relative to default parameters. These results support the execution and fitting
+workflow. They do not establish that the model predicts experimental yield,
+that its uncertainty intervals are calibrated, or that mechanistic selection
+outperforms data-only Bayesian optimization.
+
+The main scientific gap is the connection from feasible recipes and uncertain
+lysate composition to measured target performance. An audited concentration
+mapping and observation calibration should precede additional kinetic detail.
+We propose a small effective-parameter model constrained by expression time
+courses where available, followed by tests on complete withheld recipes and
+independent lysate batches. Magnesium/speciation and nucleotide regeneration
+are early mechanistic priorities. Separate folding and activity models are
+needed before extending sfGFP findings to PETase and reteplase.
+
+\subsection{Competition track: adapt POSTECH's diagnostic module exchanges}
+Joongoo Lee's group demonstrates a useful experimental principle: exchange
+functional groups between working and problematic preparations, localize a
+failure, change the preparation, and confirm recovered function\cite{chae,chae_preprint}.
+Our first proposed competition study applies that principle to supplements.
+Select two feasible reference backgrounds, A and B, with identical non-exchanged
+additions, or construct and label matched derivatives of the references.
+Cross their salt/buffer and energy/nucleotide modules while holding the
+remaining additions and supplied DNA constant. The four conditions are
+$S_AE_A$, $S_AE_B$, $S_BE_A$, and $S_BE_B$; the two matched parental combinations
+remain references within the panel. Every
+combination must satisfy fixed-base, stock, transfer, and volume constraints.
+If those constraints prevent independent module exchange, redefine the panel
+and report the coupled changes rather than label it an independent factorial.
+
+A first plate could use three technical replicates per condition, giving twelve
+condition wells, plus applicable blanks or no-DNA controls where the platform
+permits them. If matched derivatives replace actual competition references,
+include those references separately and count their wells in the budget.
+Randomize well positions and record lysate lot, incubation,
+dispensing, and assay metadata. Analyze the two module effects and their
+interaction using the actual target readout; do not infer individual enzyme
+activities from module effects alone. Repeat the panel with an independent
+preparation or lot before claiming transferability. This initial panel tests
+module behavior and technical variation, not optimization-policy superiority.
+
+Use the panel and applicable time courses to compare empirical prediction with
+a minimally calibrated mechanistic model. Freeze predictions before a new batch,
+retain repeated references, and confirm candidates independently. Only then
+start the equal-budget selection-policy comparison described above. Extend
+successful modules to PETase and reteplase as separate target studies with
+their own activity observations. A reproducible negative result is informative:
+it can reject a transferable-module hypothesis or motivate an explicit
+interaction or folding model.
+
+\subsection{Reconstitution track: reproduce and model the i-POPFLEX workflow}
+A separate laboratory study could reproduce the published i-POPFLEX preparation
+using its component definitions, DNA templates, purification protocol, and
+OT-2 workflow\cite{chae}. The study assembles in-vitro-produced translation
+factors and split T7 polymerase with ribosomes, tRNA, and buffer; it is distinct
+from supplementation of the competition's fixed lysate. Begin by auditing the
+available supplementary protocols and reagent access, preserving the authors'
+baseline conditions rather than transferring the competition recipes directly.
+Establish sfGFP performance, preparation time, cost accounting, and variability
+across independent preparation batches before introducing our own changes.
+
+Then reproduce a published functional-group exchange, prioritizing the
+energy-regeneration diagnostic. Record protein recovery and enzyme activity
+where measurable, component-pool identity, template version, and purification
+batch. Compare original and redesigned component-production templates using
+otherwise matched assembly conditions, retaining the working preparation as a
+control. This addresses the reported preparation failure without assuming that
+its mechanism is the competition's limiting step.
+
+A reconstituted model would require explicit component capacities and energy
+chemistry beyond the current aggregate Machinery state. Measured component
+activities could inform those capacities and prospective omission or titration
+tests. The Popcorn interface could version component-production constructs
+outside the competition's fixed-template scope. This track is a proposed
+reproduction and model-development study; no OT-2 protocol has been implemented
+or run by CFPS-Sim, and no collaboration with the POSTECH group is claimed.
+
+\subsection{Data and decision infrastructure}
+Curated chemical identities, reaction stoichiometry, contextual kinetic records,
+and thermodynamic constraints should enter versioned evidence tables with
+units, conditions, and source passages. A scientific-agent interface can help
+extract and reconcile that evidence, while deterministic tools enforce
+arithmetic and feasibility. Future evaluation should measure extraction error,
+predictive error and interval coverage, and independently confirmed improvement
+per total experimental budget. The decision to add detail should follow an
+observable failure or a discriminating experiment, rather than an assumption
+that a larger reaction network must select better recipes.
 
 \begin{thebibliography}{99}
 \bibitem{horvath_code} Varner Lab. Kinetic CFPS model publication code and data.
