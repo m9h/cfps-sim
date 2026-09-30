@@ -48,10 +48,44 @@ uv run --extra docs python scripts/build_docs.py
 
 The output is `docs/article.pdf`. The initial build may download TeX support
 files. Generated TeX and figures are ignored; the article source and PDF are tracked.
+`AGENTS.md` requires updating the article and rebuilding its PDF when scientific
+behavior, assumptions, workflows, or validation change.
 
 The simulator writes `trajectory.csv` and `model.xml`. Time is in minutes and
 concentrations in mM. `Protein` is immature protein and `GFP` is mature protein;
-neither is calibrated fluorescence. Model sequence counts are placeholders.
+neither is calibrated fluorescence. Without `--construct`, sequence counts remain
+illustrative placeholders. With a supplied sfGFP construct, the model uses its
+CDS-derived amino-acid counts and assumed-transcript NTP counts.
+
+## DNA constructs and Popcorn exchange
+
+The three competition plasmids are saved as versioned JSON and GenBank artifacts
+in `constructs/competition/`, with source provenance and sequence checksums. Their
+CDS translations match the proteins in the draft rules, including tags.
+[Construct documentation](constructs/README.md) specifies the schema and the
+assumed transcript boundaries. These are supplied templates; custom DNA is not
+an established competition submission variable.
+
+```sh
+uv run cfps-sim construct inspect constructs/competition/sfgfp.json
+uv run cfps-sim simulate --construct constructs/competition/sfgfp.json --output results/sfgfp
+uv run cfps-sim construct export-genbank constructs/competition/sfgfp.json --output results/sfgfp.gb
+uv run cfps-sim construct import-genbank results/sfgfp.gb --output results/sfgfp.json
+```
+
+Keep `m9h/popcorn` in its own environment and exchange GenBank artifacts. Import
+requires a complete expression construct with one CDS and an mRNA annotation,
+or explicit zero-based `--transcript-start` and `--transcript-end` coordinates.
+The existing Popcorn example's CDS-only output and random-sequence fallback
+are not verified competition constructs. No sequence-score-to-rate calibration
+or DNA optimization is implemented here.
+
+`construct inspect --aa-pools pools.json` accepts a map of canonical one-letter
+amino-acid codes to available mM and calculates a static stoichiometric ceiling.
+It excludes synthesis, recycling, and unknown lysate pools. Inspection works for
+all three targets; simulation currently accepts sfGFP only because enzyme folding
+and activity observation models are still required. Simulation also writes
+`metadata.json` with sequence demands and explicit model assumptions.
 
 ## Apple Silicon and BoTorch
 
@@ -72,6 +106,7 @@ selection only; it is not a dispensing-feasible competition candidate set.
 ```sh
 uv run --extra cloud modal setup
 uv run --extra cloud modal run modal_app.py
+uv run --extra cloud modal run modal_app.py --construct constructs/competition/sfgfp.json
 ```
 
 The first command authenticates your account. The second builds a Linux Python
@@ -101,13 +136,18 @@ in the output rather than inferred.
 
 The reduced model includes individual NTP consumption in transcription, mRNA
 decay, amino-acid and ATP/GTP use in translation, fuel-dependent ATP regeneration,
-machinery decay, and GFP maturation. Amino acids are pooled. Charging ATP use is
+machinery decay, and GFP maturation. The default demo pools amino acids; the
+construct-aware model tracks all 20 individually and uses the smallest required
+amino-acid saturation as an illustrative translation limitation. Initial pools
+are 2 mM each, not measured lysate concentrations. Charging ATP use is
 lumped into ADP equivalents; AMP, pyrophosphate, phosphate, recycling, magnesium,
 pH, oxygen transfer, and detailed lysate metabolism are not represented yet.
 
 ATP regeneration does not regenerate GTP, CTP, or UTP. These choices make resource
 limits explicit but prevent detailed biochemical interpretation of trajectories.
-Parameters and placeholder sequence composition live in `src/cfps_sim/model.py`.
+Parameters and default placeholder sequence composition live in `src/cfps_sim/model.py`.
+Construct-aware simulations replace sequence demands, while retaining uncalibrated
+kinetics. Their SBML exports retain the initial conditions and actual sequence counts.
 
 ## Implementation milestones
 
@@ -115,8 +155,9 @@ Parameters and placeholder sequence composition live in `src/cfps_sim/model.py`.
    timing, stock semantics, base buffer, and platform constraints.
 2. Reconcile reference recipe calculations and map supported chemistry to model
    initial conditions; document unknown lysate contributions separately.
-3. Replace placeholder sequence counts and parameters with sourced values and
-   uncertainty ranges. Select an initial energy pathway based on available data.
+3. Refine the supplied constructs' assumed transcript boundaries and source
+   kinetic parameters with uncertainty ranges. Select an initial energy pathway
+   based on available data.
 4. Fit identifiable effective parameters and compare against an empirical baseline
    using held-out recipes and batches, with uncertainty coverage checks.
 5. Build quantized feasible candidate sets, mechanistic residual models, and

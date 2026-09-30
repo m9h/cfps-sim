@@ -1,0 +1,95 @@
+LOCUS       petase                  2696 bp    DNA     circular UNK 01-JAN-1980
+DEFINITION  CFPS construct competition-m9307404-v1.
+ACCESSION   competition-m9307404-v1
+VERSION     competition-m9307404-v1
+KEYWORDS    .
+SOURCE      .
+  ORGANISM  .
+            .
+COMMENT     cfps-sim-metadata-base64:
+            eyJzY2hlbWFfdmVyc2lvbiI6IDEsICJpZCI6ICJjb21wZXRpdGlvbi1tOTMw
+            NzQwNC12MSIsICJ0YXJnZXQiOiAicGV0YXNlIiwgInNlcXVlbmNlX3NoYTI1
+            NiI6ICIwNmRlNTgyZGM1MDdiZWE2NDg4MzEzYjhiNDgwZWVjNTA4YWYyMDQz
+            NTdkY2Y5M2RiMDZhNGNiNTNmNzIwNjU4IiwgInRlbXBsYXRlX2Zvcm1hdCI6
+            ICJjaXJjdWxhciIsICJwcm90ZWluX3JlZmVyZW5jZSI6ICJNRUtLSVdTSFBR
+            RkVLR0dTR0VOTFlGUVNHR0FTUEFHR0dBTlBZRVJHUE5QVERBTExFQVNTR1BG
+            U1ZTRUVOVlNSTFNBU0dGR0dHVElZWVBSRU5OVFlHQVZBSVNQR1lUR1RFQVNJ
+            QVdMR0VSSUFTSEdGVlZJVElEVElUVExEUVBEU1JBRVFMTkFBTE5ITUlOUkFT
+            U1RWUlNSSURTU1JMQVZNR0hTTUdHR0dUTFJMQVNRUlBETEtBQUlQTFRQV0hM
+            TktOV1NTVlRWUFRMSUlHQURMRFRJQVBWQVRIQUtQRllOU0xQU1NJU0tBWUxF
+            TERHQVRIRkFQTklQTktJSUdLWVNWQVdMS1JGVkRORFRSWVRRRkxDUEdQUkRH
+            TEZHRVZFRVlSU1RDUEZHR1NHVlNHV1JMRktLSVMiLCAicHJvdmVuYW5jZSI6
+            IHsic291cmNlIjogImh0dHBzOi8vZG9jcy5nb29nbGUuY29tL2RvY3VtZW50
+            L2QvMWhGczJfdkdwSFBfaFo3VUIzbFJCc2ZWbE40eFZQT29MeTFIdTJJTnJC
+            b28vZWRpdCIsICJzb3VyY2Vfc3RhdHVzIjogImNvbXBldGl0aW9uX2RyYWZ0
+            IiwgInJldHJpZXZlZCI6ICIyMDI2LTA5LTI5IiwgInNvdXJjZV9maWxlX3No
+            YTI1NiI6ICI2MWFmNmVlOGM3YTJlZTZiMGU4M2I3MWZlZmMyYjY3MzdmNzY3
+            NzNlYWY0ODczMTM0YTk3ZjcwMGUzMTUzZDljIiwgImdpbmtnb19kbmFfaWQi
+            OiAibTkzMDc0MDQiLCAidmVyaWZpY2F0aW9uIjogIkROQSBhbmQgcHJvdGVp
+            biBsZW5ndGhzIG1hdGNoIGRyYWZ0OyBDRFMgdHJhbnNsYXRpb24gZXhhY3Rs
+            eSBtYXRjaGVzIGRyYWZ0IHByb3RlaW47IG5vIGV4cGVyaW1lbnRhbCBzZXF1
+            ZW5jZSB2ZXJpZmljYXRpb24ifX0=
+FEATURES             Location/Qualifiers
+     CDS             1653..2582
+                     /label="cds"
+                     /translation="MEKKIWSHPQFEKGGSGENLYFQSGGASPAGGGANPYERGPNPTD
+                     ALLEASSGPFSVSEENVSRLSASGFGGGTIYYPRENNTYGAVAISPGYTGTEASIAWLG
+                     ERIASHGFVVITIDTITTLDQPDSRAEQLNAALNHMINRASSTVRSRIDSSRLAVMGHS
+                     MGGGGTLRLASQRPDLKAAIPLTPWHLNKNWSSVTVPTLIIGADLDTIAPVATHAKPFY
+                     NSLPSSISKAYLELDGATHFAPNIPNKIIGKYSVAWLKRFVDNDTRYTQFLCPGPRDGL
+                     FGEVEEYRSTCPFGGSGVSGWRLFKKIS"
+                     /transl_table=11
+     mRNA            1590..2696
+                     /label="transcript"
+                     /boundary_status="assumed"
+                     /basis="T7 +1 inferred after TAATACGACTCACTATA; transcript
+                     assumed through the supplied terminal terminator region to
+                     plasmid sequence end. Actual termination/readthrough is
+                     unmeasured."
+ORIGIN
+        1 tgaaagccaa ttctgattag aaaaactcat cgagcatcaa atgaaactgc aatttattca
+       61 tatcaggatt atcaatacca tatttttgaa aaagccgttt ctgtaatgaa ggagaaaact
+      121 caccgaggca gttccatagg atggcaagat cctggtatcg gtctgcgatt ccgactcgtc
+      181 caacatcaat acaacctatt aatttcccct cgtcaaaaat aaggttatca agtgagaaat
+      241 caccatgagt gacgactgaa tccggtgaga atggcaaaag tttatgcatt tctttccaga
+      301 cttgttcaac aggccagcca ttacgctcgt catcaaaatc actcgcatca accaaaccgt
+      361 tattcattcg tgattgcgcc tgagcgagac gaaatacgcg atcgctgtta aaaggacaat
+      421 tacaaacagg aatcgaatgc aaccggcgca ggaacactgc cagcgcatca acaatatttt
+      481 cacctgaatc aggatattct tctaatacct ggaatgctgt tttcccgggg atcgcagtgg
+      541 tgagtaacca tgcatcatca ggagtacgga taaaatgctt gatggtcgga agaggcataa
+      601 attccgtcag ccagtttagt ctgaccatct catctgtaac atcattggca acgctacctt
+      661 tgccatgttt cagaaacaac tctggcgcat cgggcttccc atacaatcga tagattgtcg
+      721 cacctgattg cccgacatta tcgcgagccc atttataccc atataaatca gcatccatgt
+      781 tggaatttaa tcgcggcttc gagcaagacg tttcccgttg aatatggctc ataacacccc
+      841 ttgtattact gtttatgtaa gcagacagtt ttattgttca tgatgatata tttttatctt
+      901 gtgcaatgta acatcagaga ttttgagaca caacgtgaga tcaaaggatc ttcttgagat
+      961 cctttttttc tgcgcgtaat ctgctgcttg caaacaaaaa aaccaccgct accagcggtg
+     1021 gtttgtttgc cggatcaaga gctaccaact ctttttccga aggtaactgg cttcagcaga
+     1081 gcgcagatac caaatactgt tcttctagtg tagccgtagt taggccacca cttcaagaac
+     1141 tctgtagcac cgcctacata cctcgctctg ctaatcctgt taccagtggc tgctgccagt
+     1201 ggcgataagt cgtgtcttac cgggttggac tcaagacgat agttaccgga taaggcgcag
+     1261 cggtcgggct gaacgggggg ttcgtgcaca cagcccagct tggagcgaac gacctacacc
+     1321 gaactgagat acctacagcg tgagctatga gaaagcgcca cgcttcccga agggagaaag
+     1381 gcggacaggt atccggtaag cggcagggtc ggaacaggag agcgcacgag ggagcttcca
+     1441 gggggaaacg cctggtatct ttatagtcct gtcgggtttc gccacctctg acttgagcgt
+     1501 cgatttttgt gatgctcgtc aggggggcgg agcctatgga aaaacgccag caacgcgatc
+     1561 ccgcgaaagt cttaatacga ctcactatag ggagaccaca acggtttccc tctagaaata
+     1621 attttgttta actttaagaa ggagatatac atatggagaa gaagatatgg tcgcatccac
+     1681 aattcgagaa gggcggctca ggagaaaact tatactttca aagtggcggc gcgagcccgg
+     1741 caggcggcgg tgccaacccc tacgagcgtg gcccaaaccc caccgacgcg ttgctcgaag
+     1801 ccagttcagg tcctttctct gtctctgagg agaacgtctc aagattgtca gctagcggtt
+     1861 ttggtggtgg gaccatatac tacccccgcg agaacaatac ttacggcgcg gtggccatat
+     1921 ctccaggcta cacaggtaca gaagcctcga ttgcttggct gggtgaacgc attgccagcc
+     1981 acggattcgt agtcatcacg atcgatacca taacaacgct ggaccagccc gactcacgcg
+     2041 ctgagcaatt gaatgccgca cttaatcaca tgatcaaccg agcgtcttcc acggttcgct
+     2101 ctcggatcga ctcctctcgc ttagcagtga tgggacatag catgggtggc ggcggcaccc
+     2161 tgagactggc aagccagcgc ccggacctga aagccgctat accgctcacg ccttggcact
+     2221 taaacaagaa ctggtcttcc gtgacggttc ccacattgat aataggagca gatttagaca
+     2281 ccatcgcccc ggtagccacg cacgctaagc ctttctacaa tagcctgccg tctagtattt
+     2341 caaaggccta ccttgagctc gacggcgcca cgcactttgc tcctaatatc ccgaacaaaa
+     2401 tcattggcaa atactctgtc gcgtggttaa agcgcttcgt agacaatgat acccgataca
+     2461 cccaatttct gtgccccggc ccgcgtgacg gtttattcgg agaagtcgaa gaataccgat
+     2521 ccacgtgccc gttcggtggt tctggtgtga gcggctggcg gctgttcaag aagattagct
+     2581 aagtcgaccg gctgctaaca aagcccgaaa ggaagctgag ttggctgctg ccaccgctga
+     2641 gcaataacta gcataacccc ttggggcctc taaacgggtc ttgaggggtt ttttgc
+//

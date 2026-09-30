@@ -174,17 +174,48 @@ Its current GFP example uses illustrative expression parameters and can fall
 back to a random coding sequence; those outputs must not be treated as verified
 competition constructs or sequence-calibrated predictions.
 
-Our proposed first integration is an explicit construct record containing the
-verified sequence, annotated transcript and coding-region boundaries, template
-format, and provenance. Exact transcript composition supplies the four NTP
-demands; translated coding sequence supplies length and individual amino-acid
-demands. Sequence-based RBS and structure scores can become uncertain predictors
+The implemented first integration uses versioned JSON and GenBank records for
+the three supplied plasmids, with sequence checksums, template format, and source
+provenance. Each CDS translates exactly to its reference protein in the draft
+rules, including tags. This establishes consistency with the source, not
+experimental identity. Coordinates are zero-based and half-open; schema version
+1 supports contiguous forward-strand features. The transcript start is assumed
+immediately after the upstream T7 promoter motif, and its end is assumed at the
+supplied sequence boundary. Termination on a circular template is not established.
+NTP counts therefore depend on assumed boundaries; amino-acid demands follow
+the matched CDS. Sequence-based RBS and structure scores can become uncertain predictors
 of initiation or stability, subject to calibration. Synonymous coding variants
 retain amino-acid demand but can change RNA composition and structure. Keep
 Popcorn and CFPS-Sim in separate environments and exchange versioned JSON,
-GenBank, or SBML artifacts. Start by characterizing the supplied constructs;
+GenBank artifacts. Import requires one CDS and explicit transcript bounds or one
+mRNA annotation; it refuses to interpret a CDS as the complete transcript.
+The importer also rejects an altered sequence whose embedded metadata retains
+the original checksum, preventing silent replacement of a versioned construct.
+The supplied constructs are characterized first;
 explore new constructs as a separate research extension if the experimental
 scope permits them.
+
+<<construct_summary, echo=False, results='tex'>>=
+from pathlib import Path
+from cfps_sim.construct import read_construct, demands
+print(r"\begin{center}\begin{tabular}{lrrr}Target & Plasmid bp & Protein aa & Assumed RNA nt\\\hline")
+for target in ["sfgfp", "petase", "reteplase"]:
+    stats = demands(read_construct(Path("../constructs/competition") / (target + ".json")))
+    print(f"{target} & {stats['plasmid_bp']} & {stats['protein_aa']} & {stats['transcript_nt']}" + r"\\")
+print(r"\end{tabular}\end{center}")
+@
+
+\begin{verbatim}
+uv run cfps-sim construct inspect constructs/competition/sfgfp.json
+uv run cfps-sim simulate \
+  --construct constructs/competition/sfgfp.json --output results/sfgfp
+\end{verbatim}
+Inspection supports all three targets, including an optional static amino-acid
+ceiling from user-supplied pools. It excludes endogenous pools, synthesis, and
+recycling. Construct-aware simulation currently accepts sfGFP only; PETase and
+reteplase require separate folding and activity models. The JSON and GenBank
+exchange leaves Popcorn's dependencies and existing work separate from this
+project. No RBS score, codon score, or DNA design is treated as a calibrated rate.
 
 \section{Scope and evidence}
 The project separates known additions, uncertain lysate contributions, simulated
@@ -253,9 +284,17 @@ both processes; separate polymerase and ribosome pools are a planned extension.
 \dot P&=v_{\mathrm{tl}}-k_{\mathrm{mat}}P,&\dot F&=k_{\mathrm{mat}}P.
 \end{align*}
 For each nucleotide $i$, transcription consumes $n_i v_{\mathrm{tx}}$;
-the current placeholder counts are $n_i=180$. Translation consumes
+the default demonstration uses placeholder counts $n_i=180$, while construct
+mode calculates $n_i$ from the explicitly bounded transcript. Translation consumes
 $L v_{\mathrm{tl}}$ pooled amino acids, $2L v_{\mathrm{tl}}$ ATP equivalents,
 and $2L v_{\mathrm{tl}}$ GTP, with placeholder protein length $L=240$.
+Construct mode obtains $L$ and each amino-acid count $c_a$ from the CDS and uses
+$\dot A_a=-c_a v_{\mathrm{tl}}$ for the twenty individual pools. It replaces
+$s_A(A)$ with $\min_{a:c_a>0}s_A(A_a)$, an illustrative limitation rule rather
+than a calibrated charging model. Each pool starts at an illustrative 2 mM.
+The supplied sfGFP CDS also has length 240, but its individual composition and
+transcript demands replace the placeholders. Sequence-aware SBML exports retain
+these counts and initial concentrations, enabling replay from time zero.
 ATP regeneration uses fuel $E$ and ADP:
 \[
 v_{\mathrm{reg}}=k_{\mathrm{reg}}
@@ -273,7 +312,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from cfps_sim.model import simulate
-rr, values = simulate()
+construct = read_construct(Path("../constructs/competition/sfgfp.json"))
+rr, values = simulate(construct=construct)
 fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
 for name in ["ATP", "GTP", "CTP", "UTP"]:
     axes[0].plot(values[:, 0], values[:, values.colnames.index(name)], label=name)
@@ -292,7 +332,8 @@ plt.close(fig)
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/trajectory.pdf}
-\caption{Uncalibrated demonstration trajectories. These are simulated resource
+\caption{Uncalibrated trajectories using the supplied sfGFP construct and
+assumed transcript boundaries. These are simulated resource
 and protein concentrations, not measured yield or fluorescence.}
 \end{figure}
 
@@ -311,6 +352,8 @@ package and lockfile. From the project root:
 \begin{Verbatim}
 uv run --extra cloud modal setup
 uv run --extra cloud modal run modal_app.py
+uv run --extra cloud modal run modal_app.py \
+  --construct constructs/competition/sfgfp.json
 \end{Verbatim}
 The runner requests two CPU cores, 4 GiB RAM, and a ten-minute timeout. It returns
 the model trajectory, SBML, and synthetic BO result into \texttt{results/modal}.
@@ -320,7 +363,11 @@ members and simulated campaigns are natural future parallel workloads.
 \section{Validation and next milestones}
 The starter checks cover recipe arithmetic, dispensing increments, finite and
 nonnegative trajectories within tolerance, an amino-acid/protein balance, and
-absence of expression when nucleotide substrates are absent. Passing these checks
+absence of expression when nucleotide substrates are absent. Construct checks
+verify all three source protein matches, lossless GenBank exchange, refusal of
+modified checksums and implicit transcript boundaries, individual amino-acid
+conservation, absence of translation when a required amino acid is depleted,
+and replay of exported sequence-aware SBML. Passing these checks
 establishes software behavior, not empirical predictive validity.
 
 During initial verification, both core checks passed on Apple Silicon. The
@@ -328,9 +375,17 @@ synthetic BoTorch demo ran locally and on a Modal Linux CPU using float64;
 both selected the normalized grid point $(0.60,0.35)$. The remote run also
 completed the RoadRunner simulation. These smoke runs verify the execution
 paths and are not tests of biological prediction or optimization performance.
+The expanded suite now passes seven tests. A further Modal run used the supplied
+sfGFP artifact and all twenty amino-acid pools; its final mature-protein
+concentration agreed with the local trajectory within $2\times10^{-18}$ mM.
+This agreement checks cross-platform execution, not biological accuracy.
+
+Repository instructions require updating this Pweave source and rebuilding its
+tracked PDF when scientific behavior, inputs, assumptions, workflows, or
+validation change. The article remains synchronized with the implemented project.
 
 Next, audit well-level observations and metadata; reconcile reference recipes;
-map recipes to initial conditions; replace placeholder sequence counts; source
+map recipes to initial conditions; refine assumed transcript boundaries; source
 parameters with uncertainty ranges; and fit a small identifiable parameter set.
 Evaluate whole held-out recipes and batches against an empirical baseline before
 using mechanistic predictions in experiment selection. Add PETase and reteplase

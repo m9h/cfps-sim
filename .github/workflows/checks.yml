@@ -10,3 +10,4 @@ jobs:
       - run: uv run pytest
       - run: uv run cfps-sim validate examples/recipe.json
       - run: uv run cfps-sim simulate
+      - run: uv run cfps-sim simulate --construct constructs/competition/sfgfp.json --output results/sfgfp

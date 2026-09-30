@@ -1,6 +1,7 @@
 """Reduced, uncalibrated resource model. Concentrations: mM; time: minutes."""
 import antimony
 import roadrunner
+from .construct import AMINO_ACIDS, demands
 
 # Illustrative effective parameters, not extracted from or fitted to competition data.
 # ATP use for charging is lumped into ADP equivalents; this is not detailed adenylate chemistry.
@@ -30,9 +31,29 @@ end
 """
 
 
-def load_model():
+def load_model(construct=None):
+    model = MODEL
+    derived = None
+    if construct is not None:
+        if construct["target"].lower() != "sfgfp":
+            raise ValueError("Sequence simulation currently supports sfGFP only; enzyme folding/activity models are not implemented")
+        derived = demands(construct)
+        counts = derived["aa_per_protein"]
+        model = model.replace("UTP, AA, Fuel", "UTP, Fuel")
+        individual = [f"aa_{aa}" for aa in AMINO_ACIDS]
+        model = model.replace("  nt_a=", "  species " + ", ".join(individual) + ";\n  nt_a=")
+        model = model.replace("  AA' = -aa_length*tl;", "\n".join(f"  aa_{aa}' = -{counts[aa]}*tl;" for aa in AMINO_ACIDS))
+        model = model.replace("AA=40;", " ".join(f"aa_{aa}=2;" for aa in AMINO_ACIDS) + "\n  AA := " + "+".join(individual) + ";")
+        factors = [f"aa_{aa}/(K_aa+aa_{aa})" for aa in AMINO_ACIDS if counts[aa]]
+        limiting = factors[0]
+        for factor in factors[1:]:
+            limiting = f"min({limiting},{factor})"
+        model = model.replace("(AA/(K_aa+AA))", f"({limiting})")
+        for base, count in derived["ntp_per_transcript"].items():
+            model = model.replace(f"nt_{base.lower()}=180", f"nt_{base.lower()}={count}")
+        model = model.replace("aa_length=240", f"aa_length={derived['protein_aa']}")
     antimony.clearPreviousLoads()
-    if antimony.loadAntimonyString(MODEL) < 0:
+    if antimony.loadAntimonyString(model) < 0:
         raise RuntimeError(antimony.getLastError())
     rr = roadrunner.RoadRunner(antimony.getSBMLString("cfps"))
     rr.integrator.absolute_tolerance = 1e-12
@@ -40,8 +61,11 @@ def load_model():
     return rr
 
 
-def simulate(minutes=240, points=241):
+def simulate(minutes=240, points=241, construct=None):
     if minutes <= 0 or points < 2:
         raise ValueError("Positive duration and at least two time points are required")
-    rr = load_model()
-    return rr, rr.simulate(0, minutes, points, selections=["time", "ATP", "GTP", "CTP", "UTP", "AA", "Fuel", "mRNA", "Protein", "GFP", "Machinery"])
+    rr = load_model(construct)
+    selections = ["time", "ATP", "GTP", "CTP", "UTP", "AA", "Fuel", "mRNA", "Protein", "GFP", "Machinery"]
+    if construct is not None:
+        selections += [f"aa_{aa}" for aa in AMINO_ACIDS]
+    return rr, rr.simulate(0, minutes, points, selections=selections)

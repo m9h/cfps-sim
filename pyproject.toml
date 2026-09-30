@@ -7,7 +7,7 @@ name = "cfps-sim"
 version = "0.1.0"
 description = "Mechanistic CFPS starter models and constrained experiment design"
 requires-python = ">=3.11,<3.13"
-dependencies = ["antimony>=3", "libroadrunner>=2.8", "numpy>=1.26", "scipy>=1.12"]
+dependencies = ["antimony>=3", "libroadrunner>=2.8", "numpy>=1.26", "scipy>=1.12", "biopython>=1.85"]
 
 [project.optional-dependencies]
 bo = ["botorch>=0.13", "torch>=2.6"]

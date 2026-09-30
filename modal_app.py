@@ -16,22 +16,26 @@ image = (
 
 
 @app.function(image=image, cpu=2, memory=4096, timeout=600)
-def run_demo():
+def run_demo(construct=None):
     import sys
     # Modal's runtime interpreter loads packages from the locked project environment.
     sys.path.insert(0, "/opt/cfps-sim/.venv/lib/python3.11/site-packages")
     sys.path.insert(0, "/opt/cfps-sim/src")
     from cfps_sim.model import simulate
     from cfps_sim.bo import demo
-    rr, values = simulate()
+    from cfps_sim.construct import demands
+    rr, values = simulate(construct=construct)
     return {"bo": demo(), "model": "uncalibrated demonstration", "final_gfp_mM": float(values[-1, 9]),
+            "construct": demands(construct) if construct else None,
             "columns": list(values.colnames), "trajectory": values.tolist(), "sbml": rr.getSBML()}
 
 
 @app.local_entrypoint()
-def main():
+def main(construct: str = ""):
     import json
-    result = run_demo.remote()
+    from cfps_sim.construct import read_construct
+    artifact = read_construct(construct) if construct else None
+    result = run_demo.remote(artifact)
     out = ROOT / "results/modal"
     out.mkdir(parents=True, exist_ok=True)
     (out / "demo.json").write_text(json.dumps(result, indent=2))
