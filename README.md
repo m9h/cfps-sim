@@ -44,6 +44,11 @@ optimization, and Modal workflow. Its figure and numerical recipe summary are
 generated from the package with Pweave; Tectonic builds the PDF.
 The introduction also covers CFPS history, a curated modern reading guide,
 and Joongoo Lee's POSTECH i-POPFLEX work presented in the Build-a-Cell series.
+The expanded abstract reflects the implemented construct and compute workflows.
+The article also distinguishes measured CFPS formulation improvements from
+Illinois iBioFAB's enzyme-activity and metabolic-production results, and proposes
+assay calibration, module-swap experiments, and prospective comparisons of search
+policies under equal experimental budgets. These experimental steps remain planned.
 
 ```sh
 brew install tectonic
@@ -174,6 +179,20 @@ kinetics. Their SBML exports retain the initial conditions and actual sequence c
 The competition also builds on the OpenAI–Ginkgo autonomous-lab study. The
 article introduction connects that work to the Fall 2026 HTBAA course and the
 current multi-target competition.
+
+- Borkowski et al., *Large scale active-learning-guided exploration for in vitro
+  protein production optimization* (2020). Reports up to 34-fold improvement in
+  relative sfGFP yield over the tested homemade lysate's initial buffer.
+  [Open full text](https://pmc.ncbi.nlm.nih.gov/articles/PMC7170859/),
+  [DOI](https://doi.org/10.1038/s41467-020-15798-5).
+- HamediRad et al., *Towards a fully automated algorithm driven platform for
+  biosystems design* (2019). Illinois BioAutomata/iBioFAB; cellular lycopene
+  optimization compared with random screening.
+  [DOI](https://doi.org/10.1038/s41467-019-13189-z).
+- Singh et al., *A generalized platform for artificial intelligence-powered
+  autonomous enzyme engineering* (2025). Illinois iBioFAB; enzyme activity
+  improvements rather than CFPS protein-mass yield.
+  [DOI](https://doi.org/10.1038/s41467-025-61209-y).
 
 - Smith et al., *Using a GPT-5-driven autonomous lab to optimize the cost and
   titer of cell-free protein synthesis* (2026).

@@ -8,13 +8,34 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-CFPS-Sim combines recipe accounting, a reduced resource model of cell-free
-protein synthesis, and a synthetic Bayesian optimization demonstration.
-This article is executable documentation: numerical summaries and figures are
-generated from the same Python package used by the command-line tools.
-The current model is uncalibrated. Its purpose is to establish a reproducible
-foundation for testing whether mechanistic information improves experimental
-selection in a lysate-based CFPS competition.
+Cell-free protein synthesis (CFPS) offers an experimentally accessible setting
+for studying how formulation, sequence, and biochemical resources determine
+protein production. CFPS-Sim is a reproducible computational scaffold for the
+Fall 2026 How To Biomanufacture (Almost) Anything CFPS coopetition, situated in
+the history of CFPS and the recent OpenAI--Ginkgo autonomous-laboratory study.
+The project combines dispensing and concentration accounting, versioned DNA
+constructs, a reduced Antimony/RoadRunner resource model with SBML export, and
+a BoTorch demonstration of experiment selection. The three supplied plasmids
+are checked against their source protein sequences, with GenBank import and
+export supporting exchange with the Popcorn design toolkit. Construct-aware sfGFP simulation uses
+sequence-derived nucleotide demands and twenty individual amino-acid pools;
+transcript boundaries remain explicit assumptions. PETase and reteplase support
+sequence accounting but require separate folding and activity observation models.
+
+The article connects POSTECH's OT-2-assisted i-POPFLEX module-exchange experiments
+to a proposed calibration and prospective comparison strategy, and reviews
+measured improvements from CFPS active learning and Illinois biofoundry
+optimization with their distinct targets and baselines. The proposed evaluation
+separates assay calibration, identifiable effective-parameter fitting, and
+prospective testing of experiment-selection policies under equal budgets.
+It compares mechanistic information with an empirical baseline using withheld
+recipes and batches, uncertainty coverage, and independently confirmed winners.
+Python dependencies are locked with uv; execution is supported on Apple Silicon
+CPUs and Modal. Seven software tests pass, and a sequence-aware Modal trajectory
+agrees numerically with local execution. Tables and figures are generated with
+Pweave and compiled into this article with Tectonic. Kinetics remain illustrative,
+the optimizer uses synthetic observations, and no biological calibration or
+competition improvement has yet been demonstrated.
 \end{abstract}
 
 \section{Introduction: from autonomous laboratories to the CFPS coopetition}
@@ -155,6 +176,40 @@ those hypotheses can guide candidate selection and exploratory conditions.
 Replicated experiments must decide whether the proposed modules improve sfGFP
 expression or transfer to enzyme activity. This is our design proposal, rather
 than a result demonstrated by the POSTECH study.
+
+\subsection{What measured biofoundry optimization has achieved}
+Automated optimization has already produced substantial improvements, although
+the readout and starting benchmark determine what each number means.
+Borkowski et al. used acoustic liquid handling and active learning to explore
+eleven buffer variables, measuring 1,017 compositions. They reported up to a
+34-fold increase in relative sfGFP fluorescence yield compared with their initial
+buffer for a homemade lysate, and identified a twenty-composition panel for
+adapting predictions to other lysates\cite{borkowski}. The authors' affiliations
+include French institutions and Manchester's SYNBIOCHEM; this CFPS yield result
+should not be attributed to UIUC. It demonstrates experimentally measured scope
+for formulation improvement, rather than a transferable fold-change target for
+an already optimized competition reference.
+
+Illinois supplies complementary examples of integrating automation with learning.
+HamediRad et al.'s BioAutomata paired Bayesian optimization with UIUC's Illinois
+Biological Foundry for Advanced Biomanufacturing (iBioFAB). Its demonstration
+optimized cellular lycopene production, evaluated less than 1\% of the possible
+variants, and outperformed random screening by 77\%\cite{bioautomata}.
+More recently, Singh et al. integrated protein models, machine learning, and
+iBioFAB automation in four rounds of enzyme engineering, reporting approximately
+16-fold improvement in AtHMT ethyltransferase activity and 26-fold improvement
+in YmPhytase activity at neutral pH\cite{singh}. Those gains describe activity
+of engineered enzymes, not increased CFPS protein mass. Together, these studies
+support the practical value of automated design--build--test--learn cycles while
+keeping formulation yield, enzyme function, and metabolic titer distinct.
+
+For CFPS-Sim, the direct formulation study motivates an empirical optimization
+baseline and lysate-specific recalibration. The Illinois studies motivate
+prospective comparisons against a defined alternative search policy and
+confirmation using the actual functional readout. None provides an absolute
+yield ceiling or validates our current kinetic constants. Report absolute target
+readout, improvement over the same-plate competition reference, and uncertainty;
+literature fold changes are context for what optimization has achieved.
 
 \subsection{DNA design and the Popcorn connection}
 DNA architecture is also relevant to CFPS performance. Promoter and untranslated
@@ -360,6 +415,100 @@ the model trajectory, SBML, and synthetic BO result into \texttt{results/modal}.
 Compute is billed to the authenticated Modal account. Independent ensemble
 members and simulated campaigns are natural future parallel workloads.
 
+\section{Calibration and prospective experimental comparison}
+Lee's study offers an experimental template for this stage: swap functional
+modules, localize a failure, intervene, and compare the rebuilt system with
+working references. The published work includes replicated expression
+comparisons and reports at least three replicates per experiment\cite{chae}.
+We propose adapting that logic to competition supplements. It does not supply
+a fitted kinetic model of this lysate, and its purified factors cannot establish
+our endogenous enzyme activities. Calibration and prospective validation are
+therefore new work in the competition system.
+
+\subsection{Separate measurement calibration from biochemical calibration}
+First calibrate the observation process. For sfGFP, use the platform's applicable
+standard curve, blanks, dilution factors, and linear measurement range; quantify
+background and repeated-reference variability. Fluorescence reports mature
+fluorescent protein, so changes in maturation or matrix effects can mimic changes
+in total synthesis. For PETase and reteplase, preserve the substrate, assay timing,
+dilution, and activity units. Their post-expression product-release curves
+constrain the assay process rather than the preceding synthesis trajectory.
+Where available, an independent protein measurement can help separate abundance
+from active fraction. This is a proposed measurement plan, subject to what the
+competition platform exposes; missing measurements must remain missing.
+
+Next map verified recipe concentrations into initial model conditions, documenting
+base-buffer contributions and unknown lysate pools. This mapping is not yet
+implemented. Start with few effective parameters supported by the observations,
+such as aggregate expression capacity, energy-regeneration capacity, and
+machinery decay. An endpoint alone cannot separately identify transcription,
+translation, degradation, and maturation rates. Use available expression time
+courses or orthogonal measurements when possible, and otherwise constrain or
+fix unidentifiable quantities with explicitly uncertain priors. Profile or
+posterior uncertainty should reveal parameter combinations the data cannot
+resolve, rather than force a unique biochemical interpretation.
+
+An initial observation model can be written
+\[
+y_{t,b,r}(x)=h_t\!\left(z(x;\theta_b)\right)+\delta_t(x)
+            +\beta_{t,b}+\epsilon_{t,b,r},
+\]
+where $x$ is a feasible recipe, $z$ is the mechanistic state, $h_t$ maps it to
+target $t$'s actual assay, $\theta_b$ contains identifiable batch-dependent
+effective parameters, $\delta_t$ models systematic discrepancy, $\beta_{t,b}$
+is a batch offset, and $\epsilon_{t,b,r}$ is replicate noise. A GP can supply
+the discrepancy term. Batch capacity and offset can themselves be confounded;
+fit only the terms justified by repeated controls and independent batches.
+For sfGFP, the current mature-protein state is an input to $h_t$, not an already
+calibrated fluorescence prediction. Keep experimental data and simulated outputs
+separate throughout fitting. This equation describes a planned model, not an
+implemented calibration result.
+
+\subsection{Module experiments that discriminate hypotheses}
+Begin with two feasible reference recipes and exchange their salt/buffer and
+energy/nucleotide modules in a crossed design, holding the remaining additions
+and supplied DNA constant. Validate every hybrid against fixed base contributions,
+stock semantics, dispensing increments, and volume limits. A coupled change in
+salts and nucleotides must be recorded as such. Retain the original references,
+no-DNA controls where allowed, and replicated hybrids; randomize positions and
+record plate, lysate lot, preparation, incubation, and dispensing metadata.
+Use the results to test whether module effects transfer between backgrounds
+or require an interaction, rather than assume every successful swap identifies
+a single kinetic mechanism. Repeated wells estimate technical variation;
+independent preparations or lysate lots are needed to assess reproducibility.
+The panel is our adaptation of i-POPFLEX's diagnostic strategy, not a reproduction
+of its purified-component experiment.
+
+\subsection{Prospective comparison under an equal experimental budget}
+Before model-guided selection, compare a data-only GP, the calibrated mechanistic
+model, and a mechanistic-plus-discrepancy model on withheld complete recipes and
+batches. Keep all replicates of one recipe together. Report predictive error and
+interval coverage in each target's own units. Endpoint predictive accuracy and
+the ability to select improvements are separate questions.
+
+For a prospective campaign, start three policies from the same measured seed
+panel: a quantized space-filling or random baseline, data-only Bayesian
+optimization, and mechanistic-plus-discrepancy Bayesian optimization. Give them
+the same candidate constraints, rounds, assay access, and well budget, counting
+controls, replicates, and calibration measurements. Use the same information
+sharing rule for all policies and disclose it; extra measurements supplied only
+to one arm are an unequal budget. Keep policy conditions represented on each
+plate when possible so policy and plate effects are not confounded.
+
+Freeze each model, candidate list, and uncertainty interval before the next
+batch is measured; retrain only after that batch is returned. Predefine success
+as improvement in the best independently confirmed target readout over the
+competition reference per experimental budget, with a practical effect threshold
+and uncertainty. Also report learning curves and prospective interval coverage.
+Retest nominees from every policy together in independent preparations with
+common references and blinded identifiers where feasible. This reduces selection
+of a noisy apparent winner. If the available competition budget cannot support
+three arms, report the narrower comparison and its limits rather than claim a
+general advantage for mechanistic optimization. Repeated campaigns are needed
+to estimate policy reliability. The present repository establishes execution
+and accounting; this proposed comparison requires experimental access and a
+calibrated recipe-to-model connection.
+
 \section{Validation and next milestones}
 The starter checks cover recipe arithmetic, dispensing increments, finite and
 nonnegative trajectories within tolerance, an amino-acid/protein balance, and
@@ -399,6 +548,15 @@ with separate folding and assay observation models. Assay product time courses
 must not be treated as expression time courses.
 
 \begin{thebibliography}{99}
+\bibitem{borkowski} O. Borkowski et al. Large scale active-learning-guided
+exploration for in vitro protein production optimization. Nature Communications,
+11, 1872 (2020). \url{https://doi.org/10.1038/s41467-020-15798-5}.
+\bibitem{bioautomata} M. HamediRad et al. Towards a fully automated algorithm
+driven platform for biosystems design. Nature Communications, 10, 5150 (2019).
+\url{https://doi.org/10.1038/s41467-019-13189-z}.
+\bibitem{singh} N. Singh et al. A generalized platform for artificial
+intelligence-powered autonomous enzyme engineering. Nature Communications,
+16, 5648 (2025). \url{https://doi.org/10.1038/s41467-025-61209-y}.
 \bibitem{karim_plasmids} A. S. Karim et al. Modular cell-free expression plasmids
 to accelerate biological design in cells. Synthetic Biology, 5, ysaa019 (2020).
 \url{https://doi.org/10.1093/synbio/ysaa019}.
