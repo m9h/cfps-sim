@@ -1,6 +1,7 @@
 \documentclass[11pt]{article}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,graphicx,hyperref,fancyvrb,color,xurl}
+\setlength{\emergencystretch}{3em}
 \title{CFPS-Sim: A Reproducible Starter Stack for Cell-Free Protein Synthesis}
 \author{CFPS-Sim project}
 \date{\today}
@@ -50,6 +51,140 @@ The scientific question is whether these calculations improve experimental
 selection over a data-only baseline. The present executable scaffold establishes
 the workflow; calibration and prospective experimental comparison remain future
 milestones.
+
+\subsection{Historical foundations: from translation biochemistry to engineering}
+CFPS began as a way to dissect protein synthesis. Work with cell fractions in
+the 1950s helped establish the roles of amino-acid activation and RNA carriers;
+Hoagland, Zamecnik, and colleagues' 1958 study of a soluble RNA intermediate
+is a foundational contribution to the discovery of transfer RNA\cite{hoagland}.
+In 1961, Nirenberg and Matthaei used an \emph{E. coli} extract and synthetic
+polyuridylic acid to direct polyphenylalanine synthesis, connecting an RNA
+sequence to its amino-acid product and helping decipher the genetic
+code\cite{nirenberg}. These studies established the principle that translation
+could be investigated independently of intact cells.
+
+The engineering problem subsequently became how to sustain that machinery.
+Spirin et al.'s 1988 continuous-flow system supplied substrates and removed
+product, extending translation for many hours\cite{spirin}. This work makes an
+important modeling distinction visible: batch reactions and continuously fed
+systems have different resource balances. In 2001, Shimizu et al. reconstituted
+translation from purified components, establishing the PURE approach and a
+route to controlling individual translation factors\cite{shimizu}. In contrast,
+Jewett and Swartz's 2004 Cytomim work used physiologically motivated conditions
+and pyruvate-powered metabolism to sustain efficient expression in crude
+extract\cite{cytomim}.
+
+These developments define two complementary traditions: lysate systems exploit
+retained metabolic machinery, while reconstituted systems allow more explicit
+control of composition. Our competition model follows the lysate tradition;
+the POSTECH work below contributes ideas from the reconstituted tradition.
+Resource supply, inhibitory byproducts, and active machinery are therefore
+natural model variables, although their values depend on the experimental system.
+
+\subsection{Modern entry points and influential experimental papers}
+The following is a curated reading guide to modern CFPS, selected for breadth
+and relevance to this project. It is not a verified ``most-read'' ranking:
+publisher downloads, article views, and citations measure different things,
+and no comparable readership dataset has been established here.
+
+\begin{description}
+\item[Gregorio, Levine, and Oza (2019).] \emph{A User's Guide to Cell-Free Protein
+Synthesis}\cite{gregorio} is a practical entry point to choosing a platform,
+preparing extracts, and setting up reactions. Read it before treating a published
+recipe as portable across laboratories.
+\item[Silverman, Karim, and Jewett (2020).] \emph{Cell-free gene expression: an
+expanded repertoire of applications}\cite{silverman} connects CFPS to synthetic
+biology, manufacturing, and prototyping. It supplies the broader motivation for
+optimizing an open biochemical system.
+\item[Hunt et al. (2025; online 2024).] \emph{Cell-Free Gene Expression: Methods
+and Applications}\cite{hunt} is a comprehensive recent reference for extracts,
+purified systems, energy chemistry, measurement, modeling, and applications.
+Its discussion of reaction components provides a map for extending our modules.
+\item[Pardee et al. (2014).] \emph{Paper-based synthetic gene networks}\cite{pardee}
+demonstrated freeze-dried cell-free circuits on paper for sensing and diagnostics,
+showing how CFPS can support deployable functions beyond bulk protein production.
+\item[Kwon and Jewett (2015).] \emph{High-throughput preparation methods of crude
+extract for robust cell-free protein synthesis}\cite{kwon} established accessible
+sonication-based extract preparation. For this project, it highlights why lysate
+preparation and batch identity belong in the metadata.
+\end{description}
+
+For computational development, pair these references with Horvath et al.'s
+dynamic metabolic/expression model\cite{horvath}. For current experiment
+selection, read the OpenAI--Ginkgo study\cite{smith} and Nishimori et al.'s
+uncertainty-driven Bayesian optimization work\cite{nishimori}. These newer studies
+are included for their direct relevance, without a claim about readership rank.
+
+\subsection{POSTECH: modular optimization and the Build-a-Cell seminar}
+The Build-a-Cell schedule lists ``Joon Lee,'' POSTECH, on August 31, 2026,
+with the talk \emph{Automated, modular assembly of reconstituted cell-free
+systems from in vitro-produced components}\cite{bac}. The corresponding paper
+is by Chae et al., with Joongoo Lee as lead contact\cite{chae}. No recording
+is linked in that schedule entry at the time of this documentation update;
+the experimental account here is grounded in the paper, rather than a verified
+transcript of the seminar.
+
+The group's i-POPFLEX platform produces translation factors in lysate-based
+CFPS, purifies them, and assembles a defined expression system. An Opentrons
+OT-2 supports parallel component production and pooling, while automated FPLC
+supports purification. This combines optimization of preparation time,
+reproducibility, reagent cost, and biochemical function. The published study
+reports preparation reduced from four days to two, with up to 8.4-fold higher
+protein yield and 96\% lower reagent cost relative to its commercial-kit
+comparison\cite{chae}. These are platform-specific benchmarks, not expected
+improvements for our lysate competition.
+
+The particularly useful diagnostic experiment exchanged functional groups
+between in-vitro-produced and working in-vivo-produced preparations. The authors
+localized loss of sfGFP expression to the energy-regeneration group. Producing
+those components from redesigned linear DNA templates restored expression
+\cite{chae,chae_preprint}. The intervention changed how the enzymes were made;
+it was not simply a change in the final energy-substrate concentration.
+The demonstrated workflow is experimental modular troubleshooting and platform
+engineering; these results do not establish a Bayesian optimizer or a formal
+meta-analysis of independent CFPS studies.
+
+Our proposed adaptation is to exchange \emph{recipe modules}: salt/buffer,
+energy/nucleotide, amino-acid, and folding/redox additions. Compare such exchanges
+between feasible reference recipes, then examine interactions within the most
+informative modules. Unlike i-POPFLEX, the competition fixes lysate containing
+unmeasured endogenous machinery, so supplementation cannot reproduce the same
+control over purified factors. In the simulator, module-specific sensitivity
+and uncertainty analyses can propose hypotheses; in Bayesian optimization,
+those hypotheses can guide candidate selection and exploratory conditions.
+Replicated experiments must decide whether the proposed modules improve sfGFP
+expression or transfer to enzyme activity. This is our design proposal, rather
+than a result demonstrated by the POSTECH study.
+
+\subsection{DNA design and the Popcorn connection}
+DNA architecture is also relevant to CFPS performance. Promoter and untranslated
+regions, the ribosome-binding site, coding sequence, and template format can
+change transcription, translation initiation, RNA stability, and resource demand.
+Modular CFPS plasmid development provides experimental precedent for treating
+sequence context as part of expression-system design\cite{karim_plasmids}.
+However, the competition's linked draft instructions specify supplied circular
+plasmids driven by T7 expression, with fixed template additions\cite{competition_rules}.
+Custom DNA is therefore not an established optimization variable in the current
+submission scheme.
+
+The existing \texttt{m9h/popcorn} toolkit offers a useful upstream design layer:
+SBOL/GenBank representation, sequence-constrained codon optimization, RBS
+estimates, assembly planning, and reaction-network export\cite{popcorn}.
+Its current GFP example uses illustrative expression parameters and can fall
+back to a random coding sequence; those outputs must not be treated as verified
+competition constructs or sequence-calibrated predictions.
+
+Our proposed first integration is an explicit construct record containing the
+verified sequence, annotated transcript and coding-region boundaries, template
+format, and provenance. Exact transcript composition supplies the four NTP
+demands; translated coding sequence supplies length and individual amino-acid
+demands. Sequence-based RBS and structure scores can become uncertain predictors
+of initiation or stability, subject to calibration. Synonymous coding variants
+retain amino-acid demand but can change RNA composition and structure. Keep
+Popcorn and CFPS-Sim in separate environments and exchange versioned JSON,
+GenBank, or SBML artifacts. Start by characterizing the supplied constructs;
+explore new constructs as a separate research extension if the experimental
+scope permits them.
 
 \section{Scope and evidence}
 The project separates known additions, uncertain lysate contributions, simulated
@@ -202,7 +337,53 @@ using mechanistic predictions in experiment selection. Add PETase and reteplase
 with separate folding and assay observation models. Assay product time courses
 must not be treated as expression time courses.
 
-\begin{thebibliography}{9}
+\begin{thebibliography}{99}
+\bibitem{karim_plasmids} A. S. Karim et al. Modular cell-free expression plasmids
+to accelerate biological design in cells. Synthetic Biology, 5, ysaa019 (2020).
+\url{https://doi.org/10.1093/synbio/ysaa019}.
+\bibitem{competition_rules} CFPS coopetition [draft]. Linked competition
+instructions, accessed September 29, 2026.
+\href{https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit}{Competition design and DNA template specifications}.
+\bibitem{popcorn} Popcorn. Open-source genetic design toolkit. Repository inspected
+September 29, 2026. \url{https://github.com/m9h/popcorn}.
+\bibitem{hoagland} M. B. Hoagland, M. L. Stephenson, J. F. Scott, L. I. Hecht,
+and P. C. Zamecnik. A soluble ribonucleic acid intermediate in protein synthesis.
+Journal of Biological Chemistry, 231, 241--257 (1958).
+\url{https://pubmed.ncbi.nlm.nih.gov/13538965/}.
+\bibitem{nirenberg} M. W. Nirenberg and J. H. Matthaei. The dependence of cell-free
+protein synthesis in E. coli upon naturally occurring or synthetic
+polyribonucleotides. PNAS, 47, 1588--1602 (1961).
+\url{https://doi.org/10.1073/pnas.47.10.1588}.
+\bibitem{spirin} A. S. Spirin et al. A continuous cell-free translation system
+capable of producing polypeptides in high yield. Science, 242, 1162--1164 (1988).
+\url{https://doi.org/10.1126/science.3055301}.
+\bibitem{shimizu} Y. Shimizu et al. Cell-free translation reconstituted with
+purified components. Nature Biotechnology, 19, 751--755 (2001).
+\url{https://doi.org/10.1038/90802}.
+\bibitem{cytomim} M. C. Jewett and J. R. Swartz. Mimicking the Escherichia coli
+cytoplasmic environment activates long-lived and efficient cell-free protein
+synthesis. Biotechnology and Bioengineering, 86, 19--26 (2004).
+\url{https://doi.org/10.1002/bit.20026}.
+\bibitem{gregorio} N. E. Gregorio, M. Z. Levine, and J. P. Oza. A User's Guide
+to Cell-Free Protein Synthesis. Methods and Protocols, 2, 24 (2019).
+\url{https://doi.org/10.3390/mps2010024}.
+\bibitem{silverman} A. D. Silverman, A. S. Karim, and M. C. Jewett. Cell-free
+gene expression: an expanded repertoire of applications. Nature Reviews
+Genetics, 21, 151--170 (2020; published online 2019).
+\url{https://doi.org/10.1038/s41576-019-0186-3}.
+\bibitem{hunt} A. C. Hunt et al. Cell-Free Gene Expression: Methods and Applications.
+Chemical Reviews, 125, 91--149 (2025; published online December 19, 2024).
+\url{https://doi.org/10.1021/acs.chemrev.4c00116}.
+\bibitem{pardee} K. Pardee et al. Paper-based synthetic gene networks.
+Cell, 159, 940--954 (2014). \url{https://doi.org/10.1016/j.cell.2014.10.004}.
+\bibitem{kwon} Y.-C. Kwon and M. C. Jewett. High-throughput preparation methods
+of crude extract for robust cell-free protein synthesis. Scientific Reports,
+5, 8663 (2015). \url{https://doi.org/10.1038/srep08663}.
+\bibitem{bac} Build-a-Cell. Seminar series and 2026 schedule, August 31 entry.
+Accessed September 29, 2026. \url{https://www.buildacell.org/seminar}.
+\bibitem{chae_preprint} B. Chae et al. Automated, modular assembly of reconstituted
+cell-free systems from in vitro-produced components. bioRxiv, version 1 (2025).
+\url{https://doi.org/10.64898/2025.12.23.696326}.
 \bibitem{smith} A. A. Smith et al. Using a GPT-5-driven autonomous lab to optimize
 the cost and titer of cell-free protein synthesis. bioRxiv, version 1 (2026).
 \url{https://doi.org/10.64898/2026.02.05.703998}.

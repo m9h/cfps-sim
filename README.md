@@ -37,6 +37,8 @@ uv run pytest
 `docs/article.Pnw` documents the model, assumptions, recipe constraints,
 optimization, and Modal workflow. Its figure and numerical recipe summary are
 generated from the package with Pweave; Tectonic builds the PDF.
+The introduction also covers CFPS history, a curated modern reading guide,
+and Joongoo Lee's POSTECH i-POPFLEX work presented in the Build-a-Cell series.
 
 ```sh
 brew install tectonic
