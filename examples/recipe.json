@@ -1,0 +1,10 @@
+{
+  "description": "Illustrative accounting example; not a validated productive formulation",
+  "volumes_nl": {
+    "lysate": 5000, "base_buffer": 2000, "template_sfgfp": 2000,
+    "magnesium_glutamate": 250, "potassium_glutamate": 2000,
+    "atp": 300, "nuclease_free_water": 8450
+  },
+  "stocks_mM": {"magnesium_glutamate": 500, "potassium_glutamate": 875, "atp": 100},
+  "base_final_mM": {}
+}

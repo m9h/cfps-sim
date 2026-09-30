@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.DS_Store
+results/
+data/raw/
+papers/downloads/
+.env
+docs/article.tex
+docs/figures/
+docs/cache/
+docs/*.log
+docs/*.aux

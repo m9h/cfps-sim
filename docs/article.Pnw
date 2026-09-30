@@ -1,0 +1,229 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,graphicx,hyperref,fancyvrb,color,xurl}
+\title{CFPS-Sim: A Reproducible Starter Stack for Cell-Free Protein Synthesis}
+\author{CFPS-Sim project}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+CFPS-Sim combines recipe accounting, a reduced resource model of cell-free
+protein synthesis, and a synthetic Bayesian optimization demonstration.
+This article is executable documentation: numerical summaries and figures are
+generated from the same Python package used by the command-line tools.
+The current model is uncalibrated. Its purpose is to establish a reproducible
+foundation for testing whether mechanistic information improves experimental
+selection in a lysate-based CFPS competition.
+\end{abstract}
+
+\section{Introduction: from autonomous laboratories to the CFPS coopetition}
+Cell-free protein synthesis (CFPS) produces proteins using biological machinery
+outside living cells. Its experimental accessibility makes it a useful setting
+for learning how recipe composition, resource availability, and measurement
+affect biomanufacturing. The Fall 2026 course \emph{How To Biomanufacture
+(Almost) Anything} (HTBAA) combines lectures, cloud-laboratory work, and student
+projects in a global teaching network\cite{htbaa}. Its CFPS platform presents a
+``Cell-Free Synthesis Coopetition for Humans \& AI,'' linking Ginkgo Bioworks
+with HTBAA\cite{competition}.
+
+An important predecessor is the OpenAI--Ginkgo collaboration reported by Smith
+et al. in the February 2026 preprint \emph{Using a GPT-5-driven autonomous lab
+to optimize the cost and titer of cell-free protein synthesis}\cite{smith}.
+The study connected GPT-5 experimental proposals to validated robotic workflows
+and returned measurements for subsequent design rounds. It reported a 40\%
+reduction in specific protein-production cost and a 27\% increase in sfGFP titer
+relative to its benchmark. Those results concern the tested system and reaction
+geometry; they do not establish performance for other proteins or this competition.
+
+The current coopetition makes formulation design a shared experimental problem.
+Its interface supplies reagent stocks, literature formulations, reference recipes,
+and control measurements for sfGFP, PETase (TfCut2 cutinase), and reteplase.
+Participants work within fixed reaction and dispensing constraints. The readouts
+also differ: sfGFP uses calibrated fluorescence, whereas the enzyme targets use
+activity assays. A recipe can therefore affect measured performance through both
+expression and target-specific folding or activity.
+
+CFPS-Sim is our computational contribution to this setting. We propose to use
+recipe accounting to enforce feasibility, mechanistic simulations to organize
+resource hypotheses, and Bayesian optimization to choose informative experiments.
+The scientific question is whether these calculations improve experimental
+selection over a data-only baseline. The present executable scaffold establishes
+the workflow; calibration and prospective experimental comparison remain future
+milestones.
+
+\section{Scope and evidence}
+The project separates known additions, uncertain lysate contributions, simulated
+predictions, and experimental observations. No demonstration output is evidence
+of a productive competition recipe. Horvath et al. provide a starting point for
+dynamic lysate modeling\cite{horvath}; Chae et al. motivate modular diagnostics
+of cell-free systems\cite{chae}; Nishimori et al. motivate uncertainty-driven
+experiment selection\cite{nishimori}. These papers inform the planned development;
+the present numerical constants have not been extracted from those studies.
+
+\section{Installation and execution}
+The project uses Python 3.11 and a committed \texttt{uv.lock}. On macOS, install
+\texttt{uv} and \texttt{tectonic} with Homebrew. From the repository root:
+\begin{Verbatim}
+uv sync --frozen --extra bo --extra cloud --extra docs
+uv run cfps-sim validate examples/recipe.json
+uv run cfps-sim simulate
+uv run --extra bo cfps-sim bo-demo
+uv run pytest
+uv run --extra docs python scripts/build_docs.py
+\end{Verbatim}
+The final command weaves this article and compiles it with Tectonic.
+Tectonic may download TeX support files on its first run.
+
+\section{Recipe feasibility and units}
+The saved platform constraints specify a $20{,}000$ nL reaction, transfers in
+$25$ nL increments, and fixed lysate, base-buffer, and DNA volumes of
+$5{,}000$, $2{,}000$, and $2{,}000$ nL. These constraints must be reconfirmed
+before experimental submission. Remaining supplements and water occupy
+$11{,}000$ nL. For a molar stock,
+\[
+C_{i,\mathrm{known}}=C_{i,\mathrm{stock}}\frac{V_i}{V_{\mathrm{reaction}}}
++ C_{i,\mathrm{base,final}}.
+\]
+Base contributions must be supplied already diluted. Endogenous lysate pools are
+excluded. Mass concentrations, activity units, mixed stocks, and volume fractions
+require explicit chemical mappings before they can enter a molar model.
+
+<<recipe, echo=False>>=
+import json
+from pathlib import Path
+from cfps_sim.recipe import validate
+root = Path.cwd().parent
+recipe = json.loads((root / "examples/recipe.json").read_text())
+checked = validate(recipe)
+print("Total volume (nL):", sum(checked["volumes_nl"].values()))
+print("Supplement magnesium glutamate (mM):", checked["supplement_mM"]["magnesium_glutamate"])
+print("Water (nL):", checked["volumes_nl"]["nuclease_free_water"])
+@
+
+\section{Reduced dynamical model}
+Concentrations are in mM and time is in minutes. Let $D$ denote fixed template
+concentration, $M$ active machinery, $R$ mRNA, $P$ immature protein, $F$ mature
+GFP, and $A$ the pooled amino-acid concentration. Define saturation functions
+$s_N(z)=z/(K_N+z)$ and $s_A(z)=z/(K_A+z)$. Effective transcription and
+translation rates are
+\begin{align*}
+v_{\mathrm{tx}}&=k_{\mathrm{tx}}DM\prod_{z\in\{ATP,GTP,CTP,UTP\}}s_N(z),\\
+v_{\mathrm{tl}}&=k_{\mathrm{tl}}RM\,s_N(ATP)s_N(GTP)s_A(A).
+\end{align*}
+The effective rate constants $k_{\mathrm{tx}}$ and $k_{\mathrm{tl}}$ have units
+of inverse minutes. The shared machinery variable is dimensionless and couples
+both processes; separate polymerase and ribosome pools are a planned extension.
+\begin{align*}
+\dot R&=v_{\mathrm{tx}}-k_R R,&\dot M&=-k_M M,\\
+\dot P&=v_{\mathrm{tl}}-k_{\mathrm{mat}}P,&\dot F&=k_{\mathrm{mat}}P.
+\end{align*}
+For each nucleotide $i$, transcription consumes $n_i v_{\mathrm{tx}}$;
+the current placeholder counts are $n_i=180$. Translation consumes
+$L v_{\mathrm{tl}}$ pooled amino acids, $2L v_{\mathrm{tl}}$ ATP equivalents,
+and $2L v_{\mathrm{tl}}$ GTP, with placeholder protein length $L=240$.
+ATP regeneration uses fuel $E$ and ADP:
+\[
+v_{\mathrm{reg}}=k_{\mathrm{reg}}
+\frac{E}{K_E+E}\frac{ADP}{K_N+ADP}.
+\]
+Here $k_{\mathrm{reg}}$ has units mM per minute. Each regeneration event consumes
+one fuel equivalent and converts ADP to ATP. GTP, CTP, and UTP are not regenerated.
+The ATP cost of amino-acid charging is lumped into ADP equivalents; it does not
+represent the actual AMP and pyrophosphate chemistry. Nucleotide incorporation
+and degraded mRNA leave the explicit nucleotide pools. These choices limit
+biochemical interpretation while exposing resource depletion.
+
+<<trajectory, echo=False, results='hidden'>>=
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from cfps_sim.model import simulate
+rr, values = simulate()
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.2))
+for name in ["ATP", "GTP", "CTP", "UTP"]:
+    axes[0].plot(values[:, 0], values[:, values.colnames.index(name)], label=name)
+axes[0].set(ylabel="Concentration (mM)", xlabel="Time (min)")
+axes[0].legend()
+for name in ["Protein", "GFP"]:
+    axes[1].plot(values[:, 0], 1000*values[:, values.colnames.index(name)], label=name)
+axes[1].set(ylabel="Protein concentration (micromolar)", xlabel="Time (min)")
+axes[1].legend()
+fig.tight_layout()
+Path("figures").mkdir(exist_ok=True)
+fig.savefig("figures/trajectory.pdf", bbox_inches="tight")
+plt.close(fig)
+@
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/trajectory.pdf}
+\caption{Uncalibrated demonstration trajectories. These are simulated resource
+and protein concentrations, not measured yield or fluorescence.}
+\end{figure}
+
+\section{Bayesian optimization and compute}
+The demonstration fits a single-task Gaussian process to twelve noisy synthetic
+observations and uses log expected improvement to select one point on a discrete
+normalized grid. The objective is an illustrative smooth surface, not a CFPS
+surrogate. Actual selection requires a quantized feasible candidate set,
+experimental replicate noise, batch effects, and controls.
+
+BoTorch runs on Apple Silicon using CPU double precision. This project explicitly
+uses \texttt{torch.double} and \texttt{device="cpu"}. PyTorch's MPS backend does
+not support float64, while BoTorch recommends double precision for Gaussian-process
+stability\cite{botorch,mps}. Modal supplies remote Linux CPU execution of the same
+package and lockfile. From the project root:
+\begin{Verbatim}
+uv run --extra cloud modal setup
+uv run --extra cloud modal run modal_app.py
+\end{Verbatim}
+The runner requests two CPU cores, 4 GiB RAM, and a ten-minute timeout. It returns
+the model trajectory, SBML, and synthetic BO result into \texttt{results/modal}.
+Compute is billed to the authenticated Modal account. Independent ensemble
+members and simulated campaigns are natural future parallel workloads.
+
+\section{Validation and next milestones}
+The starter checks cover recipe arithmetic, dispensing increments, finite and
+nonnegative trajectories within tolerance, an amino-acid/protein balance, and
+absence of expression when nucleotide substrates are absent. Passing these checks
+establishes software behavior, not empirical predictive validity.
+
+During initial verification, both core checks passed on Apple Silicon. The
+synthetic BoTorch demo ran locally and on a Modal Linux CPU using float64;
+both selected the normalized grid point $(0.60,0.35)$. The remote run also
+completed the RoadRunner simulation. These smoke runs verify the execution
+paths and are not tests of biological prediction or optimization performance.
+
+Next, audit well-level observations and metadata; reconcile reference recipes;
+map recipes to initial conditions; replace placeholder sequence counts; source
+parameters with uncertainty ranges; and fit a small identifiable parameter set.
+Evaluate whole held-out recipes and batches against an empirical baseline before
+using mechanistic predictions in experiment selection. Add PETase and reteplase
+with separate folding and assay observation models. Assay product time courses
+must not be treated as expression time courses.
+
+\begin{thebibliography}{9}
+\bibitem{smith} A. A. Smith et al. Using a GPT-5-driven autonomous lab to optimize
+the cost and titer of cell-free protein synthesis. bioRxiv, version 1 (2026).
+\url{https://doi.org/10.64898/2026.02.05.703998}.
+\href{https://cdn.openai.com/pdf/5a12a3bc-96b7-4e07-9386-db6ee5bb2ed9/using-a-gpt-5-driven-autonomous-lab-to-optimize-the-cost-and-titer-of-cell-free-protein-synthesis.pdf}{Official author-hosted PDF}.
+\bibitem{htbaa} How To Biomanufacture (Almost) Anything. Fall 2026 course.
+\url{https://2026b.htgaa.org/2026b/course-pages/index.print.html}.
+\bibitem{competition} Cell-Free Synthesis Coopetition for Humans \& AI.
+Competition platform, accessed September 29, 2026.
+\url{https://coopetition.htgaa.org/cfps}.
+\bibitem{horvath} N. Horvath et al. Toward a genome scale sequence specific dynamic
+model of cell-free protein synthesis in Escherichia coli. Metabolic Engineering
+Communications, 10, e00113 (2020). \url{https://doi.org/10.1016/j.mec.2019.e00113}.
+\bibitem{chae} B. Chae et al. Automated, modular assembly of reconstituted cell-free
+systems from in vitro-produced components (2026).
+\url{https://doi.org/10.1016/j.tibtech.2026.05.002}.
+\bibitem{nishimori} S. Nishimori et al. Uncertainty-Driven Experiment Design in
+Cell-Free Protein Synthesis with Bayesian Optimization (2026).
+\url{https://doi.org/10.1021/acssynbio.6c00179}.
+\bibitem{botorch} BoTorch developers. Double-precision guidance.
+\url{https://github.com/meta-pytorch/botorch/discussions/1444}.
+\bibitem{mps} PyTorch developers. MPS backend documentation.
+\url{https://docs.pytorch.org/docs/main/notes/mps.html}.
+\end{thebibliography}
+\end{document}
