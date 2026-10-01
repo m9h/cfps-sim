@@ -68,6 +68,7 @@ def main():
         np.savetxt(args.output / "trajectory.csv", values, delimiter=",", header=",".join(values.colnames), comments="")
         (args.output / "model.xml").write_text(rr.getSBML())
         metadata = {"model_status": "uncalibrated", "minutes": args.minutes,
+                    "execution": rr.execution_metadata(),
                     "construct": demands(construct) if construct else None,
                     "initial_aa_pools": "2 mM each; illustrative" if construct else "40 mM pooled; illustrative"}
         (args.output / "metadata.json").write_text(json.dumps(metadata, indent=2)+"\n")

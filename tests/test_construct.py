@@ -2,12 +2,12 @@ from copy import deepcopy
 
 import numpy as np
 import pytest
-import roadrunner
+import xml.etree.ElementTree as ET
 from Bio import SeqIO
 from Bio.Seq import Seq
 
 from cfps_sim.construct import AMINO_ACIDS, demands, export_genbank, import_genbank, read_construct, validate_construct
-from cfps_sim.model import load_model, simulate
+from cfps_sim.model import export_sbml, load_model, simulate
 
 
 @pytest.mark.parametrize("target,bp,length", [("sfgfp", 2511, 240), ("petase", 2696, 309), ("reteplase", 2966, 399)])
@@ -47,7 +47,8 @@ def test_reject_modified_sequence_and_implicit_transcript(tmp_path):
         import_genbank(output)
 
 
-def test_sequence_balance_limitation_and_sbml_replay():
+@pytest.mark.gpu
+def test_sequence_balance_limitation():
     record = read_construct("constructs/competition/sfgfp.json")
     derived = demands(record, {aa: 2 for aa in AMINO_ACIDS})
     expected = min(2/n for n in derived["aa_per_protein"].values() if n)
@@ -57,15 +58,23 @@ def test_sequence_balance_limitation_and_sbml_replay():
     assert np.min(trajectory[:, 1:]) >= -1e-9
     for aa, count in derived["aa_per_protein"].items():
         assert rr[f"aa_{aa}"] + count*(rr["Protein"] + rr["GFP"]) == pytest.approx(2, abs=1e-7)
-    replay = roadrunner.RoadRunner(rr.getSBML())
-    assert replay["aa_A"] == 2  # Export retains initial conditions, not final state.
-    for base, count in derived["ntp_per_transcript"].items():
-        assert replay[f"nt_{base.lower()}"] == count
-    replay.simulate(0, 240, 241)
-    assert replay["GFP"] == pytest.approx(rr["GFP"], rel=1e-5)
     depleted = load_model(record)
     depleted["aa_L"] = 0
     depleted.simulate(0, 240, 20)
     assert depleted["GFP"] == pytest.approx(0, abs=1e-12)
     with pytest.raises(ValueError, match="sfGFP only"):
         load_model(read_construct("constructs/competition/petase.json"))
+
+
+def test_sequence_aware_sbml_export():
+    record = read_construct("constructs/competition/sfgfp.json")
+    root = ET.fromstring(export_sbml(record, {"k_tl": 0.3}, {"GTP": 0.4}))
+    species = {node.attrib["id"]: float(node.attrib["initialConcentration"])
+               for node in root.findall(".//{*}species")}
+    parameters = {node.attrib["id"]: float(node.attrib["value"])
+                  for node in root.findall(".//{*}parameter") if "value" in node.attrib}
+    assert species["aa_A"] == 2
+    assert species["GTP"] == 0.4
+    assert parameters["k_tl"] == 0.3
+    for base, count in demands(record)["ntp_per_transcript"].items():
+        assert parameters[f"nt_{base.lower()}"] == count

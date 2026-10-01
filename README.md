@@ -1,8 +1,8 @@
 # cfps-sim
 
 A first computational stack for lysate-based cell-free protein synthesis (CFPS):
-recipe accounting, a reduced Antimony/RoadRunner model with SBML export, and a
-BoTorch experiment-selection demonstration. Runs locally or on Modal.
+recipe accounting, a reduced CUDA PyTorch model with SBML export, and a
+BoTorch experiment-selection demonstration. Numerical execution requires a CUDA GPU; Modal provides a remote GPU runner.
 
 **Status:** runnable research scaffold. The kinetic constants are illustrative,
 the model is uncalibrated, and the BoTorch example uses synthetic observations.
@@ -24,11 +24,10 @@ uv uses the Python 3.11 version specified in `.python-version`; it can download
 that interpreter if necessary. `uv.lock` pins dependencies. Native wheels are
 used where available; no global Python packages are needed. COPASI is an optional
 GUI for inspecting the exported SBML, not a runtime requirement.
-On Linux, RoadRunner's wheel requires the shared Python 3.11 library. The CI
-workflow provisions Python with `actions/setup-python` before `uv sync`; Modal's
-system Python already supplies it. If a standalone interpreter reports missing
-`libpython3.11.so.1.0`, use a Python installation with its shared library available
-to the dynamic loader, then recreate the environment with `uv sync --python /path/to/python3.11`.
+Simulation, calibration, and BoTorch acquisition require CUDA-enabled PyTorch
+and a visible NVIDIA GPU. Recipe accounting, sequence inspection, and SBML
+serialization can run on the development host. The numerical backend raises
+an error when CUDA is unavailable; it does not silently change execution devices.
 
 ```sh
 uv run cfps-sim validate examples/recipe.json
@@ -73,7 +72,7 @@ front, and rank competition candidates by their target-specific economic score.
 ## Executable article
 
 `docs/article.Pnw` documents the model, assumptions, recipe constraints,
-optimization, and Modal workflow. Its figure and numerical recipe summary are
+optimization, and GPU workflow. Its figure and numerical recipe summary are
 generated from the package with Pweave; Tectonic builds the PDF.
 The introduction also covers CFPS history, a curated modern reading guide,
 and Joongoo Lee's POSTECH i-POPFLEX work presented in the Build-a-Cell series.
@@ -130,39 +129,61 @@ all three targets; simulation currently accepts sfGFP only because enzyme foldin
 and activity observation models are still required. Simulation also writes
 `metadata.json` with sequence demands and explicit model assumptions.
 
-## Apple Silicon and BoTorch
+## GPU computation and numerical accuracy
 
-BoTorch runs on Apple Silicon CPUs with PyTorch `torch.double` tensors. This
-project explicitly uses CPU float64. BoTorch recommends double precision for
-Gaussian-process stability, while PyTorch's MPS/Metal backend cannot allocate
-float64 tensors. GPU acceleration is therefore not the default on a Mac.
+The implemented backend uses PyTorch CUDA for the ODE solver, parameter fitting,
+Gaussian processes, and acquisition evaluation. State tensors and GP calculations
+use `float64`; `torch.compile` fuses per-step flux calculations on the GPU.
+Adaptive Dormand–Prince integration uses `rtol=1e-10` and
+`atol=1e-14`; the challenge suite repeats the endpoint calculation at
+`rtol=1e-12`, `atol=1e-16`. These are numerical error controls, not guarantees
+of predictive accuracy. Conservation, nonnegativity, missing-resource controls,
+and tolerance refinement must pass on the target GPU.
 
-- [BoTorch double-precision guidance](https://github.com/meta-pytorch/botorch/discussions/1444)
-- [PyTorch MPS limitations](https://docs.pytorch.org/docs/main/notes/mps.html)
+Calibration uses bounded damped Gauss–Newton in log-parameter space. Residuals,
+finite-difference Jacobians, and linear solves stay on CUDA. Two starts check
+local sensitivity; Jacobians are compared at two perturbation sizes, and
+conditional covariance uses an SVD. Convergence uses scaled gradient, objective,
+or step criteria; Jacobian disagreement above 0.1% rejects fit success. Artifacts record GPU identity, PyTorch/CUDA
+versions, solver tolerances, and fit diagnostics. Host code handles inputs,
+reporting, and serialization.
 
-The demo fits a GP to 12 synthetic observations and chooses a candidate using
-log expected improvement from a discrete normalized grid. This grid demonstrates
-selection only; it is not a dispensing-feasible competition candidate set.
+The BO demo fits twelve synthetic observations and selects from a normalized
+grid. This demonstrates acquisition only; it is not a dispensing-feasible
+competition candidate set. Better biological accuracy requires measured time
+courses, an audited assay mapping, identifiable parameters, and validation on
+whole held-out recipes and lysate batches. GPU execution alone does not supply
+that evidence.
 
-## Run on Modal
+[PyTorch numerical accuracy](https://docs.pytorch.org/docs/stable/notes/numerical_accuracy.html)
+and [torchdiffeq](https://github.com/rtqichen/torchdiffeq) describe the numerical
+backend. A JAX GPU/TPU implementation would be a separate future backend; none
+is implemented or validated here.
+
+## Run on Modal GPU
 
 ```sh
 uv run --extra cloud modal setup
 uv run --extra cloud modal run modal_app.py
 uv run --extra cloud modal run modal_app.py --construct constructs/competition/sfgfp.json
+# Run GPU tests, challenge/calibration checks, and rebuild the executable article:
+uv run --extra cloud modal run --detach modal_app.py --verify --build-docs --background
+# Retrieve the printed function-call ID once complete:
+uv run --extra cloud modal run modal_app.py --retrieve fc-...
 ```
 
-The first command authenticates your account. The second builds a Linux Python
-3.11 image using the same lockfile, runs the simulator and BoTorch remotely on
-2 CPU cores with 4 GiB RAM, and saves results under `results/modal/`. The returned
-`bo_cost` result uses the synthetic cost/yield objective; `bo` preserves the
-original yield-only smoke test. This is an
-on-demand run with a 10-minute timeout. It does not require a persistent deployment.
-Modal compute is billed to your account.
+The runner requests an A100 GPU and builds the locked Linux environment.
+Results go to `results/modal/`; `--build-docs` also replaces `docs/article.pdf`
+with the GPU-generated article. The on-demand function has a one-hour timeout.
+[Modal GPU compute](https://modal.com/docs/guide/gpu) is billed to the authenticated
+account. A CUDA-enabled RunPod host can run the same locked package and commands;
+no provider-specific RunPod integration is included.
 
-For larger workloads, add parameter-ensemble or campaign functions and distribute
-independent runs. Consider CUDA GPU execution only after benchmarking GP fitting
-and acquisition workloads; small datasets often fit well on CPU.
+All 18 tests passed on a Modal A100 GPU on September 30, 2026, including
+conservation, solver refinement, parameter recovery, holdout isolation, and
+acquisition checks. These validate software behavior; measured biological
+accuracy remains unestablished. Hosted GitHub CI runs host checks and skips GPU
+tests; use the GPU verification command for the complete suite.
 
 ## Recipe accounting
 

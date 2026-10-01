@@ -1,6 +1,6 @@
 # Computational challenges and calibration
 
-Run from the repository root:
+Run from the repository root on a CUDA GPU host:
 
 ```sh
 uv run cfps-sim experiments --output results/experiments --seed 2026
@@ -37,9 +37,11 @@ Independent Gaussian measurement noise has known SD equal to 5% of the maximum
 of each condition/channel. All other chemistry and measurement scaling are fixed.
 This is intentionally a same-model recovery exercise, not experimental calibration.
 
-The fitter uses bounded least squares in log-parameter space, with residuals
+The fitter uses GPU bounded damped Gauss–Newton least squares in log-parameter space, with residuals
 scaled by the supplied measurement SD. Two initializations check basic local
-optimizer sensitivity. It reports per-observable train/test errors, Jacobian
+optimizer sensitivity. Residuals, Jacobians, and linear solves execute on CUDA.
+It compares Jacobians at two perturbation sizes and uses SVD for conditional
+covariance. It reports per-observable train/test errors, Jacobian
 singular values and rank, and approximate conditional 95% parameter intervals
 when full rank. Those intervals exclude uncertain pools, model discrepancy,
 correlated errors, batch effects, and transcript uncertainty. They do not replace

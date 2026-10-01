@@ -16,6 +16,7 @@ def test_recipe_volume_and_concentration():
         validate(recipe)
 
 
+@pytest.mark.gpu
 def test_no_substrate_no_expression_and_resource_balance():
     rr, trajectory = simulate()
     assert np.isfinite(trajectory).all()

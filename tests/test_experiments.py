@@ -2,35 +2,36 @@ import csv
 import json
 
 import pytest
-import roadrunner
 
 from cfps_sim.construct import read_construct
 from cfps_sim.experiments import calibrate, make_synthetic_study, run_suite
 from cfps_sim.model import load_model
 
 
+@pytest.mark.gpu
 def test_challenges_and_override_export(tmp_path):
     report = run_suite("constructs/competition/sfgfp.json", tmp_path/"suite")
     assert report["all_checks_pass"]
     assert report["initial_units"]["Machinery"] == "dimensionless"
     assert report["parameter_units"]["regen"] == "mM/min"
     model = load_model(read_construct("constructs/competition/sfgfp.json"), {"k_tl": 0.3}, {"GTP": 0.4})
-    replay = roadrunner.RoadRunner(model.getSBML())
-    assert replay["k_tl"] == 0.3
-    assert replay["GTP"] == 0.4
+    assert model["k_tl"] == 0.3
+    assert model["GTP"] == 0.4
     with pytest.raises(ValueError, match="absent"):
         load_model(initial={"magnesium": 10})
     with pytest.raises(ValueError, match="positive"):
         load_model(parameters={"K_nt": 0})
 
 
+@pytest.mark.gpu
 def test_synthetic_recovery_holdout_and_no_truth_leakage(tmp_path):
     study_path = make_synthetic_study("constructs/competition/sfgfp.json", tmp_path/"study")
     study = json.loads(study_path.read_text())
     truth = study.pop("synthetic_truth")
     study_path.write_text(json.dumps(study))  # Fitting must not read generating values.
     result = calibrate(study_path, study_path.parent/"observations.csv", tmp_path/"fit")
-    assert result["optimizer_success"]
+    assert result["optimizer_success"], result
+    assert result["optimizer"]["jacobian_step_relative_difference"] < 1e-3
     assert result["jacobian_rank"] == 2
     for name, value in truth.items():
         assert result["fitted_parameters"][name] == pytest.approx(value, rel=0.1)

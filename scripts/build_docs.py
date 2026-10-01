@@ -9,6 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 
 if __name__ == "__main__":
+    from cfps_sim.backend import cuda_device
+    cuda_device()  # Executable numerical chunks must use the project GPU backend.
     if not shutil.which("tectonic"):
         raise SystemExit("Install Tectonic first: brew install tectonic")
     env = os.environ.copy()

@@ -9,10 +9,12 @@ import json
 from pathlib import Path
 
 import numpy as np
-from scipy.optimize import least_squares
+import torch
 
 from .construct import AMINO_ACIDS, demands, read_construct
 from .model import PARAMETERS, load_model, simulate
+from .backend import cuda_device
+from .fitting import least_squares
 
 
 def write_rows(path, rows):
@@ -89,8 +91,8 @@ def run_suite(construct_path, output, seed=2026):
     shortened["transcript"]["basis"] = "Sensitivity scenario: assumed transcript ends at CDS stop; no experimental verification"
     short_model, _ = simulate(construct=shortened)
     refined = load_model(construct)
-    refined.integrator.relative_tolerance = 1e-10
-    refined.integrator.absolute_tolerance = 1e-14
+    refined.integrator.relative_tolerance = 1e-12
+    refined.integrator.absolute_tolerance = 1e-16
     refined.simulate(0, 240, 481)
     convergence = abs(float(refined["GFP"])-reference)/reference
     zero_cases = {"no_template", "no_transcription", "no_translation", "no_maturation", "no_gtp", "no_leucine", "no_machinery"}
@@ -100,6 +102,7 @@ def run_suite(construct_path, output, seed=2026):
               "required_resource_controls": all(abs(row["gfp_mM"]) < 1e-12 for row in rows if row["case"] in zero_cases),
               "solver_convergence": convergence < 1e-5}
     report = {"status": "uncalibrated_computational_challenges", "construct": stats,
+              "execution": rr.execution_metadata(),
               "baseline_parameters": baseline_parameters, "baseline_initial_values": baseline_initial,
               "initial_units": {name: "dimensionless" if name == "Machinery" else "mM" for name in baseline_initial}, "duration_minutes": 240,
               "parameter_units": {name: "mM" if name == "dna_template" or name.startswith("K_") else "mM/min" if name == "regen" else "1/min" for name in baseline_parameters},
@@ -185,6 +188,9 @@ def calibrate(study_path, observations_path, output):
         raise ValueError("Insufficient training observations")
     defaults = np.array([float(next(iter(models.values()))[name]) for name in names])
 
+    device = cuda_device()
+    tensor = lambda values: torch.as_tensor(values, dtype=torch.float64, device=device)
+
     def predict(parameters):
         lookup = {}
         for key, model in models.items():
@@ -195,28 +201,35 @@ def calibrate(study_path, observations_path, output):
             observables = sorted({r["observable"] for r in requested})
             model.resetAll()
             for name, value in zip(names, parameters):
-                model[name] = float(value)
-            values = model.simulate(times=[0]+times, selections=["time"]+observables)
+                model.parameters[name] = value
+            values, _ = model.simulate_tensor(times=[0]+times, selections=["time"]+observables)
             for i, time in enumerate(times, 1):
                 for j, observable in enumerate(observables, 1):
-                    lookup[(key, time, observable)] = float(values[i, j])
-        return np.array([lookup[(r["condition"], r["time_min"], r["observable"])] for r in observations])
+                    lookup[(key, time, observable)] = values[i, j]
+        return torch.stack([lookup[(r["condition"], r["time_min"], r["observable"])] for r in observations])
 
     measured = np.array([r["value_mM"] for r in observations])
     sigma = np.array([r["sigma_mM"] for r in observations])
-    baseline = predict(defaults)
-    residual = lambda log_parameters: ((predict(np.exp(log_parameters))-measured)/sigma)[train]
+    measured_gpu, sigma_gpu = tensor(measured), tensor(sigma)
+    train_gpu = torch.as_tensor(train, device=device)
+    baseline = predict(tensor(defaults)).detach().cpu().numpy()
+    residual = lambda log_parameters: ((predict(log_parameters.exp())-measured_gpu)/sigma_gpu)[train_gpu]
     starts = [np.clip(defaults, bounds[0]*1.001, bounds[1]*0.999), np.sqrt(bounds[0]*bounds[1])]
-    fits = [least_squares(residual, np.log(start), bounds=np.log(bounds), diff_step=1e-4, max_nfev=200) for start in starts]
+    with torch.no_grad():
+        fits = [least_squares(residual, tensor(start).log(), bounds=tensor(bounds).log()) for start in starts]
     fit = min(fits, key=lambda result: result.cost)
-    predictions = predict(np.exp(fit.x))
-    singular_values = np.linalg.svd(fit.jac, compute_uv=False)
-    rank = int(np.sum(singular_values > singular_values[0]*1e-8))
+    predictions = predict(fit.x.exp()).detach().cpu().numpy()
+    singular_gpu = torch.linalg.svdvals(fit.jac)
+    singular_values = singular_gpu.cpu().numpy()
+    rank = int((singular_gpu > singular_gpu[0]*1e-8).sum())
     intervals = None
     if rank == len(names):
-        covariance = np.linalg.inv(fit.jac.T@fit.jac)
-        sd = np.sqrt(np.maximum(np.diag(covariance), 0))
-        intervals = {name: np.exp([value-1.96*error, value+1.96*error]).tolist() for name, value, error in zip(names, fit.x, sd)}
+        # SVD avoids squaring the Jacobian condition number in normal equations.
+        _, s, vh = torch.linalg.svd(fit.jac, full_matrices=False)
+        covariance = (vh.T / s.square()) @ vh
+        sd = covariance.diagonal().clamp_min(0).sqrt()
+        intervals = {name: torch.stack((value-1.96*error, value+1.96*error)).exp().tolist()
+                     for name, value, error in zip(names, fit.x, sd)}
     metrics = []
     for split in ["train", "test"]:
         for observable in sorted({r["observable"] for r in observations}):
@@ -229,7 +242,12 @@ def calibrate(study_path, observations_path, output):
     for row, predicted, base in zip(observations, predictions, baseline):
         row.update(predicted_mM=float(predicted), baseline_mM=float(base))
     report = {"data_kind": study["data_kind"], "optimizer_success": bool(fit.success),
-              "fitted_parameters": dict(zip(names, np.exp(fit.x).tolist())), "conditional_approximate_95pct_intervals": intervals,
+              "execution": next(iter(models.values())).execution_metadata(),
+              "optimizer": {"method": "bounded damped Gauss-Newton", "starts": len(starts),
+                            "iterations": fit.iterations, "evaluations": fit.evaluations,
+                            "termination": fit.termination, "scaled_gradient": fit.scaled_gradient,
+                            "jacobian_step_relative_difference": fit.derivative_relative_difference},
+              "fitted_parameters": dict(zip(names, fit.x.exp().tolist())), "conditional_approximate_95pct_intervals": intervals,
               "jacobian_rank": rank, "jacobian_singular_values": singular_values.tolist(),
               "jacobian_condition_number": float(singular_values[0]/singular_values[-1]) if singular_values[-1] else None,
               "metrics": metrics, "provenance": study["provenance"],

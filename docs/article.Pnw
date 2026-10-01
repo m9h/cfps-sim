@@ -14,7 +14,7 @@ protein production. CFPS-Sim is a reproducible computational scaffold for the
 Fall 2026 How To Biomanufacture (Almost) Anything CFPS coopetition, situated in
 the history of CFPS and the recent OpenAI--Ginkgo autonomous-laboratory study.
 The project combines dispensing, concentration and reagent-cost accounting, versioned DNA
-constructs, a reduced Antimony/RoadRunner resource model with SBML export, and
+constructs, a reduced CUDA PyTorch resource model with SBML export, and
 a BoTorch demonstration of experiment selection. The three supplied plasmids
 are checked against their source protein sequences, with GenBank import and
 export supporting exchange with the Popcorn design toolkit. Construct-aware sfGFP simulation uses
@@ -24,14 +24,13 @@ sequence accounting but require separate folding and activity observation models
 
 An executable challenge suite tests resource removal, individual amino-acid
 conservation, solver convergence, resource interactions, and uncertainty scenarios.
-All five numerical/structural checks pass. A two-parameter, same-model synthetic
-study recovers translation and machinery-decay rates within 3\% of their
-generating values; fitting lowers withheld-condition GFP prediction error by
-approximately 31\% relative to default parameters. Twelve software tests pass,
-and a sequence-aware Modal trajectory agrees numerically with local execution.
-These results establish reproducibility and fitting behavior, not biological
-predictive validity. Kinetics remain illustrative and no competition improvement
-has been demonstrated.
+The numerical backend now requires CUDA PyTorch for adaptive integration,
+parameter calibration, and Gaussian-process acquisition. Resource controls,
+amino-acid conservation, tolerance refinement, synthetic recovery, and withheld
+condition isolation are acceptance checks for this GPU implementation; earlier
+execution results do not validate the migrated backend. Kinetics remain
+illustrative, no empirical predictive validity is established, and no competition
+improvement has been demonstrated.
 
 Conceptual figures connect sequence-dependent resource demand to target-specific
 readouts and distinguish the implemented scaffold from the planned experimental
@@ -611,21 +610,42 @@ experimental replicate noise, batch effects, and controls. The production-cost
 objective and its separate synthetic demonstration are defined in the preceding
 economics section; a yield-only smoke result is not an economic optimization.
 
-BoTorch runs on Apple Silicon using CPU double precision. This project explicitly
-uses \texttt{torch.double} and \texttt{device="cpu"}. PyTorch's MPS backend does
-not support float64, while BoTorch recommends double precision for Gaussian-process
-stability\cite{botorch,mps}. Modal supplies remote Linux CPU execution of the same
-package and lockfile. From the project root:
+The implemented backend executes ODE integration, calibration residuals and
+linear algebra, Gaussian-process fitting, and acquisition calculations with
+PyTorch CUDA. Compiled GPU kernels fuse the per-step resource flux calculations
+without relaxing solver tolerances. State and GP tensors use \texttt{float64}; adaptive Dormand--Prince
+integration uses relative tolerance $10^{-10}$ and absolute tolerance $10^{-14}$.
+A refinement run uses $10^{-12}$ and $10^{-16}$ respectively. Fluxes are evaluated
+at nonnegative pools, but integrated states are not clipped: numerical negativity
+remains visible to validation. GPU tensors are copied to the host only for
+reporting and serialization. Missing CUDA support raises an error rather than
+changing the numerical execution device\cite{torchaccuracy,torchdiffeq}.
+
+Accuracy must be assessed at two levels. Numerical acceptance requires finite,
+nonnegative trajectories, sequence-dependent mass balances, resource-removal
+controls, stable endpoints under tolerance refinement, and stable calibration
+Jacobians under perturbation refinement. Predictive acceptance additionally
+requires measured time courses, calibrated observation mappings, identifiable
+parameters, whole-recipe and whole-batch holdouts, and uncertainty coverage.
+Faster hardware and tighter integration tolerances cannot repair missing
+chemistry or establish biological accuracy.
+
+The Modal runner requests an A100 GPU and uses the project lockfile. From the
+project root:
 \begin{Verbatim}
 uv run --extra cloud modal setup
-uv run --extra cloud modal run modal_app.py
 uv run --extra cloud modal run modal_app.py \
   --construct constructs/competition/sfgfp.json
+uv run --extra cloud modal run --detach modal_app.py \
+  --verify --build-docs --background
+uv run --extra cloud modal run modal_app.py --retrieve fc-...
 \end{Verbatim}
-The runner requests two CPU cores, 4 GiB RAM, and a ten-minute timeout. It returns
-the model trajectory, SBML, and both synthetic BO demonstrations into \texttt{results/modal}.
-Compute is billed to the authenticated Modal account. Independent ensemble
-members and simulated campaigns are natural future parallel workloads.
+The function has a one-hour timeout. It returns model and BO artifacts into
+\texttt{results/modal}; the verification command runs the GPU tests and study,
+and rebuilds this executable article on the GPU host. Compute is billed to the
+authenticated account\cite{modalgpu}. A CUDA-enabled RunPod host can run the same
+package. JAX GPU/TPU execution is a possible future implementation, not a backend
+implemented or validated in this repository.
 
 \section{Computational experiments and a worked calibration study}
 The command \texttt{cfps-sim experiments} runs ten reference/process/resource
@@ -665,8 +685,12 @@ and independent Gaussian noise. Known channel SD is 5\% of the maximum
 concentration for that condition. Two effective parameters are fitted:
 translation capacity $k_{\mathrm{tl}}$ and machinery decay $k_{\mathrm{decay}}$.
 All other chemistry, transcript bounds, pools, and observation scaling are fixed.
-Bounded least squares minimizes training residuals divided by their supplied SD
-in log-parameter space. Two initializations provide a basic optimizer check.
+GPU bounded damped Gauss--Newton minimizes training residuals divided by their supplied SD
+in log-parameter space. Two initializations provide a basic optimizer check. Convergence uses a
+scaled gradient, objective-change, or step criterion; Jacobians are compared
+at log-parameter perturbations $10^{-4}$ and $5\times10^{-5}$. Relative
+Jacobian disagreement above $10^{-3}$ rejects fit success. Conditional covariance
+is calculated from an SVD rather than an inverse normal matrix.
 The fitter never reads generating parameter values or withheld measurements
 when evaluating the training objective. Tests deliberately alter withheld
 measurements to check this separation.
@@ -871,30 +895,20 @@ absence of expression when nucleotide substrates are absent. Construct checks
 verify all three source protein matches, lossless GenBank exchange, refusal of
 modified checksums and implicit transcript boundaries, individual amino-acid
 conservation, absence of translation when a required amino acid is depleted,
-and replay of exported sequence-aware SBML. Passing these checks
+and preservation of sequence demands and initial conditions in exported SBML. Passing these checks
 establishes software behavior, not empirical predictive validity.
 
-During initial verification, both core checks passed on Apple Silicon. The
-synthetic BoTorch demo ran locally and on a Modal Linux CPU using float64;
-both selected the normalized grid point $(0.60,0.35)$. The remote run also
-completed the RoadRunner simulation. These smoke runs verify the execution
-paths and are not tests of biological prediction or optimization performance.
-The expanded suite now passes twelve tests, including price completeness,
-cost and mass/activity unit conversion, cost/yield tradeoffs, synthetic recovery and
-withheld-data isolation. A further Modal run used the supplied
-sfGFP artifact and all twenty amino-acid pools; its final mature-protein
-concentration agreed with the local trajectory within $2\times10^{-18}$ mM.
-This agreement checks cross-platform execution, not biological accuracy.
-The new cost/yield BO demonstration also ran locally and on Modal; both selected
-the next synthetic candidate $(0.80,0.05)$ with matching predicted economics.
-This is an exploratory acquisition result, not the known toy-surface optimum
-or a recommended competition recipe.
-The Linux RoadRunner wheel requires the shared Python 3.11 library. GitHub CI
-therefore provisions Python with \texttt{actions/setup-python} and explicitly
-selects it during \texttt{uv sync}; the initial standalone uv interpreter failed
-to load \texttt{libpython3.11.so.1.0}. Modal's system interpreter supplies this
-library. A Linux installation must make its shared Python library available to
-the dynamic loader before importing RoadRunner.
+The backend migration removes the earlier integration and optimization execution
+paths. Historical smoke-test coordinates, matching trajectories, and synthetic
+fit percentages do not validate this implementation and are not retained as
+current evidence. All eighteen software tests passed on a Modal A100 GPU on September 30, 2026,
+covering conservation, missing-resource behavior, solver refinement, synthetic
+parameter recovery, holdout isolation, and finite GP acquisition results.
+Passing this suite establishes implementation behavior on that GPU, not
+experimental predictive accuracy. Accounting, construct,
+SBML-serialization, and GPU-required checks can also run on a development host.
+A development host without CUDA cannot regenerate the numerical article chunks;
+use the GPU runner to rebuild the tracked PDF.
 
 Repository instructions require updating this Pweave source and rebuilding its
 tracked PDF when scientific behavior, inputs, assumptions, workflows, or
@@ -913,11 +927,9 @@ CFPS-Sim now provides a reproducible path from audited inputs to resource-model
 simulation, software challenges, and conditional parameter fitting. Three
 supplied constructs retain sequence provenance and source-protein checks;
 sfGFP simulations account for twenty amino-acid pools and assumed transcript
-demand. Twelve software tests pass; Linux CI checks the same core suite. The computational suite passes
-five numerical/structural checks, and the synthetic calibration recovers both
-generating rates within 3\%, reducing withheld GFP RMSE by approximately 31\%
-relative to default parameters. These results support the execution and fitting
-workflow. They do not establish that the model predicts experimental yield,
+demand. CUDA integration, parameter recovery, and acquisition behavior require
+verification on the GPU backend before reporting new numerical results.
+The software checks do not establish that the model predicts experimental yield,
 that its uncertainty intervals are calibrated, or that mechanistic selection
 outperforms data-only Bayesian optimization. The added price ledger and synthetic
 cost/yield acquisition make specific production cost explicit, but an unresolved
@@ -1113,9 +1125,11 @@ systems from in vitro-produced components (2026).
 \bibitem{nishimori} S. Nishimori et al. Uncertainty-Driven Experiment Design in
 Cell-Free Protein Synthesis with Bayesian Optimization (2026).
 \url{https://doi.org/10.1021/acssynbio.6c00179}.
-\bibitem{botorch} BoTorch developers. Double-precision guidance.
-\url{https://github.com/meta-pytorch/botorch/discussions/1444}.
-\bibitem{mps} PyTorch developers. MPS backend documentation.
-\url{https://docs.pytorch.org/docs/main/notes/mps.html}.
+\bibitem{torchaccuracy} PyTorch developers. Numerical accuracy.
+\url{https://docs.pytorch.org/docs/stable/notes/numerical_accuracy.html}.
+\bibitem{torchdiffeq} R. T. Q. Chen et al. Differentiable ODE solvers for PyTorch.
+\url{https://github.com/rtqichen/torchdiffeq}.
+\bibitem{modalgpu} Modal developers. GPU acceleration.
+\url{https://modal.com/docs/guide/gpu}.
 \end{thebibliography}
 \end{document}

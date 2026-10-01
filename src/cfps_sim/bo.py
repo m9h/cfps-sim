@@ -1,30 +1,32 @@
-"""CPU float64 BoTorch demonstration on a synthetic discrete candidate set."""
+"""CUDA float64 BoTorch demonstration on a synthetic discrete candidate set."""
+from .backend import cuda_device, metadata
 def demo(seed=42):
     import torch
     from botorch.models import SingleTaskGP
     from botorch.models.transforms.outcome import Standardize
-    from botorch.fit import fit_gpytorch_mll
+    from botorch.optim.fit import fit_gpytorch_mll_torch
     from botorch.acquisition.analytic import LogExpectedImprovement
     from gpytorch.mlls import ExactMarginalLogLikelihood
 
     torch.manual_seed(seed)
-    torch.set_num_threads(1)
-    x = torch.rand(12, 2, dtype=torch.double, device="cpu")
+    device = cuda_device()
+    x = torch.rand(12, 2, dtype=torch.double, device=device)
     y = (1 - (x[:, :1] - 0.65)**2 - 2*(x[:, 1:] - 0.35)**2)
     y += 0.01 * torch.randn_like(y)
     gp = SingleTaskGP(x, y, outcome_transform=Standardize(m=1))
-    fit_gpytorch_mll(ExactMarginalLogLikelihood(gp.likelihood, gp))
-    grid = torch.linspace(0, 1, 21, dtype=torch.double, device="cpu")
+    fit_gpytorch_mll_torch(ExactMarginalLogLikelihood(gp.likelihood, gp), step_limit=2000)
+    gp.eval()
+    gp.likelihood.eval()
+    grid = torch.linspace(0, 1, 21, dtype=torch.double, device=device)
     candidates = torch.cartesian_prod(grid, grid)
     with torch.no_grad():
         scores = LogExpectedImprovement(gp, best_f=y.max())(candidates.unsqueeze(1))
         best = candidates[scores.argmax()]
         posterior = gp.posterior(best.reshape(1, 2))
-    return {"device": "cpu", "dtype": "float64", "seed": seed,
+    return {**metadata(), "seed": seed,
             "candidate_normalized": best.tolist(),
             "predicted_mean": posterior.mean.item(),
             "predicted_std": posterior.variance.sqrt().item(),
-            "torch_version": torch.__version__, "mps_available": torch.backends.mps.is_available(),
             "note": "Synthetic objective; normalized grid is not a competition recipe."}
 
 
@@ -38,18 +40,18 @@ def cost_demo(seed=42):
     import torch
     from botorch.models import SingleTaskGP
     from botorch.models.transforms.outcome import Standardize
-    from botorch.fit import fit_gpytorch_mll
+    from botorch.optim.fit import fit_gpytorch_mll_torch
     from botorch.acquisition.logei import qLogNoisyExpectedImprovement
     from botorch.acquisition.objective import GenericMCObjective
     from botorch.sampling.normal import SobolQMCNormalSampler
     from gpytorch.mlls import ExactMarginalLogLikelihood
 
     torch.manual_seed(seed)
-    torch.set_num_threads(1)
+    device = cuda_device()
     volume_l = 20e-6
-    grid = torch.linspace(0, 1, 21, dtype=torch.double, device="cpu")
+    grid = torch.linspace(0, 1, 21, dtype=torch.double, device=device)
     candidates = torch.cartesian_prod(grid, grid)
-    indices = torch.randperm(len(candidates))[:12]
+    indices = torch.randperm(len(candidates), device=device)[:12]
     x = candidates[indices]
 
     def costs(points):
@@ -58,9 +60,11 @@ def cost_demo(seed=42):
     def true_yield(points):
         return 0.1 + 0.9*torch.exp(-3*(points[..., 0]-0.65)**2 - 8*(points[..., 1]-0.7)**2)
 
-    log_y = true_yield(x).log().unsqueeze(-1) + 0.08*torch.randn(12, 1, dtype=torch.double)
+    log_y = true_yield(x).log().unsqueeze(-1) + 0.08*torch.randn(12, 1, dtype=torch.double, device=device)
     gp = SingleTaskGP(x, log_y, outcome_transform=Standardize(m=1))
-    fit_gpytorch_mll(ExactMarginalLogLikelihood(gp.likelihood, gp))
+    fit_gpytorch_mll_torch(ExactMarginalLogLikelihood(gp.likelihood, gp), step_limit=2000)
+    gp.eval()
+    gp.likelihood.eval()
     # Maximizing this utility is equivalent pointwise to minimizing USD/g.
     # Subtract known cost for both baseline and candidate posterior samples.
     objective = GenericMCObjective(lambda samples, X: samples[..., 0] + math.log(volume_l) - costs(X).log())
@@ -68,7 +72,7 @@ def cost_demo(seed=42):
         gp, X_baseline=x, objective=objective,
         sampler=SobolQMCNormalSampler(torch.Size([128]), seed=seed), prune_baseline=False,
     )
-    remaining = torch.ones(len(candidates), dtype=torch.bool)
+    remaining = torch.ones(len(candidates), dtype=torch.bool, device=device)
     remaining[indices] = False
     choices = candidates[remaining]
     with torch.no_grad():
@@ -88,7 +92,7 @@ def cost_demo(seed=42):
                 "cost_usd": true_costs[index].item(),
                 "usd_per_g": (true_costs[index]/(true_titers[index]*volume_l)).item()}
 
-    return {"data_kind": "synthetic", "seed": seed, "device": "cpu", "dtype": "float64",
+    return {"data_kind": "synthetic", "seed": seed, **metadata(),
             "objective": "maximize log(g/USD), equivalent pointwise to minimize USD/g",
             "candidate_normalized": selected.tolist(), "reaction_cost_usd": cost,
             "predicted_median_titer_g_l": median_titer,
