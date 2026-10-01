@@ -15,6 +15,15 @@ def main():
     scoring.add_argument("recipe", type=Path)
     scoring.add_argument("prices", type=Path)
     scoring.add_argument("observation", type=Path)
+    preflight = commands.add_parser("preflight", help="Audit recipe chemistry and unresolved execution gates")
+    preflight.add_argument("recipe", type=Path)
+    preflight.add_argument("--registry", type=Path, default=Path("data/registry/inventory.draft.json"))
+    preflight.add_argument("--prices", type=Path)
+    preflight.add_argument("--base", type=Path, help="Explicit chemical-to-final-mM base composition")
+    benchmark = commands.add_parser("benchmark", help="GPU retrospective baseline on pinned measured CFPS data")
+    benchmark.add_argument("--data", type=Path, default=Path("data/raw/borkowski2020/observations.csv"))
+    benchmark.add_argument("--provenance", type=Path, default=Path("data/raw/borkowski2020/provenance.json"))
+    benchmark.add_argument("--output", type=Path, default=Path("results/benchmark"))
     simulation = commands.add_parser("simulate")
     simulation.add_argument("--output", type=Path, default=Path("results/demo"))
     simulation.add_argument("--minutes", type=float, default=240)
@@ -58,6 +67,18 @@ def main():
         print(json.dumps(report, indent=2))
         if not report["complete"] or report.get("scorable") is False:
             raise SystemExit(2)
+    elif args.command == "preflight":
+        from .preflight import audit_recipe
+        report = audit_recipe(json.loads(args.recipe.read_text()), json.loads(args.registry.read_text()),
+                              json.loads(args.prices.read_text()) if args.prices else None,
+                              json.loads(args.base.read_text()) if args.base else None)
+        print(json.dumps(report, indent=2))
+        if not report["submission_ready"]:
+            raise SystemExit(2)
+    elif args.command == "benchmark":
+        from .benchmark import run_benchmark
+        report = run_benchmark(args.data, args.provenance, args.output)
+        print(json.dumps({"split": report["split"], "selection": report["selection"], "metrics": report["metrics"]}, indent=2))
     elif args.command == "simulate":
         import numpy as np
         from .model import simulate

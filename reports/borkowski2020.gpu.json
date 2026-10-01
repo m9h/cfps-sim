@@ -1,0 +1,205 @@
+{
+  "data_kind": "experimental",
+  "execution": {
+    "backend": "torch",
+    "device": "cuda",
+    "dtype": "float64",
+    "gpu": "NVIDIA A100-SXM4-40GB",
+    "torch_version": "2.14.0+cu130",
+    "cuda_version": "13.0"
+  },
+  "source": {
+    "schema_version": 1,
+    "data_kind": "experimental",
+    "repository": "https://github.com/brsynth/active_learning_cell_free",
+    "revision": "52816965250802a9243183ee391da7c09f08f069",
+    "paper": "https://doi.org/10.1038/s41467-020-15738-w",
+    "files": [
+      {
+        "plate": 1,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_1_raw_yield_and_std.csv",
+        "git_blob_sha1": "5bb90ee77e797cc9681c6757dee364cb462a14ba"
+      },
+      {
+        "plate": 2,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_2_raw_yield_and_std.csv",
+        "git_blob_sha1": "1dd402d40df4c4f7ca7d6573cd1f4456066734cc"
+      },
+      {
+        "plate": 3,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_3_raw_yield_and_std.csv",
+        "git_blob_sha1": "cfae73b5eca8a8c21987a4f250eec4ed10c2419d"
+      },
+      {
+        "plate": 4,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_4_raw_yield_and_std.csv",
+        "git_blob_sha1": "151a4aff03c3abcaec91aec8efab5eccdd5ba1b3"
+      },
+      {
+        "plate": 5,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_5_raw_yield_and_std.csv",
+        "git_blob_sha1": "5694b75a6e98ad1e60232725f4cd906625778f60"
+      },
+      {
+        "plate": 6,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_6_raw_yield_and_std.csv",
+        "git_blob_sha1": "1e1e03a7093ddb37f51e569fef2264845d04d239"
+      },
+      {
+        "plate": 7,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_7_raw_yield_and_std.csv",
+        "git_blob_sha1": "16063f38f5e2291dbfee1ebf3e2de7378192e7a2"
+      },
+      {
+        "plate": 8,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_8_raw_yield_and_std.csv",
+        "git_blob_sha1": "612ac116718b1f01737be3b2c13a7aa8a6ce879e"
+      },
+      {
+        "plate": 9,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_9_raw_yield_and_std.csv",
+        "git_blob_sha1": "0fff27fe4b3e122f2d93059ff051007780c37917"
+      },
+      {
+        "plate": 10,
+        "path": "whole_lysate_most_informative_points/data/no_controls/plate_AL_10_raw_yield_and_std.csv",
+        "git_blob_sha1": "8fce048f153443f15bed3b670675616a46c9a99b"
+      }
+    ],
+    "response": "yield",
+    "response_units": "author_processed_relative_yield",
+    "target": "GFP reporter; constitutive promoter, not competition T7 sfGFP",
+    "license_status": "no root license found at pinned revision; download locally, raw tables not redistributed",
+    "limitations": [
+      "processed formulation means, not individual well observations",
+      "yield_std retained but not treated as replicate count",
+      "plate identifiers retained; no independent lysate batch labels supplied",
+      "source feature names and numeric scales retained; no assumed chemical equivalence to competition stocks",
+      "not a reproduction of the authors original learning policy or predictive model"
+    ]
+  },
+  "normalized_sha256": "5194b6e1b11e7dd674a297a768e3efa9c60779c7f99c74829be39c8fb5ccd726",
+  "feature_names": [
+    "nad",
+    "folinic_acid",
+    "coa",
+    "nucleo_mix",
+    "spermidin",
+    "pga",
+    "aa",
+    "trna",
+    "mg_gluta",
+    "camp",
+    "K_gluta"
+  ],
+  "split": {
+    "train": {
+      "rows": 711,
+      "unique_recipes": 701,
+      "plates": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "purged_rows": 0
+    },
+    "validation": {
+      "rows": 102,
+      "unique_recipes": 102,
+      "plates": [
+        8
+      ],
+      "purged_rows": 0
+    },
+    "calibration": {
+      "rows": 102,
+      "unique_recipes": 102,
+      "plates": [
+        9
+      ],
+      "purged_rows": 0
+    },
+    "test": {
+      "rows": 102,
+      "unique_recipes": 102,
+      "plates": [
+        10
+      ],
+      "purged_rows": 0
+    }
+  },
+  "recipe_overlap_across_splits": 0,
+  "selection": {
+    "model": "quadratic_ridge",
+    "alpha": 10.0,
+    "validation_mae": 0.15578364045779566
+  },
+  "validation_candidates": [
+    {
+      "model": "linear_ridge",
+      "alpha": 0.1,
+      "validation_mae": 0.3302599508727828
+    },
+    {
+      "model": "linear_ridge",
+      "alpha": 1.0,
+      "validation_mae": 0.33049241054010314
+    },
+    {
+      "model": "linear_ridge",
+      "alpha": 10.0,
+      "validation_mae": 0.332811090430629
+    },
+    {
+      "model": "linear_ridge",
+      "alpha": 100.0,
+      "validation_mae": 0.3534610390698493
+    },
+    {
+      "model": "quadratic_ridge",
+      "alpha": 0.1,
+      "validation_mae": 0.16369038685111675
+    },
+    {
+      "model": "quadratic_ridge",
+      "alpha": 1.0,
+      "validation_mae": 0.16270839893268926
+    },
+    {
+      "model": "quadratic_ridge",
+      "alpha": 10.0,
+      "validation_mae": 0.15578364045779566
+    },
+    {
+      "model": "quadratic_ridge",
+      "alpha": 100.0,
+      "validation_mae": 0.16173379247401865
+    }
+  ],
+  "metrics": {
+    "mae": 0.5813509135326482,
+    "rmse": 0.710108837818547,
+    "mean_baseline_mae": 1.0111499312640184,
+    "spearman": -0.31459816455660417,
+    "interval_coverage": 0.6176470588235294,
+    "mean_interval_width": 1.5597331576558517,
+    "interval_radius": 0.7798665788279258
+  },
+  "interval_target": 0.9,
+  "limitations": [
+    "processed formulation means, not individual well observations",
+    "yield_std retained but not treated as replicate count",
+    "plate identifiers retained; no independent lysate batch labels supplied",
+    "source feature names and numeric scales retained; no assumed chemical equivalence to competition stocks",
+    "not a reproduction of the authors original learning policy or predictive model",
+    "chronological plate holdout is distribution-shifted, not an independent lysate-batch test",
+    "split-conformal coverage assumes exchangeability; later-plate coverage is empirical only",
+    "intervals concern processed formulation means, not individual wells",
+    "negative regression outputs clipped to zero; no assay-to-mass conversion",
+    "no cost objective, mechanistic comparison, or Ginkgo performance claim"
+  ]
+}

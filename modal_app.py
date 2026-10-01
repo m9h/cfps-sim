@@ -19,14 +19,21 @@ image = (
     .add_local_dir(ROOT / "constructs", "/opt/cfps-sim/constructs", copy=True)
     .add_local_dir(ROOT / "examples", "/opt/cfps-sim/examples", copy=True)
     .add_local_dir(ROOT / "docs", "/opt/cfps-sim/docs", copy=True)
+    .add_local_dir(ROOT / "data/registry", "/opt/cfps-sim/data/registry", copy=True)
+    .add_local_dir(ROOT / "benchmarks", "/opt/cfps-sim/benchmarks", copy=True)
     .add_local_dir(ROOT / "scripts", "/opt/cfps-sim/scripts", copy=True)
     .run_commands("cd /opt/cfps-sim && uv sync --frozen --extra bo --extra docs")
     .env({"PATH": "/opt/cfps-sim/.venv/bin:/usr/local/bin:/usr/bin:/bin"})
 )
 
 
+# Public measurements are downloaded locally, rather than redistributed in Git.
+if (ROOT / "data/raw/borkowski2020").is_dir():
+    image = image.add_local_dir(ROOT / "data/raw/borkowski2020", "/opt/cfps-sim/data/raw/borkowski2020", copy=True)
+
+
 @app.function(image=image, gpu="A100", memory=8192, timeout=3600)
-def run_demo(construct=None, verify: bool = False, build_docs: bool = False):
+def run_demo(construct=None, verify: bool = False, build_docs: bool = False, benchmark: bool = False):
     import sys
     # Modal's runtime interpreter loads packages from the locked project environment.
     sys.path.insert(0, "/opt/cfps-sim/.venv/lib/python3.11/site-packages")
@@ -34,6 +41,12 @@ def run_demo(construct=None, verify: bool = False, build_docs: bool = False):
     from cfps_sim.model import simulate
     from cfps_sim.bo import demo, cost_demo
     from cfps_sim.construct import demands
+    if benchmark:
+        from cfps_sim.benchmark import run_benchmark
+        report = run_benchmark("/opt/cfps-sim/data/raw/borkowski2020/observations.csv",
+                               "/opt/cfps-sim/data/raw/borkowski2020/provenance.json",
+                               "/opt/cfps-sim/results/benchmark")
+        return {"benchmark": report}
     if verify or build_docs:
         from cfps_sim.backend import cuda_device
         cuda_device()
@@ -65,7 +78,7 @@ def run_demo(construct=None, verify: bool = False, build_docs: bool = False):
 
 @app.local_entrypoint()
 def main(construct: str = "", verify: bool = False, build_docs: bool = False,
-         background: bool = False, retrieve: str = ""):
+         background: bool = False, retrieve: str = "", benchmark: bool = False):
     import json
     from cfps_sim.construct import read_construct
     artifact = read_construct(construct) if construct else None
@@ -78,12 +91,16 @@ def main(construct: str = "", verify: bool = False, build_docs: bool = False,
             print("GPU job is still running")
             return
     elif background:
-        call = run_demo.spawn(artifact, verify=verify, build_docs=build_docs)
+        call = run_demo.spawn(artifact, verify=verify, build_docs=build_docs, benchmark=benchmark)
         (out / "function_call.json").write_text(json.dumps({"id": call.object_id})+"\n")
         print(f"Started GPU job {call.object_id}; retrieve with --retrieve {call.object_id}")
         return
     else:
-        result = run_demo.remote(artifact, verify=verify, build_docs=build_docs)
+        result = run_demo.remote(artifact, verify=verify, build_docs=build_docs, benchmark=benchmark)
+    if "benchmark" in result:
+        (out / "benchmark.json").write_text(json.dumps(result["benchmark"], indent=2)+"\n")
+        print(json.dumps({"split": result["benchmark"]["split"], "metrics": result["benchmark"]["metrics"]}, indent=2))
+        return
     if "verification" in result:
         pdf = result.pop("article_pdf")
         if pdf is not None:

@@ -49,8 +49,8 @@ Resolve amino-acid mixtures, counterions, polymer distributions, activity units,
 and the price ledger. Keep uncertain endogenous pools separate. Each candidate
 should either initialize a model with documented assumptions or fail with an
 explicit unsupported ingredient; it must not silently initialize every recipe
-with the same pools. The cost ledger is now implemented, but the chemical
-initialization mapping remains open.
+with the same pools. The cost ledger and an explicit-background initial-pool mapper are implemented;
+complete chemical-response mapping and in-domain calibration remain open.
 
 \item \textbf{Add magnesium/speciation and buffering.} Represent total versus
 free magnesium, binding to nucleotide/phosphate species, ionic contributions,

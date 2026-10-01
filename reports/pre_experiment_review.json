@@ -1,0 +1,257 @@
+{
+  "status": "pre_experiment_review_not_submission",
+  "registry_stocks": 66,
+  "price_conflicts": [
+    {
+      "stock": "lysate",
+      "cached_usd_per_ml": 20,
+      "draft_usd_per_ml": 4.0
+    },
+    {
+      "stock": "template_sfgfp",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 1.933
+    },
+    {
+      "stock": "template_petase",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.078
+    },
+    {
+      "stock": "template_reteplase",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.284
+    },
+    {
+      "stock": "base_buffer",
+      "cached_usd_per_ml": 0.22,
+      "draft_usd_per_ml": null
+    },
+    {
+      "stock": "nuclease_free_water",
+      "cached_usd_per_ml": 0.0703,
+      "draft_usd_per_ml": 0.0
+    },
+    {
+      "stock": "potassium_glutamate",
+      "cached_usd_per_ml": 0.071,
+      "draft_usd_per_ml": 0.07
+    },
+    {
+      "stock": "magnesium_glutamate",
+      "cached_usd_per_ml": 0.0627,
+      "draft_usd_per_ml": 0.065
+    },
+    {
+      "stock": "atp",
+      "cached_usd_per_ml": 1.5388,
+      "draft_usd_per_ml": 1.539
+    },
+    {
+      "stock": "ctp",
+      "cached_usd_per_ml": 27.9374,
+      "draft_usd_per_ml": 27.937
+    },
+    {
+      "stock": "gtp",
+      "cached_usd_per_ml": 39.3431,
+      "draft_usd_per_ml": 39.343
+    },
+    {
+      "stock": "utp",
+      "cached_usd_per_ml": 37.8462,
+      "draft_usd_per_ml": 37.846
+    }
+  ],
+  "illustrative_recipe_audit": {
+    "target": "sfgfp",
+    "volumes_nl": {
+      "lysate": 5000,
+      "base_buffer": 2000,
+      "template_sfgfp": 2000,
+      "magnesium_glutamate": 250,
+      "potassium_glutamate": 2000,
+      "atp": 300,
+      "nuclease_free_water": 8450
+    },
+    "known_final_mM": {
+      "magnesium": 6.25,
+      "glutamate": 100.0,
+      "potassium": 87.5,
+      "atp": 1.5
+    },
+    "base_composition_supplied": false,
+    "unresolved_stocks": [
+      "base_buffer",
+      "lysate",
+      "nuclease_free_water",
+      "template_sfgfp"
+    ],
+    "absent_stocks": [],
+    "unsupported_model_effects": [
+      "magnesium_glutamate",
+      "potassium_glutamate"
+    ],
+    "price_conflicts": [
+      {
+        "stock": "lysate",
+        "cached_usd_per_ml": 20,
+        "draft_usd_per_ml": 4.0
+      },
+      {
+        "stock": "template_sfgfp",
+        "cached_usd_per_ml": 6.418,
+        "draft_usd_per_ml": 1.933
+      },
+      {
+        "stock": "base_buffer",
+        "cached_usd_per_ml": 0.22,
+        "draft_usd_per_ml": null
+      },
+      {
+        "stock": "nuclease_free_water",
+        "cached_usd_per_ml": 0.0703,
+        "draft_usd_per_ml": 0.0
+      },
+      {
+        "stock": "potassium_glutamate",
+        "cached_usd_per_ml": 0.071,
+        "draft_usd_per_ml": 0.07
+      },
+      {
+        "stock": "magnesium_glutamate",
+        "cached_usd_per_ml": 0.0627,
+        "draft_usd_per_ml": 0.065
+      },
+      {
+        "stock": "atp",
+        "cached_usd_per_ml": 1.5388,
+        "draft_usd_per_ml": 1.539
+      }
+    ],
+    "cost": {
+      "currency": "USD",
+      "cost_scope": "dispensed_reagents_only",
+      "complete": false,
+      "reaction_volume_l": 2e-05,
+      "known_subtotal_usd": 0.02448395,
+      "total_cost_usd": null,
+      "missing_prices": [
+        "base_buffer"
+      ],
+      "line_items": [
+        {
+          "reagent": "lysate",
+          "volume_nl": 5000,
+          "usd_per_ml_stock": 4.0,
+          "cost_usd": 0.02,
+          "fixed_input": true
+        },
+        {
+          "reagent": "base_buffer",
+          "volume_nl": 2000,
+          "usd_per_ml_stock": null,
+          "cost_usd": null,
+          "fixed_input": true
+        },
+        {
+          "reagent": "template_sfgfp",
+          "volume_nl": 2000,
+          "usd_per_ml_stock": 1.933,
+          "cost_usd": 0.003866,
+          "fixed_input": true
+        },
+        {
+          "reagent": "magnesium_glutamate",
+          "volume_nl": 250,
+          "usd_per_ml_stock": 0.065,
+          "cost_usd": 1.625e-05,
+          "fixed_input": false
+        },
+        {
+          "reagent": "potassium_glutamate",
+          "volume_nl": 2000,
+          "usd_per_ml_stock": 0.07,
+          "cost_usd": 0.00014,
+          "fixed_input": false
+        },
+        {
+          "reagent": "atp",
+          "volume_nl": 300,
+          "usd_per_ml_stock": 1.539,
+          "cost_usd": 0.0004617,
+          "fixed_input": false
+        },
+        {
+          "reagent": "nuclease_free_water",
+          "volume_nl": 8450,
+          "usd_per_ml_stock": 0.0,
+          "cost_usd": 0.0,
+          "fixed_input": false
+        }
+      ],
+      "price_provenance": {
+        "source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+        "snapshot_date": "2026-09-29",
+        "status": "partial_cached_draft_not_confirmed_current_scoring_ledger",
+        "note": "Stock prices transcribed from the draft. Base-buffer price is absent here and must be verified; do not infer a zero price. Confirm all prices and scoring scope before submission."
+      },
+      "note": "Dispensed reagent costs only. No labor, plates, assays, purification, compute, or scale-up costs are included. Missing prices are never treated as zero."
+    },
+    "submission_ready": false,
+    "blockers": [
+      "inventory_and_execution_constraints_unconfirmed",
+      "base_buffer_composition_unknown",
+      "conflicting_price_sources",
+      "complete_price_ledger_missing",
+      "operative_price_ledger_unconfirmed"
+    ],
+    "note": "Analytical totals, not free-ion concentrations. Unknown lysate pools are excluded. Formula stoichiometry does not model binding, pH, or activity."
+  },
+  "prioritized_hypotheses": [
+    {
+      "priority": 1,
+      "module": "salt_buffer_nucleotide_balance",
+      "question": "Does Mg/NTP balance or buffering explain failed formulations?",
+      "missing_evidence": [
+        "current base composition",
+        "available pH measurements",
+        "Mg/NTP response data"
+      ],
+      "model_gap": "analytical totals available; free Mg and pH effects absent"
+    },
+    {
+      "priority": 2,
+      "module": "energy_regeneration",
+      "question": "Is a formulation limited by energy substrate chemistry or effective enzyme capacity?",
+      "missing_evidence": [
+        "ATP/ADP or other energy readouts if available",
+        "stock activities",
+        "incubation geometry"
+      ],
+      "model_gap": "lumped Fuel does not identify actual substrate chemistry"
+    },
+    {
+      "priority": 3,
+      "module": "folding_redox_activity",
+      "question": "Do PETase/reteplase readouts change through expression or active fraction?",
+      "missing_evidence": [
+        "target-specific activity calibration",
+        "orthogonal abundance measurement if available"
+      ],
+      "model_gap": "no validated target activity model"
+    }
+  ],
+  "shortlist_acceptance_gates": [
+    "inventory, concentrations, execution constraints and price ledger reconciled",
+    "all proposed stocks and mixed-stock constituents accounted for",
+    "target construct version and assay conversion documented",
+    "in-domain reference observations available, or panel explicitly designated calibration",
+    "prediction performance compared with empirical baseline on complete held-out recipes",
+    "candidate ranking stress-tested against fitted uncertainty and structural model alternatives",
+    "plate layout includes references, controls, replication and batch metadata",
+    "measurement requests and interpretation criteria specified before execution"
+  ],
+  "candidate_rankings": null,
+  "reason_no_rankings": "No in-domain calibration or complete reconciled ledger; literature prediction is not a Ginkgo recipe score."
+}

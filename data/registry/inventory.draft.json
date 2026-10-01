@@ -1,0 +1,1116 @@
+{
+  "schema_version": 1,
+  "status": "draft_requires_reconciliation",
+  "source": {
+    "url": "https://coopetition.htgaa.org/cfps",
+    "artifact": "competition.json",
+    "sha256": "715be309d3a2eabddbb96cdb94dd10221530dfa416531a374b98117adcf1c0d1",
+    "status": "local_cache_capture_date_unknown"
+  },
+  "constraints": {
+    "reaction_nl": 20000,
+    "transfer_increment_nl": 25,
+    "lysate_nl": 5000,
+    "base_buffer_nl": 2000,
+    "template_nl": 2000,
+    "status": "existing_project_assumptions_require_current_confirmation"
+  },
+  "base_buffer_components": null,
+  "unknowns": [
+    "current_inventory",
+    "operative_price_ledger",
+    "base_buffer_composition",
+    "lysate_background_pools",
+    "mixed_stock_composition",
+    "target_assay_conversion"
+  ],
+  "price_conflicts": [
+    {
+      "stock": "lysate",
+      "cached_usd_per_ml": 20,
+      "draft_usd_per_ml": 4.0
+    },
+    {
+      "stock": "template_sfgfp",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 1.933
+    },
+    {
+      "stock": "template_petase",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.078
+    },
+    {
+      "stock": "template_reteplase",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.284
+    },
+    {
+      "stock": "base_buffer",
+      "cached_usd_per_ml": 0.22,
+      "draft_usd_per_ml": null
+    },
+    {
+      "stock": "nuclease_free_water",
+      "cached_usd_per_ml": 0.0703,
+      "draft_usd_per_ml": 0.0
+    },
+    {
+      "stock": "potassium_glutamate",
+      "cached_usd_per_ml": 0.071,
+      "draft_usd_per_ml": 0.07
+    },
+    {
+      "stock": "magnesium_glutamate",
+      "cached_usd_per_ml": 0.0627,
+      "draft_usd_per_ml": 0.065
+    },
+    {
+      "stock": "atp",
+      "cached_usd_per_ml": 1.5388,
+      "draft_usd_per_ml": 1.539
+    },
+    {
+      "stock": "ctp",
+      "cached_usd_per_ml": 27.9374,
+      "draft_usd_per_ml": 27.937
+    },
+    {
+      "stock": "gtp",
+      "cached_usd_per_ml": 39.3431,
+      "draft_usd_per_ml": 39.343
+    },
+    {
+      "stock": "utp",
+      "cached_usd_per_ml": 37.8462,
+      "draft_usd_per_ml": 37.846
+    }
+  ],
+  "stocks": {
+    "lysate": {
+      "name": "Cell Lysate",
+      "source_id": "cell_lysate",
+      "stock_label": "1X",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 20,
+      "draft_usd_per_ml": 4.0
+    },
+    "template_sfgfp": {
+      "name": "DNA Template",
+      "source_id": "dna_template",
+      "stock_label": "50nM",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 1.933
+    },
+    "template_petase": {
+      "name": "DNA Template",
+      "source_id": "dna_template",
+      "stock_label": "50nM",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.078
+    },
+    "template_reteplase": {
+      "name": "DNA Template",
+      "source_id": "dna_template",
+      "stock_label": "50nM",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 6.418,
+      "draft_usd_per_ml": 2.284
+    },
+    "base_buffer": {
+      "name": "Base Buffer",
+      "source_id": "base_buffer",
+      "stock_label": "10X",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.22,
+      "draft_usd_per_ml": null
+    },
+    "nuclease_free_water": {
+      "name": "Nuclease-Free Water",
+      "source_id": "nuclease_free_water",
+      "stock_label": "N/A",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0703,
+      "draft_usd_per_ml": 0.0
+    },
+    "potassium_glutamate": {
+      "name": "Potassium Glutamate",
+      "source_id": "potassium_glutamate",
+      "stock_label": "0.875M",
+      "stock_mM": 875.0,
+      "components_per_formula_unit": {
+        "potassium": 1,
+        "glutamate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.071,
+      "draft_usd_per_ml": 0.07
+    },
+    "magnesium_glutamate": {
+      "name": "Magnesium Glutamate",
+      "source_id": "magnesium_glutamate",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "magnesium": 1,
+        "glutamate": 2
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0627,
+      "draft_usd_per_ml": 0.065
+    },
+    "hepes_koh": {
+      "name": "HEPES-KOH pH 7.5",
+      "source_id": "hepes_koh",
+      "stock_label": "1M",
+      "stock_mM": 1000.0,
+      "components_per_formula_unit": {
+        "hepes_koh": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.254,
+      "draft_usd_per_ml": null
+    },
+    "ammonium_glutamate": {
+      "name": "Ammonium Glutamate",
+      "source_id": "ammonium_glutamate",
+      "stock_label": "1M",
+      "stock_mM": 1000.0,
+      "components_per_formula_unit": {
+        "ammonium": 1,
+        "glutamate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.72,
+      "draft_usd_per_ml": null
+    },
+    "bis_tris_ph_6_5": {
+      "name": "Bis-Tris pH 6.5",
+      "source_id": "bis_tris_ph_6_5",
+      "stock_label": "0.2M",
+      "stock_mM": 200.0,
+      "components_per_formula_unit": {
+        "bis_tris_ph_6_5": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0,
+      "draft_usd_per_ml": null
+    },
+    "atp": {
+      "name": "ATP",
+      "source_id": "atp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "atp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "ATP",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 1.5388,
+      "draft_usd_per_ml": 1.539
+    },
+    "ctp": {
+      "name": "CTP",
+      "source_id": "ctp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "ctp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "CTP",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 27.9374,
+      "draft_usd_per_ml": 27.937
+    },
+    "gtp": {
+      "name": "GTP",
+      "source_id": "gtp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "gtp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "GTP",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 39.3431,
+      "draft_usd_per_ml": 39.343
+    },
+    "utp": {
+      "name": "UTP",
+      "source_id": "utp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "utp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "UTP",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 37.8462,
+      "draft_usd_per_ml": 37.846
+    },
+    "aa_mix_17": {
+      "name": "17 Amino Acid Mix",
+      "source_id": "aa_mix_17",
+      "stock_label": "0.05M",
+      "stock_mM": 50.0,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0938,
+      "draft_usd_per_ml": null
+    },
+    "tyrosine": {
+      "name": "Tyrosine pH 12",
+      "source_id": "tyrosine",
+      "stock_label": "0.05M",
+      "stock_mM": 50.0,
+      "components_per_formula_unit": {
+        "tyrosine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "aa_Y",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0075,
+      "draft_usd_per_ml": null
+    },
+    "cysteine": {
+      "name": "Cysteine",
+      "source_id": "cysteine",
+      "stock_label": "0.2M",
+      "stock_mM": 200.0,
+      "components_per_formula_unit": {
+        "cysteine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": "aa_C",
+      "model_coverage": "initial_pool_only",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.023,
+      "draft_usd_per_ml": null
+    },
+    "sodium_pyruvate": {
+      "name": "Sodium Pyruvate",
+      "source_id": "sodium_pyruvate",
+      "stock_label": "100g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0936,
+      "draft_usd_per_ml": null
+    },
+    "maltose": {
+      "name": "Maltose",
+      "source_id": "maltose",
+      "stock_label": "50g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.01995,
+      "draft_usd_per_ml": null
+    },
+    "ribose": {
+      "name": "Ribose",
+      "source_id": "ribose",
+      "stock_label": "100g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.183,
+      "draft_usd_per_ml": null
+    },
+    "maltodextrin_17": {
+      "name": "Maltodextrin 17",
+      "source_id": "maltodextrin_17",
+      "stock_label": "300g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.1224,
+      "draft_usd_per_ml": null
+    },
+    "folinic_acid": {
+      "name": "Folinic Acid",
+      "source_id": "folinic_acid",
+      "stock_label": "10g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 4.78,
+      "draft_usd_per_ml": null
+    },
+    "nad": {
+      "name": "NAD",
+      "source_id": "nad",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "nad": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 7.0992,
+      "draft_usd_per_ml": null
+    },
+    "camp": {
+      "name": "cAMP",
+      "source_id": "camp",
+      "stock_label": "0.2M",
+      "stock_mM": 200.0,
+      "components_per_formula_unit": {
+        "camp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 7.4797,
+      "draft_usd_per_ml": null
+    },
+    "spermidine": {
+      "name": "Spermidine",
+      "source_id": "spermidine",
+      "stock_label": "0.25M",
+      "stock_mM": 250.0,
+      "components_per_formula_unit": {
+        "spermidine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 1.1835,
+      "draft_usd_per_ml": null
+    },
+    "oxidized_glutathione": {
+      "name": "Oxidized Glutathione (GSSG)",
+      "source_id": "oxidized_glutathione",
+      "stock_label": "0.17M",
+      "stock_mM": 170.0,
+      "components_per_formula_unit": {
+        "oxidized_glutathione": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.733196,
+      "draft_usd_per_ml": null
+    },
+    "reduced_glutathione": {
+      "name": "Reduced Glutathione (GSH)",
+      "source_id": "reduced_glutathione",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "reduced_glutathione": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.165338,
+      "draft_usd_per_ml": null
+    },
+    "dithiothreitol": {
+      "name": "Dithiothreitol (DTT)",
+      "source_id": "dithiothreitol",
+      "stock_label": "1M",
+      "stock_mM": 1000.0,
+      "components_per_formula_unit": {
+        "dithiothreitol": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0,
+      "draft_usd_per_ml": null
+    },
+    "putrescine_dihydrochloride": {
+      "name": "Putrescine Dihydrochloride",
+      "source_id": "putrescine_dihydrochloride",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "putrescine_dihydrochloride": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.4669,
+      "draft_usd_per_ml": null
+    },
+    "coa": {
+      "name": "Coenzyme A",
+      "source_id": "coa",
+      "stock_label": "0.05M",
+      "stock_mM": 50.0,
+      "components_per_formula_unit": {
+        "coa": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 157.3437,
+      "draft_usd_per_ml": null
+    },
+    "brij_35": {
+      "name": "Brij-35",
+      "source_id": "brij_35",
+      "stock_label": "10% v/v",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0266,
+      "draft_usd_per_ml": null
+    },
+    "peg_8000": {
+      "name": "PEG-8000",
+      "source_id": "peg_8000",
+      "stock_label": "100g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0,
+      "draft_usd_per_ml": null
+    },
+    "dmso": {
+      "name": "Dimethyl Sulfoxide (DMSO)",
+      "source_id": "dmso",
+      "stock_label": "60% v/v",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.2028,
+      "draft_usd_per_ml": null
+    },
+    "pyruvate_oxidase": {
+      "name": "Pyruvate oxidase (1.5U/mg)",
+      "source_id": "pyruvate_oxidase",
+      "stock_label": "10g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 48.15,
+      "draft_usd_per_ml": null
+    },
+    "catalase": {
+      "name": "Catalase",
+      "source_id": "catalase",
+      "stock_label": "50000U/ml",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 5,
+      "draft_usd_per_ml": null
+    },
+    "sodium_hexametaphosphate": {
+      "name": "Sodium Hexametaphosphate",
+      "source_id": "sodium_hexametaphosphate",
+      "stock_label": "0.15M",
+      "stock_mM": 150.0,
+      "components_per_formula_unit": {
+        "sodium_hexametaphosphate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0044,
+      "draft_usd_per_ml": null
+    },
+    "dilithium_acetyl_phosphate": {
+      "name": "Dilithium Acetyl Phosphate",
+      "source_id": "dilithium_acetyl_phosphate",
+      "stock_label": "0.05M",
+      "stock_mM": 50.0,
+      "components_per_formula_unit": {
+        "dilithium_acetyl_phosphate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.273,
+      "draft_usd_per_ml": null
+    },
+    "amp": {
+      "name": "AMP",
+      "source_id": "amp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "amp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.6994,
+      "draft_usd_per_ml": null
+    },
+    "cmp": {
+      "name": "CMP",
+      "source_id": "cmp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "cmp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 1.2704,
+      "draft_usd_per_ml": null
+    },
+    "gmp": {
+      "name": "GMP",
+      "source_id": "gmp",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "gmp": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.5334,
+      "draft_usd_per_ml": null
+    },
+    "ump": {
+      "name": "UMP",
+      "source_id": "ump",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "ump": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.8394,
+      "draft_usd_per_ml": null
+    },
+    "adenosine": {
+      "name": "Adenosine",
+      "source_id": "adenosine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "adenosine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0202,
+      "draft_usd_per_ml": null
+    },
+    "guanosine": {
+      "name": "Guanosine",
+      "source_id": "guanosine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "guanosine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0303,
+      "draft_usd_per_ml": null
+    },
+    "cytidine": {
+      "name": "Cytidine",
+      "source_id": "cytidine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "cytidine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0738,
+      "draft_usd_per_ml": null
+    },
+    "uridine": {
+      "name": "Uridine",
+      "source_id": "uridine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "uridine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0268,
+      "draft_usd_per_ml": null
+    },
+    "thymidine": {
+      "name": "Thymidine",
+      "source_id": "thymidine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "thymidine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.108,
+      "draft_usd_per_ml": null
+    },
+    "adenine": {
+      "name": "Adenine",
+      "source_id": "adenine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "adenine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0095,
+      "draft_usd_per_ml": null
+    },
+    "guanine": {
+      "name": "Guanine",
+      "source_id": "guanine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "guanine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0034,
+      "draft_usd_per_ml": null
+    },
+    "cytosine": {
+      "name": "Cytosine",
+      "source_id": "cytosine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "cytosine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0339,
+      "draft_usd_per_ml": null
+    },
+    "uracil": {
+      "name": "Uracil",
+      "source_id": "uracil",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "uracil": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.00325,
+      "draft_usd_per_ml": null
+    },
+    "thymine": {
+      "name": "Thymine",
+      "source_id": "thymine",
+      "stock_label": "0.025M",
+      "stock_mM": 25.0,
+      "components_per_formula_unit": {
+        "thymine": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0069,
+      "draft_usd_per_ml": null
+    },
+    "dsbc_ecoli": {
+      "name": "DsbC (E. coli, 25.5 kDa)",
+      "source_id": "dsbc_ecoli",
+      "stock_label": "0.0001M",
+      "stock_mM": 0.1,
+      "components_per_formula_unit": {
+        "dsbc_ecoli": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 5631.72,
+      "draft_usd_per_ml": null
+    },
+    "glucose": {
+      "name": "Glucose",
+      "source_id": "glucose",
+      "stock_label": "200g/L",
+      "stock_mM": null,
+      "components_per_formula_unit": {},
+      "components_status": "unresolved",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.002784,
+      "draft_usd_per_ml": null
+    },
+    "potassium_phosphate_dibasic": {
+      "name": "Potassium phosphate dibasic",
+      "source_id": "potassium_phosphate_dibasic",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium": 2,
+        "phosphate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0144,
+      "draft_usd_per_ml": null
+    },
+    "potassium_phosphate_monobasic": {
+      "name": "Potassium phosphate monobasic",
+      "source_id": "potassium_phosphate_monobasic",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium": 1,
+        "phosphate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0041,
+      "draft_usd_per_ml": null
+    },
+    "potassium_phosphate_ratio_dibasic_monobasic": {
+      "name": "Potassium phosphate 1.6:1 dibasic:monobasic (molar ratio)",
+      "source_id": "potassium_phosphate_ratio_dibasic_monobasic",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium_phosphate_ratio_dibasic_monobasic": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0104,
+      "draft_usd_per_ml": null
+    },
+    "potassium_phosphate_ratio_monobasic_dibasic": {
+      "name": "Potassium phosphate 1.6:1 monobasic:dibasic (molar ratio)",
+      "source_id": "potassium_phosphate_ratio_monobasic_dibasic",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium_phosphate_ratio_monobasic_dibasic": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0081,
+      "draft_usd_per_ml": null
+    },
+    "phosphoenolpyruvic_acid_cyclohexylammonium_salt": {
+      "name": "Phosphoenolpyruvic acid cyclohexylammonium salt",
+      "source_id": "phosphoenolpyruvic_acid_cyclohexylammonium_salt",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "phosphoenolpyruvic_acid_cyclohexylammonium_salt": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 2.2,
+      "draft_usd_per_ml": null
+    },
+    "nicotinamide": {
+      "name": "Nicotinamide",
+      "source_id": "nicotinamide",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "nicotinamide": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.001478,
+      "draft_usd_per_ml": null
+    },
+    "pep_mono": {
+      "name": "PEP mono (0.1M stock)",
+      "source_id": "pep_mono",
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
+      "components_per_formula_unit": {
+        "pep_mono": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 2.2019,
+      "draft_usd_per_ml": null
+    },
+    "potassium_oxalate": {
+      "name": "Potassium Oxalate",
+      "source_id": "potassium_oxalate",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium_oxalate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.031688,
+      "draft_usd_per_ml": null
+    },
+    "three_pga": {
+      "name": "3-Phosphoglycerate (3-PGA)",
+      "source_id": "three_pga",
+      "stock_label": "0.075M",
+      "stock_mM": 75.0,
+      "components_per_formula_unit": {
+        "three_pga": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0,
+      "draft_usd_per_ml": null
+    },
+    "oxaloacetic_acid": {
+      "name": "Oxaloacetic acid",
+      "source_id": "oxaloacetic_acid",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "oxaloacetic_acid": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.9245,
+      "draft_usd_per_ml": null
+    },
+    "succinic_acid": {
+      "name": "Succinic acid",
+      "source_id": "succinic_acid",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "succinic_acid": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0043,
+      "draft_usd_per_ml": null
+    },
+    "potassium_formate": {
+      "name": "Potassium formate",
+      "source_id": "potassium_formate",
+      "stock_label": "0.5M",
+      "stock_mM": 500.0,
+      "components_per_formula_unit": {
+        "potassium_formate": 1
+      },
+      "components_status": "formula_accounting",
+      "model_species": null,
+      "model_coverage": "unsupported",
+      "cached_in_stock": true,
+      "availability_status": "unconfirmed_cached_snapshot",
+      "cached_usd_per_ml": 0.0042,
+      "draft_usd_per_ml": null
+    }
+  }
+}

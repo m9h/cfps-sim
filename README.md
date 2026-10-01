@@ -7,7 +7,7 @@ BoTorch experiment-selection demonstration. Numerical execution requires a CUDA 
 **Status:** runnable research scaffold. The kinetic constants are illustrative,
 the model is uncalibrated, and the BoTorch example uses synthetic observations.
 It does not predict competition winners. Recipe validation and simulation are
-currently separate commands; recipe-to-model mapping is a planned milestone.
+separate workflows. Initial-pool mapping now requires explicit base chemistry and lysate backgrounds; a calibrated recipe-response model remains future work.
 
 ## Install with uv
 
@@ -35,6 +35,50 @@ uv run cfps-sim simulate --output results/demo
 uv run --extra bo cfps-sim bo-cost-demo
 uv run pytest
 ```
+
+## Pre-experiment evidence and readiness
+
+The source-aware registry in `data/registry/inventory.draft.json` normalizes 66
+cached stock entries and preserves 12 price conflicts with the draft ledger.
+Neither source is designated the operative inventory. Mass/activity stocks,
+mixed-stock constituents, base chemistry, availability and assay conversions
+remain unresolved where source evidence is insufficient. Salt accounting reports
+analytical totals, not free ions or pH. No substrate is silently converted into
+the model's lumped Fuel.
+
+```sh
+uv run cfps-sim preflight examples/recipe.json --prices examples/prices.draft.json
+uv run python scripts/prepare_review.py
+uv run python scripts/fetch_benchmark.py
+uv run cfps-sim benchmark                         # requires CUDA
+uv run --extra cloud modal run modal_app.py --benchmark
+```
+
+`preflight` intentionally exits 2 while readiness gates are blocked.
+`model_initial_conditions` requires explicit backgrounds for all supported NTP
+and amino-acid pools, explicit other initial states, and resolved dispensed
+chemical stocks. It returns missing-mechanism warnings with the mapping; this
+is not a calibrated recipe response. `reports/pre_experiment_review.json`
+contains prioritized diagnostic hypotheses and shortlist acceptance criteria,
+with candidate rankings withheld pending in-domain evidence and reconciled costs.
+
+The measured-data benchmark downloads ten pinned Borkowski author tables
+(1,017 formulation means) into ignored `data/raw/borkowski2020`, verifies each
+Git blob hash, and records SHA-256 provenance. Raw tables are not redistributed.
+The benchmark uses source feature scales and relative yield, without an assumed
+conversion to mass or competition reagents. Plates 1–7 train the model; plate 8
+selects linear/quadratic ridge and regularization; plate 9 calibrates intervals;
+plate 10 tests predictions. Shared recipes are purged from earlier splits, and
+all preprocessing is fitted on training data. Final fitting uses training and
+validation plates only.
+
+The A100 result in `reports/borkowski2020.gpu.json` has MAE 0.581 versus 1.011
+for a training-mean baseline, but Spearman correlation −0.315 and only 61.8%
+coverage for nominal 90% intervals. This warns against using this baseline for
+recipe ranking. Later active-learning plates are distribution-shifted; interval
+coverage is an empirical check, not a guarantee. The benchmark neither reproduces
+the authors' original policy nor validates Ginkgo predictions or cost savings.
+Fetch the data before a remote benchmark or executable article build.
 
 ## Production economics
 
@@ -76,7 +120,7 @@ optimization, and GPU workflow. Its figure and numerical recipe summary are
 generated from the package with Pweave; Tectonic builds the PDF.
 The introduction also covers CFPS history, a curated modern reading guide,
 and Joongoo Lee's POSTECH i-POPFLEX work presented in the Build-a-Cell series.
-The expanded abstract reflects the implemented construct and compute workflows.
+The concise abstract summarizes the implemented scope and remaining validation gaps.
 The article also distinguishes measured CFPS formulation improvements from
 Illinois iBioFAB's enzyme-activity and metabolic-production results, and proposes
 assay calibration, module-swap experiments, and prospective comparisons of search

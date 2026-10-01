@@ -8,44 +8,17 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-Cell-free protein synthesis (CFPS) offers an experimentally accessible setting
-for studying how formulation, sequence, and biochemical resources determine
-protein production. CFPS-Sim is a reproducible computational scaffold for the
-Fall 2026 How To Biomanufacture (Almost) Anything CFPS coopetition, situated in
-the history of CFPS and the recent OpenAI--Ginkgo autonomous-laboratory study.
-The project combines dispensing, concentration and reagent-cost accounting, versioned DNA
-constructs, a reduced CUDA PyTorch resource model with SBML export, and
-a BoTorch demonstration of experiment selection. The three supplied plasmids
-are checked against their source protein sequences, with GenBank import and
-export supporting exchange with the Popcorn design toolkit. Construct-aware sfGFP simulation uses
-sequence-derived nucleotide demands and twenty individual amino-acid pools;
-transcript boundaries remain explicit assumptions. PETase and reteplase support
-sequence accounting but require separate folding and activity observation models.
-
-An executable challenge suite tests resource removal, individual amino-acid
-conservation, solver convergence, resource interactions, and uncertainty scenarios.
-The numerical backend now requires CUDA PyTorch for adaptive integration,
-parameter calibration, and Gaussian-process acquisition. Resource controls,
-amino-acid conservation, tolerance refinement, synthetic recovery, and withheld
-condition isolation are acceptance checks for this GPU implementation; earlier
-execution results do not validate the migrated backend. Kinetics remain
-illustrative, no empirical predictive validity is established, and no competition
-improvement has been demonstrated.
-
-Conceptual figures connect sequence-dependent resource demand to target-specific
-readouts and distinguish the implemented scaffold from the planned experimental
-learning loop. The article reviews measured biofoundry improvements and proposes
-a staged adaptation of Joongoo Lee's POSTECH OT-2-assisted i-POPFLEX diagnostics:
-cross feasible recipe modules, calibrate assays and identifiable effective
-parameters, test withheld recipes and batches, and compare selection policies
-under equal budgets using specific production cost as the primary outcome.
-An auditable stock-price ledger and a synthetic cost/yield BO demonstration
-target USD per gram or target-specific activity unit; missing prices block
-complete scoring. A separate reproduction track would evaluate purified
-component preparation using the published protocol. Missing chemistry, ingredient
-databases, a staged chemistry-coverage plan, T7 resource allocation, and a provenance-focused scientific-agent
-project define further development. Python dependencies are locked with uv;
-tables and vector figures are generated with Pweave and compiled with Tectonic.
+CFPS-Sim combines auditable formulation and reagent-cost accounting, versioned
+DNA constructs, and a reduced GPU model of cell-free protein synthesis.
+Sequence-derived resource demands support sfGFP simulations; PETase and
+reteplase require separate folding and activity models. A source-aware stock
+registry flags unresolved chemistry and conflicting prices, while a GPU
+benchmark evaluates prediction on measured literature formulations with
+complete-recipe and plate holdouts. Numerical challenges and synthetic
+calibration test implementation consistency, not biological accuracy.
+The project prepares an evidence-grounded experimental learning workflow;
+kinetics remain illustrative, and improved performance in the Ginkgo
+coopetition has not been demonstrated.
 \end{abstract}
 
 \section{Introduction: from autonomous laboratories to the CFPS coopetition}
@@ -132,7 +105,7 @@ work. It does not complete the experimental cycle shown in the figure.
 \includegraphics[width=\linewidth]{figures/intro-workflow.pdf}
 \caption{Proposed evidence-to-experiment cycle. The project implements provenance,
 recipe validation, reduced simulation, synthetic fitting, and a BoTorch
-cost/yield demonstration. Audited recipe-to-model mapping, experimental calibration, and
+cost/yield demonstration. Complete chemical-response mapping, in-domain experimental calibration, and
 prospective model-guided selection remain future work. The lower experimental
 stages require actual measurements; synthetic recovery cannot substitute for
 them. Recipe-module interventions adapt the diagnostic logic of i-POPFLEX.}
@@ -250,9 +223,7 @@ Borkowski et al. used acoustic liquid handling and active learning to explore
 eleven buffer variables, measuring 1,017 compositions. They reported up to a
 34-fold increase in relative sfGFP fluorescence yield compared with their initial
 buffer for a homemade lysate, and identified a twenty-composition panel for
-adapting predictions to other lysates\cite{borkowski}. The authors' affiliations
-include French institutions and Manchester's SYNBIOCHEM; this CFPS yield result
-should not be attributed to UIUC. It demonstrates experimentally measured scope
+adapting predictions to other lysates\cite{borkowski}. It demonstrates experimentally measured scope
 for formulation improvement, rather than a transferable fold-change target for
 an already optimized competition reference.
 
@@ -789,6 +760,74 @@ concentrations without a validated observation mapping. Conditions and all their
 replicates are assigned wholly to training or testing. This same-model recovery
 exercise establishes fitting behavior; experimental calibration remains open.
 
+\section{Pre-experiment inventory audit and measured-data benchmark}
+The source-aware registry normalizes 66 cached stock entries and records twelve
+price conflicts against the separate draft ledger. These are unresolved source
+disagreements, not corrected prices. The current inventory, stock availability,
+execution constraints, mixed-stock constituents, base-buffer composition, and
+operative pricing require reconciliation. Formula accounting includes known
+counterions, but analytical magnesium and phosphate totals do not establish free
+ion concentrations, buffering, or biochemical activity.
+
+The preflight command separates dispensing feasibility from submission readiness:
+\begin{Verbatim}[fontsize=\small]
+uv run cfps-sim preflight examples/recipe.json \
+  --prices examples/prices.draft.json
+uv run python scripts/prepare_review.py
+uv run python scripts/fetch_benchmark.py
+uv run cfps-sim benchmark
+\end{Verbatim}
+The first command intentionally exits with status 2 while gates are blocked.
+Initial-pool mapping requires explicit base chemistry and lysate backgrounds for
+all supported nucleotides and amino acids, plus explicit remaining states.
+Unresolved chemical stocks block mapping. Unsupported salt, buffering, energy,
+and folding effects remain warnings rather than silently acquiring fitted
+mechanisms. No real energy substrate is equated with the model's lumped Fuel.
+The review packet prioritizes salt/buffer/nucleotide balance, energy regeneration,
+and target folding/activity hypotheses, without assigning unsupported recipe ranks.
+
+For retrospective validation, we download ten author-processed experimental
+formulation tables from Borkowski et al.'s repository\cite{borkowski_data}, pinned
+to revision \texttt{52816965250802a9243183ee391da7c09f08f069}.
+Each download is checked against its Git blob hash; normalized observations and
+source files receive SHA-256 provenance. Raw tables remain a local download.
+The 1,017 rows describe formulation means with eleven source features, relative
+yield, reported yield standard deviation, and plate identifiers. We retain
+source scales without inferring equivalence to competition stocks or converting
+the response into mass. Individual well observations, replicate counts, and
+independent lysate batch identifiers are not supplied by these tables.
+
+CUDA PyTorch fits linear and quadratic ridge candidates. Plates 1--7 train the
+models, plate 8 selects feature order and regularization by mean absolute error,
+plate 9 calibrates absolute-residual intervals, and plate 10 tests predictions.
+Shared recipes belong to their latest split and are purged from earlier splits.
+Preprocessing uses fitting data only; the final selected model is refitted on
+training and validation plates, leaving calibration and test responses untouched.
+Intervals use the finite-sample split-conformal residual order statistic and a
+nominal 90\% target. Exchangeability is not established for sequential
+active-learning plates, so coverage is measured rather than guaranteed.
+
+<<measured_benchmark, echo=False>>=
+from cfps_sim.benchmark import run_benchmark
+measured = run_benchmark(root / "data/raw/borkowski2020/observations.csv",
+                         root / "data/raw/borkowski2020/provenance.json",
+                         root / "results/benchmark")
+print("Measured formulation rows:", sum(v["rows"] for v in measured["split"].values()))
+print("Selected model:", measured["selection"]["model"], "alpha:", measured["selection"]["alpha"])
+for metric in ["mae", "mean_baseline_mae", "spearman", "interval_coverage"]:
+    print(metric + ":", round(measured["metrics"][metric], 4))
+print("Cross-split shared recipes:", measured["recipe_overlap_across_splits"])
+@
+
+In the recorded A100 run, the selected model's held-out MAE was 0.581 versus
+1.011 for the fitting-set mean baseline. However, rank correlation was
+$-0.315$, and nominal 90\% intervals covered only 61.8\% of test formulations.
+Lower aggregate error therefore did not establish useful recipe ranking or
+reliable uncertainty under this plate shift. These findings argue against using
+this baseline to recommend competition formulations. This is a new retrospective
+baseline, not a reproduction of the authors' original learning policy, a test of
+the mechanistic model, or evidence of Ginkgo performance or cost savings.
+
 \section{Calibration and prospective experimental comparison}
 Lee's study offers an experimental template for this stage: swap functional
 modules, localize a failure, intervene, and compare the rebuilt system with
@@ -811,9 +850,10 @@ Where available, an independent protein measurement can help separate abundance
 from active fraction. This is a proposed measurement plan, subject to what the
 competition platform exposes; missing measurements must remain missing.
 
-Next map verified recipe concentrations into initial model conditions, documenting
-base-buffer contributions and unknown lysate pools. This mapping is not yet
-implemented. Start with few effective parameters supported by the observations,
+The initial-pool mapper now requires explicit base chemistry, lysate backgrounds,
+and other initial states. It rejects unresolved dispensed chemical stocks and
+retains warnings about unsupported effects. Complete chemical-response mapping
+and in-domain calibration remain open. Start with few effective parameters supported by the observations,
 such as aggregate expression capacity, energy-regeneration capacity, and
 machinery decay. An endpoint alone cannot separately identify transcription,
 translation, degradation, and maturation rates. Use available expression time
@@ -901,9 +941,10 @@ establishes software behavior, not empirical predictive validity.
 The backend migration removes the earlier integration and optimization execution
 paths. Historical smoke-test coordinates, matching trajectories, and synthetic
 fit percentages do not validate this implementation and are not retained as
-current evidence. All eighteen software tests passed on a Modal A100 GPU on September 30, 2026,
+current evidence. The complete suite is executed on the Modal A100 runner,
 covering conservation, missing-resource behavior, solver refinement, synthetic
-parameter recovery, holdout isolation, and finite GP acquisition results.
+parameter recovery, holdout isolation, finite GP acquisition, counterion
+accounting, explicit-background mapping, and measured-data split isolation.
 Passing this suite establishes implementation behavior on that GPU, not
 experimental predictive accuracy. Accounting, construct,
 SBML-serialization, and GPU-required checks can also run on a development host.
@@ -914,8 +955,9 @@ Repository instructions require updating this Pweave source and rebuilding its
 tracked PDF when scientific behavior, inputs, assumptions, workflows, or
 validation change. The article remains synchronized with the implemented project.
 
-Next, audit well-level observations and metadata; reconcile reference recipes;
-map recipes to initial conditions; refine assumed transcript boundaries; source
+Next, reconcile current inventory and prices, audit in-domain well-level
+observations and metadata, extend the initial-pool mapping to missing chemical
+effects, refine assumed transcript boundaries, source
 parameters with uncertainty ranges; and fit a small identifiable parameter set.
 Evaluate whole held-out recipes and batches against an empirical baseline before
 using mechanistic predictions in experiment selection. Add PETase and reteplase
@@ -933,7 +975,7 @@ The software checks do not establish that the model predicts experimental yield,
 that its uncertainty intervals are calibrated, or that mechanistic selection
 outperforms data-only Bayesian optimization. The added price ledger and synthetic
 cost/yield acquisition make specific production cost explicit, but an unresolved
-base-buffer price and the missing biological recipe mapping prevent an official
+base-buffer price and the missing calibrated chemical-response mapping prevent an official
 competition-economic prediction.
 
 The main scientific gap is the connection from feasible recipes and uncertain
@@ -1052,6 +1094,10 @@ coli-based cell-free protein synthesis. Biotechnology Progress (2012).
 \url{https://labs.globus.org/projects/foundry.html}.
 \bibitem{osi} Open Scientific Intelligence Hackathon. October 21--22, 2026.
 Schedule accessed September 29, 2026. \url{https://llmhackathon.github.io/}.
+\bibitem{borkowski_data} M. Koch and collaborators. Author data and analysis for
+active-learning-guided cell-free production. Pinned repository revision listed
+in the benchmark manifest. \url{https://github.com/brsynth/active_learning_cell_free}.
+
 \bibitem{borkowski} O. Borkowski et al. Large scale active-learning-guided
 exploration for in vitro protein production optimization. Nature Communications,
 11, 1872 (2020). \url{https://doi.org/10.1038/s41467-020-15798-5}.
