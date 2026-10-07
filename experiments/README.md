@@ -80,3 +80,15 @@ The next real-data reproduction should run the authors' original model against
 its original observations first, preserving its Julia environment and units.
 The CAT/glucose study is not the competition's sfGFP/T7 recipe dataset, and our
 synthetic example does not reproduce the paper's fitted model or results.
+
+## Local-to-Ginkgo calibration plan
+
+`local-calibration.json` records the proposed material, assay and transfer study.
+The supplied draft provides known base contributions and price; its 18-AA
+constituent concentrations still block automatic full pool initialization.
+Use standard versus DSB lysate by target, the exact versioned plasmids, the
+source incubation schedules, and target-specific assay progress curves.
+Maintain 20 uL across vessel geometries. Raw OD405/h and RFU/h are separate
+from mass or undefined enzyme units. Local studies can choose three or four
+replicates; competition designs require four under the draft submission rules.
+The plan has not been executed, submitted, or used to claim predictive transfer.

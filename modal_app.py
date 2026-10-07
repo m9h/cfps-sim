@@ -17,6 +17,7 @@ image = (
     .add_local_dir(ROOT / "src", "/opt/cfps-sim/src", copy=True)
     .add_local_dir(ROOT / "tests", "/opt/cfps-sim/tests", copy=True)
     .add_local_dir(ROOT / "constructs", "/opt/cfps-sim/constructs", copy=True)
+    .add_local_dir(ROOT / "experiments", "/opt/cfps-sim/experiments", copy=True)
     .add_local_dir(ROOT / "examples", "/opt/cfps-sim/examples", copy=True)
     .add_local_dir(ROOT / "docs", "/opt/cfps-sim/docs", copy=True)
     .add_local_dir(ROOT / "data/registry", "/opt/cfps-sim/data/registry", copy=True)

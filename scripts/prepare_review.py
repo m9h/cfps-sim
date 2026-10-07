@@ -14,15 +14,18 @@ if __name__ == '__main__':
         'status': 'pre_experiment_review_not_submission',
         'registry_stocks': len(registry['stocks']),
         'price_conflicts': registry['price_conflicts'],
+        'selected_accounting_source': registry.get('selected_accounting_source'),
+        'draft_ambiguities': registry.get('draft_ambiguities', []),
+        'local_calibration_plan': json.loads((ROOT/'experiments/local-calibration.json').read_text()),
         'illustrative_recipe_audit': audit,
         'prioritized_hypotheses': [
             {'priority': 1, 'module': 'salt_buffer_nucleotide_balance',
              'question': 'Does Mg/NTP balance or buffering explain failed formulations?',
-             'missing_evidence': ['current base composition', 'available pH measurements', 'Mg/NTP response data'],
+             'missing_evidence': ['base 18-AA mixture reconciliation', 'available pH measurements', 'Mg/NTP response data'],
              'model_gap': 'analytical totals available; free Mg and pH effects absent'},
             {'priority': 2, 'module': 'energy_regeneration',
              'question': 'Is a formulation limited by energy substrate chemistry or effective enzyme capacity?',
-             'missing_evidence': ['ATP/ADP or other energy readouts if available', 'stock activities', 'incubation geometry'],
+             'missing_evidence': ['ATP/ADP or other energy readouts if available', 'stock activities', 'geometry-dependent transfer measurements'],
              'model_gap': 'lumped Fuel does not identify actual substrate chemistry'},
             {'priority': 3, 'module': 'folding_redox_activity',
              'question': 'Do PETase/reteplase readouts change through expression or active fraction?',
@@ -38,6 +41,6 @@ if __name__ == '__main__':
             'plate layout includes references, controls, replication and batch metadata',
             'measurement requests and interpretation criteria specified before execution'],
         'candidate_rankings': None,
-        'reason_no_rankings': 'No in-domain calibration or complete reconciled ledger; literature prediction is not a Ginkgo recipe score.'}
+        'reason_no_rankings': 'The supplied draft completes this example price ledger, but in-domain calibration, operative rules and activity scoring remain unresolved; literature prediction is not a Ginkgo recipe score.'}
     (ROOT/'reports/pre_experiment_review.json').write_text(json.dumps(packet, indent=2)+'\n')
     print(f"Audited {packet['registry_stocks']} stocks; {len(packet['price_conflicts'])} price conflicts; shortlist blocked")

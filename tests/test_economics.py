@@ -16,6 +16,10 @@ def inputs():
 
 def test_price_completeness_and_units():
     recipe, prices, observation = inputs()
+    complete = cost_recipe(recipe, prices)
+    assert complete["complete"]
+    assert complete["total_cost_usd"] == pytest.approx(0.02492395)
+    prices["usd_per_ml"]["base_buffer"] = None  # Exercise deliberately missing input.
     incomplete = score_recipe(recipe, prices, observation)
     assert incomplete["missing_prices"] == ["base_buffer"]
     assert incomplete["specific_cost"] is None

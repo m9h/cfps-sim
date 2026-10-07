@@ -38,13 +38,19 @@ uv run pytest
 
 ## Pre-experiment evidence and readiness
 
-The source-aware registry in `data/registry/inventory.draft.json` normalizes 66
-cached stock entries and preserves 12 price conflicts with the draft ledger.
-Neither source is designated the operative inventory. Mass/activity stocks,
-mixed-stock constituents, base chemistry, availability and assay conversions
-remain unresolved where source evidence is insufficient. Salt accounting reports
-analytical totals, not free ions or pH. No substrate is silently converted into
-the model's lumped Fuel.
+The registry reconciles 66 cached stock entries with the full draft supplied on
+October 5, 2026. `data/registry/competition.supplied-draft.json` records the
+source facts, target-specific lysates, incubation schedules, assays, geometry,
+and unresolved rules. Draft prices are selected for provisional accounting;
+54 differences from the older UI cache remain visible as historical conflicts.
+Live availability and operative scoring approval are separate from that choice.
+
+The fixed base contributes 30 mM HEPES, 200 mM potassium glutamate, 2.6 mM
+magnesium glutamate, and 1 mM cysteine. Known analytical glutamate from those
+salts is 205.2 mM. The reported 1 mM 18-AA base mixture remains unresolved at
+the constituent level; mapping refuses to silently omit it. Potassium from
+KOH titration and endogenous lysate pools are also not inferred. Salt accounting
+reports analytical totals, not free ions, pH or validated activity.
 
 ```sh
 uv run cfps-sim preflight examples/recipe.json --prices examples/prices.draft.json
@@ -57,7 +63,7 @@ uv run --extra cloud modal run modal_app.py --benchmark
 `preflight` intentionally exits 2 while readiness gates are blocked.
 `model_initial_conditions` requires explicit backgrounds for all supported NTP
 and amino-acid pools, explicit other initial states, and resolved dispensed
-chemical stocks. It returns missing-mechanism warnings with the mapping; this
+chemical stocks and base amino-acid constituents. It returns missing-mechanism warnings with the mapping; this
 is not a calibrated recipe response. `reports/pre_experiment_review.json`
 contains prioritized diagnostic hypotheses and shortlist acceptance criteria,
 with candidate rankings withheld pending in-domain evidence and reconciled costs.
@@ -82,8 +88,8 @@ Fetch the data before a remote benchmark or executable article build.
 
 ## Production economics
 
-The competition objective is **minimize specific production cost**, not maximize
-yield alone: `USD/g = reaction cost / (titer in g/L × reaction volume in L)`.
+The project assumes **minimize specific production cost**; the draft repeatedly
+says "maximize" $/g and requires clarification. Under our economic interpretation: `USD/g = reaction cost / (titer in g/L × reaction volume in L)`.
 The ledger charges all dispensed stocks, including fixed lysate, base buffer,
 DNA, and explicit water. Missing prices are reported and block a complete score.
 It currently covers dispensed reagent costs, not labor, assays, purification,
@@ -96,10 +102,11 @@ uv run cfps-sim score examples/recipe.json examples/prices.illustrative.json \
 uv run --extra bo cfps-sim bo-cost-demo
 ```
 
-The first command intentionally exits with status 2: the partial cached draft
-has no verified base-buffer price. The complete illustrative ledger assumes
-that price; its yield file is synthetic. Neither example is an official score
-or a demonstrated productive recipe. `score` accepts explicit, source-matched
+The first command now succeeds: the supplied draft lists the base buffer at
+$0.220/mL, giving $0.02492395 for this illustrative reaction. Complete draft
+arithmetic does not establish official scoring approval. The separate illustrative
+ledger and yield file remain synthetic demonstrations; neither is an official
+score or a demonstrated productive recipe. `score` accepts explicit, source-matched
 `g/L` or `U/mL` observations and keeps `USD/g` separate from `USD/U`. Apparent
 enzyme g/L requires an audited assay conversion; raw fluorescence or activity
 must not be silently treated as mass. Zero product is unscorable.
@@ -112,6 +119,34 @@ test. Neither BO example uses experimental competition observations or an
 implemented recipe-to-model mapping. Highest yield and lowest USD/g can select
 different points. Report both raw yield and cost, retain the cost/yield Pareto
 front, and rank competition candidates by their target-specific economic score.
+
+## Local calibration and competition execution
+
+`experiments/local-calibration.json` proposes local experiments using matching
+Ginkgo CFPS or bulk standard lysate for sfGFP/TfCut2 and CFPS Disulfide/DSB lysate
+for reteplase. Purchased lots may differ from competition lots. Sepia extract
+and b.next PURE systems provide comparison and mechanism-isolation tracks with
+separate effective parameters. No purchase, contact or experiment submission
+has been made.
+
+Match the existing versioned circular plasmids at 5 nM, 25% lysate and the
+source assay definitions. sfGFP and TfCut2 incubate 20 h at 30 C. Reteplase uses
+DSB lysate and 10 h at 30 C, 2 h at 4 C and 8 h ambient before its assay.
+TfCut2 uses p-nitrophenol hexanoate esterase activity, a nominal 600-fold reaction
+dilution and a 60 C/10 min pre-assay treatment; it is not a direct PET degradation
+measurement. Reteplase uses IPR-AMC cleavage. Both use reverse product/substrate
+standards and kinetic readouts. Raw OD405/h or RFU/h must not be silently relabeled
+U/mL or protein mass; official activity-unit conversion remains unspecified.
+
+All three competition stages retain **20 uL reactions**, including the final
+2-mL tube vessels. Match geometry, seals, incubation and lot metadata when
+assessing transfer. The participant submission section specifies 80 designs
+with four identical replicates each, 320 wells in columns 5–24, and reserved
+columns 1–4. Later extra-control wording conflicts with that allocation.
+The reagent allowance is bracketed as [20] or [10 or 20]. These unresolved rules,
+the 18-AA base mixture, and a standard-dilution labeling inconsistency are
+preserved in the contract. The linked `autonomous-cfps` repository returned 404
+from public access; our preflight is not its authoritative plate validator.
 
 ## Executable article
 

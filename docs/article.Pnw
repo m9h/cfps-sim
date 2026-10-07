@@ -4,7 +4,7 @@
 \setlength{\emergencystretch}{3em}
 \title{CFPS-Sim: A Reproducible Starter Stack for Cell-Free Protein Synthesis}
 \author{CFPS-Sim project}
-\date{\today}
+\date{October 6, 2026}
 \begin{document}
 \maketitle
 \begin{abstract}
@@ -342,8 +342,12 @@ $11{,}000$ nL. For a molar stock,
 C_{i,\mathrm{known}}=C_{i,\mathrm{stock}}\frac{V_i}{V_{\mathrm{reaction}}}
 + C_{i,\mathrm{base,final}}.
 \]
-Base contributions must be supplied already diluted. Endogenous lysate pools are
-excluded. Mass concentrations, activity units, mixed stocks, and volume fractions
+Base contributions are already diluted in the registry. The supplied draft
+fixes final HEPES at 30 mM, potassium glutamate at 200 mM, magnesium glutamate
+at 2.6 mM, cysteine at 1 mM, and an ambiguously specified 18-amino-acid mix
+at 1 mM. Known glutamate from the two salts is 205.2 mM; KOH titration and
+endogenous lysate contributions remain unquantified. The mixture is not silently
+expanded into assumed constituent concentrations. Mass concentrations, activity units, mixed stocks, and volume fractions
 require explicit chemical mappings before they can enter a molar model.
 
 <<recipe, echo=False>>=
@@ -356,6 +360,12 @@ checked = validate(recipe)
 print("Total volume (nL):", sum(checked["volumes_nl"].values()))
 print("Supplement magnesium glutamate (mM):", checked["supplement_mM"]["magnesium_glutamate"])
 print("Water (nL):", checked["volumes_nl"]["nuclease_free_water"])
+from cfps_sim.preflight import audit_recipe
+registry = json.loads((root / "data/registry/inventory.draft.json").read_text())
+draft_audit = audit_recipe(recipe, registry)
+print("Known total potassium (mM):", draft_audit["known_final_mM"]["potassium"])
+print("Known total glutamate (mM):", draft_audit["known_final_mM"]["glutamate"])
+print("Unresolved base components:", len(draft_audit["base_unresolved_components"]))
 @
 
 \section{Production economics: controlling cost and increasing output}
@@ -387,9 +397,11 @@ using the specific-cost ratio to rank eligible competition outcomes. Any extra
 minimum-yield requirement must be justified by operative rules or a separately
 stated practical objective, rather than imposed as an undocumented score change.
 
-The partial cached draft ledger lists lysate at 4 USD/mL and sfGFP DNA stock at
+The supplied draft ledger lists lysate at 4 USD/mL and sfGFP DNA stock at
 1.933 USD/mL\cite{competition_rules}. Their fixed transfers alone cost 0.023866
-USD per reaction before base buffer and supplements. The listed ATP stock costs
+USD per reaction before base buffer and supplements. The base-buffer stock is
+0.220 USD/mL, adding 0.000440 USD; the three fixed inputs therefore cost
+0.024306 USD per reaction. The listed ATP stock costs
 1.539 USD/mL, compared with 27.937, 39.343, and 37.846 USD/mL for CTP, GTP,
 and UTP stocks. These prices apply to the particular listed stocks; concentration
 and counterion definitions still matter. They motivate testing nucleotide
@@ -398,9 +410,9 @@ the same economics. The present model regenerates ATP only, so it cannot yet
 predict the economic benefit of NMP substitution or other salvage chemistry.
 
 The new cost ledger charges every positive transfer. Missing prices remain
-missing, and a subtotal cannot produce a complete score. The cached draft
-example has an unresolved base-buffer price; the separate illustrative ledger
-explicitly assumes 0.1 USD/mL solely for demonstration. The implemented scope is
+missing, and a subtotal cannot produce a complete score. The supplied draft
+completes the price ledger for the accounting example, yielding 0.02492395 USD
+per reaction. Price completeness does not establish operative scoring approval. The implemented scope is
 dispensed reagent cost, excluding labor, plates, assays, purification, and
 compute. These other expenses belong in an experimental campaign budget or a
 separate full manufacturing-cost model unless the official score includes them.
@@ -412,8 +424,8 @@ uv run cfps-sim score examples/recipe.json examples/prices.illustrative.json \
   examples/yield.synthetic.json
 uv run --extra bo cfps-sim bo-cost-demo
 \end{Verbatim}
-The first command intentionally exits with status 2 because its ledger is
-incomplete. The other examples use declared assumptions and synthetic output;
+The first command now succeeds because all dispensed example stocks have
+draft prices. The other examples use declared assumptions and synthetic output;
 they do not score actual competition observations.
 
 <<economics, echo=False, results='tex'>>=
@@ -423,8 +435,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
-prices = json.loads((root / "examples/prices.illustrative.json").read_text())
-partial = cost_recipe(recipe, json.loads((root / "examples/prices.draft.json").read_text()))
+prices = json.loads((root / "examples/prices.draft.json").read_text())
+draft_cost = cost_recipe(recipe, prices)
 economic_cases = []
 for label, volume, titer in [("Reference", 300, 1.0), ("Higher output", 600, 1.3), ("Economical", 150, 0.9)]:
     candidate = deepcopy(recipe)
@@ -442,7 +454,7 @@ for label, row in economic_cases:
 print(r"\end{tabular}\end{center}")
 front = pareto_indices([row["total_cost_usd"] for _, row in economic_cases], [row["observation"]["value"] for _, row in economic_cases])
 print("The cost/yield Pareto front contains " + ", ".join(economic_cases[i][0] for i in front) + "; the Economical illustration has the lowest USD/g.")
-print("The partial draft ledger leaves these prices unresolved: " + ", ".join(partial["missing_prices"]).replace("_", r"\_") + ".")
+print("The supplied draft completes this example ledger; its total reagent cost is " + f"{draft_cost['total_cost_usd']:.8f}" + " USD. Operative scoring approval remains unconfirmed.")
 fig, ax = plt.subplots(figsize=(7, 3.4))
 titer_range = np.linspace(0.6, 1.45, 50)
 for specific in [2000, 3000, 4000]:
@@ -463,8 +475,8 @@ plt.close(fig)
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\linewidth]{figures/economics.pdf}
-\caption{Illustrative economics using draft stock prices, an assumed base-buffer
-price, and assigned synthetic titers. Dashed lines join equal USD/g values at
+\caption{Illustrative economics using supplied draft stock prices, including
+the stated base-buffer price, and assigned synthetic titers. Dashed lines join equal USD/g values at
 fixed volume. Highest output is not the lowest specific cost. These accounting
 examples are dispensing-feasible but are not demonstrated productive formulations;
 their titers are not predictions of the reduced model.}
@@ -761,11 +773,12 @@ replicates are assigned wholly to training or testing. This same-model recovery
 exercise establishes fitting behavior; experimental calibration remains open.
 
 \section{Pre-experiment inventory audit and measured-data benchmark}
-The source-aware registry normalizes 66 cached stock entries and records twelve
-price conflicts against the separate draft ledger. These are unresolved source
-disagreements, not corrected prices. The current inventory, stock availability,
-execution constraints, mixed-stock constituents, base-buffer composition, and
-operative pricing require reconciliation. Formula accounting includes known
+The source-aware registry reconciles 66 cached stock entries with the complete
+draft supplied on October 5, 2026. Its 54 price differences from the older UI
+cache remain visible, with supplied draft values selected for provisional
+accounting. Historical cache differences no longer imply that the base price
+is missing. Live inventory, operative rules, mixture concentrations and
+activity scoring still require reconciliation. Formula accounting includes known
 counterions, but analytical magnesium and phosphate totals do not establish free
 ion concentrations, buffering, or biochemical activity.
 
@@ -780,7 +793,7 @@ uv run cfps-sim benchmark
 The first command intentionally exits with status 2 while gates are blocked.
 Initial-pool mapping requires explicit base chemistry and lysate backgrounds for
 all supported nucleotides and amino acids, plus explicit remaining states.
-Unresolved chemical stocks block mapping. Unsupported salt, buffering, energy,
+Unresolved chemical stocks or base amino-acid constituents block mapping. Unsupported salt, buffering, energy,
 and folding effects remain warnings rather than silently acquiring fitted
 mechanisms. No real energy substrate is equated with the model's lumped Fuel.
 The review packet prioritizes salt/buffer/nucleotide balance, energy regeneration,
@@ -975,7 +988,7 @@ The software checks do not establish that the model predicts experimental yield,
 that its uncertainty intervals are calibrated, or that mechanistic selection
 outperforms data-only Bayesian optimization. The added price ledger and synthetic
 cost/yield acquisition make specific production cost explicit, but an unresolved
-base-buffer price and the missing calibrated chemical-response mapping prevent an official
+operative scoring convention and missing calibrated chemical-response mapping prevent an official
 competition-economic prediction.
 
 The main scientific gap is the connection from feasible recipes and uncertain
@@ -1002,9 +1015,10 @@ combination must satisfy fixed-base, stock, transfer, and volume constraints.
 If those constraints prevent independent module exchange, redefine the panel
 and report the coupled changes rather than label it an independent factorial.
 
-A first plate could use three technical replicates per condition, giving twelve
-condition wells, plus applicable blanks or no-DNA controls where the platform
-permits them. If matched derivatives replace actual competition references,
+A local pilot can use three technical replicates per condition. A competition
+submission requires four, and must fill the participant design allocation using
+the authoritative validator. Participant-added blanks must not be assumed to
+replace Ginkgo-controlled reserved wells. If matched derivatives replace actual competition references,
 include those references separately and count their wells in the budget.
 Randomize well positions and record lysate lot, incubation,
 dispensing, and assay metadata. Analyze the two module effects and their
@@ -1022,6 +1036,55 @@ successful modules to PETase and reteplase as separate target studies with
 their own activity observations. A reproducible negative result is informative:
 it can reject a transferable-module hypothesis or motivate an explicit
 interaction or folding model.
+
+\subsection{Local calibration matched to the supplied Ginkgo draft}
+The draft explicitly allows purchasing Ginkgo CFPS and CFPS Disulfide kits and
+custom bulk lysate\cite{competition_rules}. These support local calibration with
+materials closer to the competition, although purchased lysate lots may differ.
+The standard lysate is T7-induced BL21 Star (DE3); reteplase instead uses a
+DTT-free, alkylated and quenched DSB preparation. Ordinary reducing extract is
+not an equivalent background. Sepia extract kits offer a complementary
+lot-documented comparison, while b.next's defined PURE-based Cytosol permits
+mechanism isolation\cite{sepia,bnext}. Effective capacities and energy parameters
+should remain platform-specific unless shared behavior is experimentally supported.
+
+Use the existing competition plasmid versions at 5 nM and record complete stock,
+base, lysate, vessel and assay provenance. The draft incubates sfGFP and TfCut2
+for 20 h at 30 degrees C. Reteplase has 10 h at 30 degrees C, 2 h at 4 degrees C,
+and 8 h ambient before substrate addition. A subsequent approximately eight-hour
+assay trajectory is not an expression trajectory.
+
+For sfGFP, use purified matching protein standards and recorded dilution to
+convert fluorescence into mass-equivalent titer. TfCut2 is measured through
+p-nitrophenol hexanoate cleavage, with 400 micromolar final substrate, a nominal
+600-fold reaction dilution, and a 60 degrees C, ten-minute pre-assay treatment.
+This measures esterase activity, not direct PET depolymerization. Reteplase uses
+25 micromolar IPR-AMC in a 40-microliter assay containing 50\% CFPS reaction.
+Both enzyme assays use reverse standards that preserve total product plus
+substrate concentration. Retain no-template backgrounds, matrix effects, actual
+read timestamps and executed dilution factors. Raw OD405/h and RFU/h outputs
+are not defined enzyme units and must not be relabeled as U/mL or protein mass.
+HiBiT abundance measurements are an optional local addition; the draft does not
+plan them as competition outputs, and its blanket HiBiT statement conflicts with
+the supplied sfGFP sequence. Existing construct sequences are preserved.
+
+All scale stages retain 20-microliter reactions, including the winning 2-mL
+\emph{tube vessel}. Local geometry experiments should therefore vary vessel and
+oxygen-transfer conditions while retaining reaction volume. Begin with a modest
+sfGFP magnesium--nucleotide panel, assay standards and selected orthogonal
+measurements, then extend target activity and lot/geometry comparisons. Add the
+missing magnesium and explicit energy mechanisms before fitting those effects.
+Freeze local predictions and assess transfer on held-out Ginkgo conditions
+against a matched data-only baseline. Local optimization alone does not establish
+improved competition prediction.
+
+The machine-readable draft contract records unresolved objective wording
+(``maximize'' versus our assumed economic minimization), bracketed additional
+reagent allowance, the 18-AA mixture, activity scoring units, inconsistent
+standard-dilution labels, and extra-control placement conflicting with 80 designs
+at four replicates. The linked submission repository returned 404 from public
+access on October 5, 2026. Its current validator has not been independently
+verified; no uploaded plate, purchase or vendor contact is produced here.
 
 \subsection{Reconstitution track: reproduce and model the i-POPFLEX workflow}
 A separate laboratory study could reproduce the published i-POPFLEX preparation
@@ -1094,6 +1157,11 @@ coli-based cell-free protein synthesis. Biotechnology Progress (2012).
 \url{https://labs.globus.org/projects/foundry.html}.
 \bibitem{osi} Open Scientific Intelligence Hackathon. October 21--22, 2026.
 Schedule accessed September 29, 2026. \url{https://llmhackathon.github.io/}.
+\bibitem{sepia} Sepia Biosciences. OpenCFPS E. coli Core Kit: composition,
+lot records and documentation. \url{https://sepiabio.com/products/opencfps-core-ecoli-z0001}.
+\bibitem{bnext} b.next. Nucleus Base Cytosol specification.
+\url{https://docs.nucleus.engineering/docs/modules/base-cytosol/spec/}.
+
 \bibitem{borkowski_data} M. Koch and collaborators. Author data and analysis for
 active-learning-guided cell-free production. Pinned repository revision listed
 in the benchmark manifest. \url{https://github.com/brsynth/active_learning_cell_free}.

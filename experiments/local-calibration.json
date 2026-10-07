@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "status": "proposed_calibration_plan_not_executed_or_submitted",
+  "contract": "data/registry/competition.supplied-draft.json",
+  "objective": "Test whether local measurements improve held-out Ginkgo ranking and uncertainty coverage",
+  "materials_priority": [
+    {"priority": 1, "system": "Ginkgo CFPS or custom bulk standard lysate", "use": "sfGFP and TfCut2 local calibration", "caveat": "Purchased lysate lots may differ from competition lots"},
+    {"priority": 1, "system": "Ginkgo CFPS Disulfide or corresponding bulk DSB lysate", "use": "reteplase folding/activity calibration", "caveat": "Standard reducing lysate is not equivalent to the draft DSB preparation"},
+    {"priority": 2, "system": "Sepia OpenCFPS", "use": "Extract-based comparison with recorded lot composition", "caveat": "Separate effective parameters; compare known total concentrations, not supplement volumes alone"},
+    {"priority": 3, "system": "b.next Nucleus Cytosol", "use": "Defined PURE-based transcription/translation mechanism tests", "caveat": "Different energy chemistry and background activities; no direct transplantation of fitted rates"}
+  ],
+  "stages": [
+    {"stage": "measurement_bridge", "targets": ["sfgfp", "petase", "reteplase"], "work": ["use the supplied competition constructs with existing checksum/version provenance", "calibrate purified matching sfGFP in assay matrices", "use reverse product/substrate standards for PNP and AMC", "record no-template backgrounds, spike recovery, actual dilutions and read timestamps"], "gate": "Readout conversion and matrix effects are documented; product rates are kept separate from protein mass and undefined enzyme units"},
+    {"stage": "sfGFP_mechanism_panel", "design": "12-condition magnesium x nucleotide panel; ranges set only after complete stock/base reconciliation", "local_replicates": "3 or 4; record chosen design explicitly", "competition_replicates": 4, "measurements": ["fluorescence trajectories", "selected mRNA, ATP/phosphate and pH measurements where available"], "gate": "Add magnesium/speciation and explicit energy chemistry before fitting those mechanisms; do not absorb missing chemistry into unrelated rate constants"},
+    {"stage": "target_activity_panel", "design": "Selected reference and diagnostic conditions for TfCut2 and reteplase, using target-specific lysate and incubation", "petase": "Match p-nitrophenol hexanoate esterase assay and pre-assay heat/dilution; do not label it PET depolymerization", "reteplase": "Match DSB lysate, 10h at 30C + 2h at 4C + 8h ambient, then IPR-AMC kinetics; optional independent abundance measurement remains a local addition"},
+    {"stage": "geometry_and_lot_transfer", "design": "Repeat shared feasible anchors across independent lots and 384-well, 96-well and 2-mL tube vessels", "reaction_volume_uL": 20, "gate": "Fit lot/system/geometry effects separately and retain failed transfer outcomes"},
+    {"stage": "Ginkgo_prediction_test", "work": ["freeze locally calibrated predictions before receiving Ginkgo outcomes", "compare with a Ginkgo-data-only baseline using the same training data and budget", "hold out complete recipes and independent batches; count all replicates and confirmation wells", "evaluate target-specific rank correlation, error and empirical uncertainty coverage"], "gate": "Claim improved Ginkgo prediction only after the held-out comparison; no local optimization result alone establishes transfer"}
+  ],
+  "submission_note": "An actual Ginkgo plate requires the authoritative autonomous-cfps validator, 80 designs x four replicas in the stated participant layout, and reconciliation of the draft's extra-control ambiguity. No uploaded plate is produced by this plan.",
+  "metadata_required": ["construct checksum", "target and lysate profile", "lysate and kit lot", "stock/base concentrations and uncertainties", "reaction and assay volumes", "vessel and seal", "temperature/shaking history", "standards and blanks", "raw progress curves", "actual timestamps", "replicate/batch identities", "price snapshot and scoring convention"]
+}

@@ -1,17 +1,117 @@
 {
   "schema_version": 1,
   "status": "research_hypotheses_not_submission_recipes",
-  "primary_objective": "minimize confirmed target-specific USD/g or USD/activity unit using the official complete price ledger",
+  "primary_objective": "Assume minimization of target-specific USD/g or USD/activity unit; supplied draft says maximize, requiring confirmation",
   "economic_screen": "Require each supplement or module's confirmed output gain to justify its added cost; include fixed lysate, base-buffer, and DNA costs. Report both yield and cost and retain the Pareto front.",
   "competition_source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
-  "catalog_snapshot_date": "2026-09-29",
-  "note": "Existing items are from a cached draft. Proposed additions require current competition acceptance and verified commercial sourcing. Unknown stocks, chemical identifiers, and lysate activities must not be inferred.",
+  "catalog_snapshot_date": "2026-10-05",
+  "note": "Supplied full draft now provides the base-buffer price and known concentrations. Current acceptance, bracketed new-reagent allowance, mixture concentration interpretation and official scoring units remain unresolved.",
   "priorities": [
-    {"priority": 1, "module": "magnesium_and_buffering", "existing_examples": ["magnesium glutamate", "potassium glutamate", "HEPES-KOH", "potassium phosphates"], "hypothesis": "Free magnesium and pH couple NTP supply, transcription, and translation", "missing_model": ["Mg-NTP and Mg-phosphate binding", "buffer capacity", "ionic contributions"]},
-    {"priority": 2, "module": "energy_and_salvage", "existing_examples": ["NTPs", "NMPs", "nucleosides", "ribose", "glucose", "PEP", "pyruvate", "acetyl phosphate", "maltose", "maltodextrin", "NAD", "CoA"], "proposed_request_examples": ["nucleoside diphosphate kinase", "adenylate kinase", "inorganic pyrophosphatase"], "hypothesis": "Replenish all NTPs rather than ATP alone; track AMP, PPi, Pi and competing substrate consumption", "missing_model": ["explicit pathway stoichiometry", "active enzyme capacities", "polymer and counterion mapping"]},
-    {"priority": 3, "module": "oxidative_folding", "existing_examples": ["DsbC", "reduced glutathione", "oxidized glutathione"], "proposed_request_examples": ["DnaK/DnaJ/GrpE", "GroEL/GroES"], "hypothesis": "Improve active enzyme fraction independently of total expression", "missing_model": ["target-specific folding", "redox state", "aggregation", "chaperone ATP consumption"]},
-    {"priority": 4, "module": "oxygen_and_peroxide", "existing_examples": ["pyruvate oxidase", "catalase", "pyruvate"], "hypothesis": "Energy chemistry interacts with oxygen supply and peroxide management", "missing_model": ["oxygen transfer", "peroxide production and removal", "activity-unit conversions"]},
-    {"priority": 5, "module": "translation_and_measurement", "existing_examples": ["17 amino-acid mix", "tyrosine", "cysteine", "spermidine", "putrescine", "Brij-35", "DMSO"], "hypothesis": "Mixed stocks, folding, and assay-matrix effects can change measured target output", "missing_model": ["exact per-amino-acid stock accounting", "polyamine effects", "assay interference", "soluble and active protein fractions"]}
+    {
+      "priority": 1,
+      "module": "magnesium_and_buffering",
+      "existing_examples": [
+        "magnesium glutamate",
+        "potassium glutamate",
+        "HEPES-KOH",
+        "potassium phosphates"
+      ],
+      "hypothesis": "Free magnesium and pH couple NTP supply, transcription, and translation",
+      "missing_model": [
+        "Mg-NTP and Mg-phosphate binding",
+        "buffer capacity",
+        "ionic contributions"
+      ]
+    },
+    {
+      "priority": 2,
+      "module": "energy_and_salvage",
+      "existing_examples": [
+        "NTPs",
+        "NMPs",
+        "nucleosides",
+        "ribose",
+        "glucose",
+        "PEP",
+        "pyruvate",
+        "acetyl phosphate",
+        "maltose",
+        "maltodextrin",
+        "NAD",
+        "CoA"
+      ],
+      "proposed_request_examples": [
+        "nucleoside diphosphate kinase",
+        "adenylate kinase",
+        "inorganic pyrophosphatase"
+      ],
+      "hypothesis": "Replenish all NTPs rather than ATP alone; track AMP, PPi, Pi and competing substrate consumption",
+      "missing_model": [
+        "explicit pathway stoichiometry",
+        "active enzyme capacities",
+        "polymer and counterion mapping"
+      ]
+    },
+    {
+      "priority": 3,
+      "module": "oxidative_folding",
+      "existing_examples": [
+        "DsbC",
+        "reduced glutathione",
+        "oxidized glutathione"
+      ],
+      "proposed_request_examples": [
+        "DnaK/DnaJ/GrpE",
+        "GroEL/GroES"
+      ],
+      "hypothesis": "Improve active enzyme fraction independently of total expression",
+      "missing_model": [
+        "target-specific folding",
+        "redox state",
+        "aggregation",
+        "chaperone ATP consumption"
+      ]
+    },
+    {
+      "priority": 4,
+      "module": "oxygen_and_peroxide",
+      "existing_examples": [
+        "pyruvate oxidase",
+        "catalase",
+        "pyruvate"
+      ],
+      "hypothesis": "Energy chemistry interacts with oxygen supply and peroxide management",
+      "missing_model": [
+        "oxygen transfer",
+        "peroxide production and removal",
+        "activity-unit conversions"
+      ]
+    },
+    {
+      "priority": 5,
+      "module": "translation_and_measurement",
+      "existing_examples": [
+        "17 amino-acid mix",
+        "tyrosine",
+        "cysteine",
+        "spermidine",
+        "putrescine",
+        "Brij-35",
+        "DMSO"
+      ],
+      "hypothesis": "Mixed stocks, folding, and assay-matrix effects can change measured target output",
+      "missing_model": [
+        "exact per-amino-acid stock accounting",
+        "polyamine effects",
+        "assay interference",
+        "soluble and active protein fractions"
+      ]
+    }
   ],
-  "evidence_sources": ["https://doi.org/10.1021/acs.chemrev.4c00116", "https://doi.org/10.1016/j.mec.2019.e00113"]
+  "evidence_sources": [
+    "https://doi.org/10.1021/acs.chemrev.4c00116",
+    "https://doi.org/10.1016/j.mec.2019.e00113"
+  ],
+  "local_calibration_plan": "experiments/local-calibration.json",
+  "competition_contract": "data/registry/competition.supplied-draft.json"
 }

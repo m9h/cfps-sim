@@ -5,64 +5,492 @@
     {
       "stock": "lysate",
       "cached_usd_per_ml": 20,
-      "draft_usd_per_ml": 4.0
+      "draft_usd_per_ml": 4.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_sfgfp",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 1.933
+      "draft_usd_per_ml": 1.933,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_petase",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.078
+      "draft_usd_per_ml": 2.078,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_reteplase",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.284
-    },
-    {
-      "stock": "base_buffer",
-      "cached_usd_per_ml": 0.22,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 2.284,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "nuclease_free_water",
       "cached_usd_per_ml": 0.0703,
-      "draft_usd_per_ml": 0.0
+      "draft_usd_per_ml": 0.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "potassium_glutamate",
       "cached_usd_per_ml": 0.071,
-      "draft_usd_per_ml": 0.07
+      "draft_usd_per_ml": 0.07,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "magnesium_glutamate",
       "cached_usd_per_ml": 0.0627,
-      "draft_usd_per_ml": 0.065
+      "draft_usd_per_ml": 0.065,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "hepes_koh",
+      "cached_usd_per_ml": 0.254,
+      "draft_usd_per_ml": 0.13,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "atp",
       "cached_usd_per_ml": 1.5388,
-      "draft_usd_per_ml": 1.539
+      "draft_usd_per_ml": 1.539,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "ctp",
       "cached_usd_per_ml": 27.9374,
-      "draft_usd_per_ml": 27.937
+      "draft_usd_per_ml": 27.937,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "gtp",
       "cached_usd_per_ml": 39.3431,
-      "draft_usd_per_ml": 39.343
+      "draft_usd_per_ml": 39.343,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "utp",
       "cached_usd_per_ml": 37.8462,
-      "draft_usd_per_ml": 37.846
+      "draft_usd_per_ml": 37.846,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "aa_mix_17",
+      "cached_usd_per_ml": 0.0938,
+      "draft_usd_per_ml": 0.083,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "tyrosine",
+      "cached_usd_per_ml": 0.0075,
+      "draft_usd_per_ml": 0.011,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cysteine",
+      "cached_usd_per_ml": 0.023,
+      "draft_usd_per_ml": 0.024,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "sodium_pyruvate",
+      "cached_usd_per_ml": 0.0936,
+      "draft_usd_per_ml": 0.164,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "maltose",
+      "cached_usd_per_ml": 0.01995,
+      "draft_usd_per_ml": 0.02,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "ribose",
+      "cached_usd_per_ml": 0.183,
+      "draft_usd_per_ml": 0.18,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "maltodextrin_17",
+      "cached_usd_per_ml": 0.1224,
+      "draft_usd_per_ml": 0.122,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "folinic_acid",
+      "cached_usd_per_ml": 4.78,
+      "draft_usd_per_ml": 8.978,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "nad",
+      "cached_usd_per_ml": 7.0992,
+      "draft_usd_per_ml": 33.348,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "camp",
+      "cached_usd_per_ml": 7.4797,
+      "draft_usd_per_ml": 7.48,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "spermidine",
+      "cached_usd_per_ml": 1.1835,
+      "draft_usd_per_ml": 1.045,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "oxidized_glutathione",
+      "cached_usd_per_ml": 0.733196,
+      "draft_usd_per_ml": 0.73,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "reduced_glutathione",
+      "cached_usd_per_ml": 0.165338,
+      "draft_usd_per_ml": 0.17,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "putrescine_dihydrochloride",
+      "cached_usd_per_ml": 0.4669,
+      "draft_usd_per_ml": 0.435,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "coa",
+      "cached_usd_per_ml": 157.3437,
+      "draft_usd_per_ml": 104.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "brij_35",
+      "cached_usd_per_ml": 0.0266,
+      "draft_usd_per_ml": 0.027,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "dmso",
+      "cached_usd_per_ml": 0.2028,
+      "draft_usd_per_ml": 0.203,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "sodium_hexametaphosphate",
+      "cached_usd_per_ml": 0.0044,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "amp",
+      "cached_usd_per_ml": 0.6994,
+      "draft_usd_per_ml": 0.699,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cmp",
+      "cached_usd_per_ml": 1.2704,
+      "draft_usd_per_ml": 1.27,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "gmp",
+      "cached_usd_per_ml": 0.5334,
+      "draft_usd_per_ml": 0.533,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "ump",
+      "cached_usd_per_ml": 0.8394,
+      "draft_usd_per_ml": 0.839,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "adenosine",
+      "cached_usd_per_ml": 0.0202,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "guanosine",
+      "cached_usd_per_ml": 0.0303,
+      "draft_usd_per_ml": 0.012,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cytidine",
+      "cached_usd_per_ml": 0.0738,
+      "draft_usd_per_ml": 0.047,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "uridine",
+      "cached_usd_per_ml": 0.0268,
+      "draft_usd_per_ml": 0.003,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "adenine",
+      "cached_usd_per_ml": 0.0095,
+      "draft_usd_per_ml": 0.01,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "guanine",
+      "cached_usd_per_ml": 0.0034,
+      "draft_usd_per_ml": 0.003,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cytosine",
+      "cached_usd_per_ml": 0.0339,
+      "draft_usd_per_ml": 0.034,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "uracil",
+      "cached_usd_per_ml": 0.00325,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "thymine",
+      "cached_usd_per_ml": 0.0069,
+      "draft_usd_per_ml": 0.007,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "dsbc_ecoli",
+      "cached_usd_per_ml": 5631.72,
+      "draft_usd_per_ml": 5632.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "glucose",
+      "cached_usd_per_ml": 0.002784,
+      "draft_usd_per_ml": 0.00222,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_dibasic",
+      "cached_usd_per_ml": 0.0144,
+      "draft_usd_per_ml": 0.035,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_monobasic",
+      "cached_usd_per_ml": 0.0041,
+      "draft_usd_per_ml": 0.01,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_ratio_dibasic_monobasic",
+      "cached_usd_per_ml": 0.0104,
+      "draft_usd_per_ml": 0.024,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_ratio_monobasic_dibasic",
+      "cached_usd_per_ml": 0.0081,
+      "draft_usd_per_ml": 0.018,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "phosphoenolpyruvic_acid_cyclohexylammonium_salt",
+      "cached_usd_per_ml": 2.2,
+      "draft_usd_per_ml": 2.202,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "nicotinamide",
+      "cached_usd_per_ml": 0.001478,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "oxaloacetic_acid",
+      "cached_usd_per_ml": 0.9245,
+      "draft_usd_per_ml": 0.925,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "succinic_acid",
+      "cached_usd_per_ml": 0.0043,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_formate",
+      "cached_usd_per_ml": 0.0042,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     }
   ],
+  "selected_accounting_source": {
+    "title": "CFPS coopetition [draft]",
+    "url": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+    "received_date": "2026-10-05",
+    "status": "user_supplied_draft_not_confirmed_operative_rules",
+    "locator": "Full text pasted by user; structured facts transcribed from the named sections"
+  },
+  "draft_ambiguities": [
+    {
+      "id": "objective_direction",
+      "sections": [
+        "Executive Summary",
+        "Competition design"
+      ],
+      "source_wording": "maximize the specific cost ($/g or $/unit)",
+      "project_assumption": "minimize specific cost; explicit economic interpretation, not confirmed rule"
+    },
+    {
+      "id": "additional_reagent_allowance",
+      "sections": [
+        "Executive Summary",
+        "Additional reagents"
+      ],
+      "source_wording": "[20] versus [10 or 20]",
+      "unresolved": "collective allowance per approach per round is bracketed; commercial availability and lead time apply"
+    },
+    {
+      "id": "experimental_control_layout",
+      "sections": [
+        "Preparing Your Plate Submission",
+        "Destination (CFPS Reaction) Plate Layouts"
+      ],
+      "source_wording": "80 designs x 4 fills columns 5-24; later description also places 8 positive controls there",
+      "unresolved": "80-design allocation versus additional interspersed controls requires authoritative validator"
+    },
+    {
+      "id": "base_amino_acids",
+      "sections": [
+        "CFPS Reagents",
+        "Final Reaction Composition"
+      ],
+      "source_wording": "17-AA supplemental mix; base table says 18-AA mix with cysteine separately",
+      "unresolved": "identity and per-constituent concentration of base 18-AA mixture, including tyrosine, need confirmation"
+    },
+    {
+      "id": "activity_scoring_units",
+      "sections": [
+        "Data analysis",
+        "Competition design"
+      ],
+      "unresolved": "raw OD405/h and RFU/h are not defined enzyme units; official rate-to-economic-score conversion is unspecified"
+    },
+    {
+      "id": "sfGFP_HiBiT_statement",
+      "sections": [
+        "Target Proteins"
+      ],
+      "unresolved": "prose says each target includes HiBiT, but supplied sfGFP sequence ends in Strep tag without the PETase/reteplase HiBiT sequence; preserve supplied sequences"
+    },
+    {
+      "id": "standard_dilution_labels",
+      "sections": [
+        "Final Reaction Composition (Standard / Negative Control Wells)"
+      ],
+      "unresolved": "4X to 1X label does not follow from 2 uL into 20 uL; use executed standard definitions and assay dilution metadata"
+    }
+  ],
+  "local_calibration_plan": {
+    "schema_version": 1,
+    "status": "proposed_calibration_plan_not_executed_or_submitted",
+    "contract": "data/registry/competition.supplied-draft.json",
+    "objective": "Test whether local measurements improve held-out Ginkgo ranking and uncertainty coverage",
+    "materials_priority": [
+      {
+        "priority": 1,
+        "system": "Ginkgo CFPS or custom bulk standard lysate",
+        "use": "sfGFP and TfCut2 local calibration",
+        "caveat": "Purchased lysate lots may differ from competition lots"
+      },
+      {
+        "priority": 1,
+        "system": "Ginkgo CFPS Disulfide or corresponding bulk DSB lysate",
+        "use": "reteplase folding/activity calibration",
+        "caveat": "Standard reducing lysate is not equivalent to the draft DSB preparation"
+      },
+      {
+        "priority": 2,
+        "system": "Sepia OpenCFPS",
+        "use": "Extract-based comparison with recorded lot composition",
+        "caveat": "Separate effective parameters; compare known total concentrations, not supplement volumes alone"
+      },
+      {
+        "priority": 3,
+        "system": "b.next Nucleus Cytosol",
+        "use": "Defined PURE-based transcription/translation mechanism tests",
+        "caveat": "Different energy chemistry and background activities; no direct transplantation of fitted rates"
+      }
+    ],
+    "stages": [
+      {
+        "stage": "measurement_bridge",
+        "targets": [
+          "sfgfp",
+          "petase",
+          "reteplase"
+        ],
+        "work": [
+          "use the supplied competition constructs with existing checksum/version provenance",
+          "calibrate purified matching sfGFP in assay matrices",
+          "use reverse product/substrate standards for PNP and AMC",
+          "record no-template backgrounds, spike recovery, actual dilutions and read timestamps"
+        ],
+        "gate": "Readout conversion and matrix effects are documented; product rates are kept separate from protein mass and undefined enzyme units"
+      },
+      {
+        "stage": "sfGFP_mechanism_panel",
+        "design": "12-condition magnesium x nucleotide panel; ranges set only after complete stock/base reconciliation",
+        "local_replicates": "3 or 4; record chosen design explicitly",
+        "competition_replicates": 4,
+        "measurements": [
+          "fluorescence trajectories",
+          "selected mRNA, ATP/phosphate and pH measurements where available"
+        ],
+        "gate": "Add magnesium/speciation and explicit energy chemistry before fitting those mechanisms; do not absorb missing chemistry into unrelated rate constants"
+      },
+      {
+        "stage": "target_activity_panel",
+        "design": "Selected reference and diagnostic conditions for TfCut2 and reteplase, using target-specific lysate and incubation",
+        "petase": "Match p-nitrophenol hexanoate esterase assay and pre-assay heat/dilution; do not label it PET depolymerization",
+        "reteplase": "Match DSB lysate, 10h at 30C + 2h at 4C + 8h ambient, then IPR-AMC kinetics; optional independent abundance measurement remains a local addition"
+      },
+      {
+        "stage": "geometry_and_lot_transfer",
+        "design": "Repeat shared feasible anchors across independent lots and 384-well, 96-well and 2-mL tube vessels",
+        "reaction_volume_uL": 20,
+        "gate": "Fit lot/system/geometry effects separately and retain failed transfer outcomes"
+      },
+      {
+        "stage": "Ginkgo_prediction_test",
+        "work": [
+          "freeze locally calibrated predictions before receiving Ginkgo outcomes",
+          "compare with a Ginkgo-data-only baseline using the same training data and budget",
+          "hold out complete recipes and independent batches; count all replicates and confirmation wells",
+          "evaluate target-specific rank correlation, error and empirical uncertainty coverage"
+        ],
+        "gate": "Claim improved Ginkgo prediction only after the held-out comparison; no local optimization result alone establishes transfer"
+      }
+    ],
+    "submission_note": "An actual Ginkgo plate requires the authoritative autonomous-cfps validator, 80 designs x four replicas in the stated participant layout, and reconciliation of the draft's extra-control ambiguity. No uploaded plate is produced by this plan.",
+    "metadata_required": [
+      "construct checksum",
+      "target and lysate profile",
+      "lysate and kit lot",
+      "stock/base concentrations and uncertainties",
+      "reaction and assay volumes",
+      "vessel and seal",
+      "temperature/shaking history",
+      "standards and blanks",
+      "raw progress curves",
+      "actual timestamps",
+      "replicate/batch identities",
+      "price snapshot and scoring convention"
+    ]
+  },
   "illustrative_recipe_audit": {
     "target": "sfgfp",
     "volumes_nl": {
@@ -75,12 +503,23 @@
       "nuclease_free_water": 8450
     },
     "known_final_mM": {
-      "magnesium": 6.25,
-      "glutamate": 100.0,
-      "potassium": 87.5,
-      "atp": 1.5
+      "magnesium": 8.85,
+      "glutamate": 305.2,
+      "potassium": 287.5,
+      "atp": 1.5,
+      "hepes": 30.0,
+      "cysteine": 1.0
     },
-    "base_composition_supplied": false,
+    "base_composition_supplied": true,
+    "base_composition_source": "registry",
+    "base_unresolved_components": [
+      {
+        "name": "18 amino acid mix",
+        "reported_final_mM": 1.0,
+        "reason": "per-constituent identities and concentrations not explicitly reconciled"
+      }
+    ],
+    "unlisted_stocks": [],
     "unresolved_stocks": [
       "base_buffer",
       "lysate",
@@ -96,49 +535,48 @@
       {
         "stock": "lysate",
         "cached_usd_per_ml": 20,
-        "draft_usd_per_ml": 4.0
+        "draft_usd_per_ml": 4.0,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       },
       {
         "stock": "template_sfgfp",
         "cached_usd_per_ml": 6.418,
-        "draft_usd_per_ml": 1.933
-      },
-      {
-        "stock": "base_buffer",
-        "cached_usd_per_ml": 0.22,
-        "draft_usd_per_ml": null
+        "draft_usd_per_ml": 1.933,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       },
       {
         "stock": "nuclease_free_water",
         "cached_usd_per_ml": 0.0703,
-        "draft_usd_per_ml": 0.0
+        "draft_usd_per_ml": 0.0,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       },
       {
         "stock": "potassium_glutamate",
         "cached_usd_per_ml": 0.071,
-        "draft_usd_per_ml": 0.07
+        "draft_usd_per_ml": 0.07,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       },
       {
         "stock": "magnesium_glutamate",
         "cached_usd_per_ml": 0.0627,
-        "draft_usd_per_ml": 0.065
+        "draft_usd_per_ml": 0.065,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       },
       {
         "stock": "atp",
         "cached_usd_per_ml": 1.5388,
-        "draft_usd_per_ml": 1.539
+        "draft_usd_per_ml": 1.539,
+        "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
       }
     ],
     "cost": {
       "currency": "USD",
       "cost_scope": "dispensed_reagents_only",
-      "complete": false,
+      "complete": true,
       "reaction_volume_l": 2e-05,
-      "known_subtotal_usd": 0.02448395,
-      "total_cost_usd": null,
-      "missing_prices": [
-        "base_buffer"
-      ],
+      "known_subtotal_usd": 0.02492395,
+      "total_cost_usd": 0.02492395,
+      "missing_prices": [],
       "line_items": [
         {
           "reagent": "lysate",
@@ -150,8 +588,8 @@
         {
           "reagent": "base_buffer",
           "volume_nl": 2000,
-          "usd_per_ml_stock": null,
-          "cost_usd": null,
+          "usd_per_ml_stock": 0.22,
+          "cost_usd": 0.00044,
           "fixed_input": true
         },
         {
@@ -191,19 +629,102 @@
         }
       ],
       "price_provenance": {
-        "source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
-        "snapshot_date": "2026-09-29",
-        "status": "partial_cached_draft_not_confirmed_current_scoring_ledger",
-        "note": "Stock prices transcribed from the draft. Base-buffer price is absent here and must be verified; do not infer a zero price. Confirm all prices and scoring scope before submission."
+        "title": "CFPS coopetition [draft]",
+        "url": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+        "received_date": "2026-10-05",
+        "status": "user_supplied_draft_not_confirmed_current_scoring_ledger",
+        "locator": "Full text pasted by user; structured facts transcribed from the named sections",
+        "note": "Full provided CFPS Reagents price table, including base buffer at $0.220/mL. Arithmetic completeness is separate from operative scoring approval.",
+        "source": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit"
       },
       "note": "Dispensed reagent costs only. No labor, plates, assays, purification, compute, or scale-up costs are included. Missing prices are never treated as zero."
     },
     "submission_ready": false,
+    "lysate_profile": "standard",
+    "target_execution_profile": {
+      "protein_target": "sfgfp-strep-m9134733",
+      "plasmid_id": "m9134733",
+      "protein_id": "m9142078",
+      "mw_g_mol": 27015,
+      "length_aa": 240,
+      "lysate_profile": "standard",
+      "incubation": [
+        {
+          "temperature_C": 30,
+          "hours": 20
+        }
+      ],
+      "assay": {
+        "readout": "endpoint fluorescence",
+        "calibration": "purified matching sfGFP standards on each plate",
+        "conversion": "g/L = uM * MW(g/mol) / 1e6, followed by recorded dilution correction",
+        "observation": "mature fluorescent protein, not automatically total translated protein"
+      }
+    },
+    "draft_ambiguities": [
+      {
+        "id": "objective_direction",
+        "sections": [
+          "Executive Summary",
+          "Competition design"
+        ],
+        "source_wording": "maximize the specific cost ($/g or $/unit)",
+        "project_assumption": "minimize specific cost; explicit economic interpretation, not confirmed rule"
+      },
+      {
+        "id": "additional_reagent_allowance",
+        "sections": [
+          "Executive Summary",
+          "Additional reagents"
+        ],
+        "source_wording": "[20] versus [10 or 20]",
+        "unresolved": "collective allowance per approach per round is bracketed; commercial availability and lead time apply"
+      },
+      {
+        "id": "experimental_control_layout",
+        "sections": [
+          "Preparing Your Plate Submission",
+          "Destination (CFPS Reaction) Plate Layouts"
+        ],
+        "source_wording": "80 designs x 4 fills columns 5-24; later description also places 8 positive controls there",
+        "unresolved": "80-design allocation versus additional interspersed controls requires authoritative validator"
+      },
+      {
+        "id": "base_amino_acids",
+        "sections": [
+          "CFPS Reagents",
+          "Final Reaction Composition"
+        ],
+        "source_wording": "17-AA supplemental mix; base table says 18-AA mix with cysteine separately",
+        "unresolved": "identity and per-constituent concentration of base 18-AA mixture, including tyrosine, need confirmation"
+      },
+      {
+        "id": "activity_scoring_units",
+        "sections": [
+          "Data analysis",
+          "Competition design"
+        ],
+        "unresolved": "raw OD405/h and RFU/h are not defined enzyme units; official rate-to-economic-score conversion is unspecified"
+      },
+      {
+        "id": "sfGFP_HiBiT_statement",
+        "sections": [
+          "Target Proteins"
+        ],
+        "unresolved": "prose says each target includes HiBiT, but supplied sfGFP sequence ends in Strep tag without the PETase/reteplase HiBiT sequence; preserve supplied sequences"
+      },
+      {
+        "id": "standard_dilution_labels",
+        "sections": [
+          "Final Reaction Composition (Standard / Negative Control Wells)"
+        ],
+        "unresolved": "4X to 1X label does not follow from 2 uL into 20 uL; use executed standard definitions and assay dilution metadata"
+      }
+    ],
     "blockers": [
       "inventory_and_execution_constraints_unconfirmed",
-      "base_buffer_composition_unknown",
-      "conflicting_price_sources",
-      "complete_price_ledger_missing",
+      "base_amino_acid_constituents_unresolved",
+      "draft_rules_require_reconciliation",
       "operative_price_ledger_unconfirmed"
     ],
     "note": "Analytical totals, not free-ion concentrations. Unknown lysate pools are excluded. Formula stoichiometry does not model binding, pH, or activity."
@@ -214,7 +735,7 @@
       "module": "salt_buffer_nucleotide_balance",
       "question": "Does Mg/NTP balance or buffering explain failed formulations?",
       "missing_evidence": [
-        "current base composition",
+        "base 18-AA mixture reconciliation",
         "available pH measurements",
         "Mg/NTP response data"
       ],
@@ -227,7 +748,7 @@
       "missing_evidence": [
         "ATP/ADP or other energy readouts if available",
         "stock activities",
-        "incubation geometry"
+        "geometry-dependent transfer measurements"
       ],
       "model_gap": "lumped Fuel does not identify actual substrate chemistry"
     },
@@ -253,5 +774,5 @@
     "measurement requests and interpretation criteria specified before execution"
   ],
   "candidate_rankings": null,
-  "reason_no_rankings": "No in-domain calibration or complete reconciled ledger; literature prediction is not a Ginkgo recipe score."
+  "reason_no_rankings": "The supplied draft completes this example price ledger, but in-domain calibration, operative rules and activity scoring remain unresolved; literature prediction is not a Ginkgo recipe score."
 }

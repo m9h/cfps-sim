@@ -17,7 +17,7 @@ SUPPORTED = {"atp": "ATP", "ctp": "CTP", "gtp": "GTP", "utp": "UTP",
              "tyrosine": "aa_Y", "cysteine": "aa_C"}
 
 
-def normalize(source, draft):
+def normalize(source, draft, contract=None):
     raw = json.loads(source.read_text())
     stocks, conflicts = {}, []
     for group in raw["reagentGroups"]:
@@ -50,7 +50,7 @@ def normalize(source, draft):
                     "availability_status": "unconfirmed_cached_snapshot",
                     "cached_usd_per_ml": cached_price, "draft_usd_per_ml": draft_price,
                 }
-    return {"schema_version": 1, "status": "draft_requires_reconciliation",
+    registry = {"schema_version": 1, "status": "draft_requires_reconciliation",
             "source": {"url": "https://coopetition.htgaa.org/cfps", "artifact": source.name,
                        "sha256": hashlib.sha256(source.read_bytes()).hexdigest(),
                        "status": "local_cache_capture_date_unknown"},
@@ -63,11 +63,41 @@ def normalize(source, draft):
             "price_conflicts": conflicts, "stocks": stocks}
 
 
+    if contract is not None:
+        registry["sources"] = [registry["source"], contract["source"]]
+        registry["selected_accounting_source"] = contract["source"]
+        registry["constraints"] = contract["constraints"]
+        registry["base_buffer_components"] = contract["base_buffer"]["final_known_mM"]
+        registry["base_unresolved_components"] = contract["base_buffer"]["unresolved_components"]
+        registry["unquantified_counterions"] = contract["base_buffer"]["other_unquantified_components"]
+        registry["lysate_profiles"] = contract["lysate_profiles"]
+        registry["target_profiles"] = contract["targets"]
+        registry["draft_ambiguities"] = contract["ambiguities"]
+        registry["unknowns"] = ["current_inventory", "operative_price_ledger", "base_amino_acid_constituents",
+                                "lysate_background_pools", "mixed_stock_concentration_interpretation",
+                                "unquantified_titration_counterions", "official_activity_scoring_units"]
+        for stock_id, stock in stocks.items():
+            stock["listed_in_supplied_draft"] = stock_id in contract["prices_usd_per_ml"]
+            stock["selected_price_source"] = "supplied_draft" if stock["listed_in_supplied_draft"] else None
+            stock["supplied_draft_usd_per_ml"] = contract["prices_usd_per_ml"].get(stock_id)
+            if stock_id in contract["stock_overrides"]:
+                stock["cached_stock_mM"] = stock["stock_mM"]
+                stock.update(contract["stock_overrides"][stock_id])
+                stock["stock_concentration_source"] = "supplied_draft"
+            if stock_id == "aa_mix_17":
+                stock["documented_constituents"] = contract["base_buffer"]["supplemental_17AA_identities"]
+                stock["components_status"] = "identities_documented_per_constituent_concentrations_unresolved"
+        for conflict in conflicts:
+            conflict["resolution"] = "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    return registry
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("source", type=Path)
     parser.add_argument("--draft", type=Path, default=Path("examples/prices.draft.json"))
+    parser.add_argument("--contract", type=Path, default=Path("data/registry/competition.supplied-draft.json"))
     parser.add_argument("--output", type=Path, default=Path("data/registry/inventory.draft.json"))
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(normalize(args.source, json.loads(args.draft.read_text())), indent=2)+"\n")
+    args.output.write_text(json.dumps(normalize(args.source, json.loads(args.draft.read_text()), json.loads(args.contract.read_text())), indent=2)+"\n")

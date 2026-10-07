@@ -9,81 +9,387 @@
   },
   "constraints": {
     "reaction_nl": 20000,
+    "variable_nl": 11000,
     "transfer_increment_nl": 25,
     "lysate_nl": 5000,
     "base_buffer_nl": 2000,
     "template_nl": 2000,
-    "status": "existing_project_assumptions_require_current_confirmation"
+    "dna_stock_nM": 50,
+    "dna_final_nM": 5,
+    "replicates": 4,
+    "designs_per_plate": 80,
+    "experimental_wells": 320,
+    "reserved_columns": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "experimental_columns": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24
+    ],
+    "array_order": "column",
+    "status": "documented_in_supplied_draft"
   },
-  "base_buffer_components": null,
+  "base_buffer_components": {
+    "hepes": 30.0,
+    "potassium": 200.0,
+    "magnesium": 2.6,
+    "glutamate": 205.2,
+    "cysteine": 1.0
+  },
   "unknowns": [
     "current_inventory",
     "operative_price_ledger",
-    "base_buffer_composition",
+    "base_amino_acid_constituents",
     "lysate_background_pools",
-    "mixed_stock_composition",
-    "target_assay_conversion"
+    "mixed_stock_concentration_interpretation",
+    "unquantified_titration_counterions",
+    "official_activity_scoring_units"
   ],
   "price_conflicts": [
     {
       "stock": "lysate",
       "cached_usd_per_ml": 20,
-      "draft_usd_per_ml": 4.0
+      "draft_usd_per_ml": 4.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_sfgfp",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 1.933
+      "draft_usd_per_ml": 1.933,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_petase",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.078
+      "draft_usd_per_ml": 2.078,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "template_reteplase",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.284
-    },
-    {
-      "stock": "base_buffer",
-      "cached_usd_per_ml": 0.22,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 2.284,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "nuclease_free_water",
       "cached_usd_per_ml": 0.0703,
-      "draft_usd_per_ml": 0.0
+      "draft_usd_per_ml": 0.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "potassium_glutamate",
       "cached_usd_per_ml": 0.071,
-      "draft_usd_per_ml": 0.07
+      "draft_usd_per_ml": 0.07,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "magnesium_glutamate",
       "cached_usd_per_ml": 0.0627,
-      "draft_usd_per_ml": 0.065
+      "draft_usd_per_ml": 0.065,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "hepes_koh",
+      "cached_usd_per_ml": 0.254,
+      "draft_usd_per_ml": 0.13,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "atp",
       "cached_usd_per_ml": 1.5388,
-      "draft_usd_per_ml": 1.539
+      "draft_usd_per_ml": 1.539,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "ctp",
       "cached_usd_per_ml": 27.9374,
-      "draft_usd_per_ml": 27.937
+      "draft_usd_per_ml": 27.937,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "gtp",
       "cached_usd_per_ml": 39.3431,
-      "draft_usd_per_ml": 39.343
+      "draft_usd_per_ml": 39.343,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     },
     {
       "stock": "utp",
       "cached_usd_per_ml": 37.8462,
-      "draft_usd_per_ml": 37.846
+      "draft_usd_per_ml": 37.846,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "aa_mix_17",
+      "cached_usd_per_ml": 0.0938,
+      "draft_usd_per_ml": 0.083,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "tyrosine",
+      "cached_usd_per_ml": 0.0075,
+      "draft_usd_per_ml": 0.011,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cysteine",
+      "cached_usd_per_ml": 0.023,
+      "draft_usd_per_ml": 0.024,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "sodium_pyruvate",
+      "cached_usd_per_ml": 0.0936,
+      "draft_usd_per_ml": 0.164,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "maltose",
+      "cached_usd_per_ml": 0.01995,
+      "draft_usd_per_ml": 0.02,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "ribose",
+      "cached_usd_per_ml": 0.183,
+      "draft_usd_per_ml": 0.18,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "maltodextrin_17",
+      "cached_usd_per_ml": 0.1224,
+      "draft_usd_per_ml": 0.122,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "folinic_acid",
+      "cached_usd_per_ml": 4.78,
+      "draft_usd_per_ml": 8.978,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "nad",
+      "cached_usd_per_ml": 7.0992,
+      "draft_usd_per_ml": 33.348,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "camp",
+      "cached_usd_per_ml": 7.4797,
+      "draft_usd_per_ml": 7.48,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "spermidine",
+      "cached_usd_per_ml": 1.1835,
+      "draft_usd_per_ml": 1.045,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "oxidized_glutathione",
+      "cached_usd_per_ml": 0.733196,
+      "draft_usd_per_ml": 0.73,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "reduced_glutathione",
+      "cached_usd_per_ml": 0.165338,
+      "draft_usd_per_ml": 0.17,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "putrescine_dihydrochloride",
+      "cached_usd_per_ml": 0.4669,
+      "draft_usd_per_ml": 0.435,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "coa",
+      "cached_usd_per_ml": 157.3437,
+      "draft_usd_per_ml": 104.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "brij_35",
+      "cached_usd_per_ml": 0.0266,
+      "draft_usd_per_ml": 0.027,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "dmso",
+      "cached_usd_per_ml": 0.2028,
+      "draft_usd_per_ml": 0.203,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "sodium_hexametaphosphate",
+      "cached_usd_per_ml": 0.0044,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "amp",
+      "cached_usd_per_ml": 0.6994,
+      "draft_usd_per_ml": 0.699,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cmp",
+      "cached_usd_per_ml": 1.2704,
+      "draft_usd_per_ml": 1.27,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "gmp",
+      "cached_usd_per_ml": 0.5334,
+      "draft_usd_per_ml": 0.533,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "ump",
+      "cached_usd_per_ml": 0.8394,
+      "draft_usd_per_ml": 0.839,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "adenosine",
+      "cached_usd_per_ml": 0.0202,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "guanosine",
+      "cached_usd_per_ml": 0.0303,
+      "draft_usd_per_ml": 0.012,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cytidine",
+      "cached_usd_per_ml": 0.0738,
+      "draft_usd_per_ml": 0.047,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "uridine",
+      "cached_usd_per_ml": 0.0268,
+      "draft_usd_per_ml": 0.003,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "adenine",
+      "cached_usd_per_ml": 0.0095,
+      "draft_usd_per_ml": 0.01,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "guanine",
+      "cached_usd_per_ml": 0.0034,
+      "draft_usd_per_ml": 0.003,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "cytosine",
+      "cached_usd_per_ml": 0.0339,
+      "draft_usd_per_ml": 0.034,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "uracil",
+      "cached_usd_per_ml": 0.00325,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "thymine",
+      "cached_usd_per_ml": 0.0069,
+      "draft_usd_per_ml": 0.007,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "dsbc_ecoli",
+      "cached_usd_per_ml": 5631.72,
+      "draft_usd_per_ml": 5632.0,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "glucose",
+      "cached_usd_per_ml": 0.002784,
+      "draft_usd_per_ml": 0.00222,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_dibasic",
+      "cached_usd_per_ml": 0.0144,
+      "draft_usd_per_ml": 0.035,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_monobasic",
+      "cached_usd_per_ml": 0.0041,
+      "draft_usd_per_ml": 0.01,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_ratio_dibasic_monobasic",
+      "cached_usd_per_ml": 0.0104,
+      "draft_usd_per_ml": 0.024,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_phosphate_ratio_monobasic_dibasic",
+      "cached_usd_per_ml": 0.0081,
+      "draft_usd_per_ml": 0.018,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "phosphoenolpyruvic_acid_cyclohexylammonium_salt",
+      "cached_usd_per_ml": 2.2,
+      "draft_usd_per_ml": 2.202,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "nicotinamide",
+      "cached_usd_per_ml": 0.001478,
+      "draft_usd_per_ml": 0.002,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "oxaloacetic_acid",
+      "cached_usd_per_ml": 0.9245,
+      "draft_usd_per_ml": 0.925,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "succinic_acid",
+      "cached_usd_per_ml": 0.0043,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
+    },
+    {
+      "stock": "potassium_formate",
+      "cached_usd_per_ml": 0.0042,
+      "draft_usd_per_ml": 0.004,
+      "resolution": "supplied_draft_selected_for_provisional_accounting; cache_difference_retained"
     }
   ],
   "stocks": {
@@ -99,7 +405,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 20,
-      "draft_usd_per_ml": 4.0
+      "draft_usd_per_ml": 4.0,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 4.0
     },
     "template_sfgfp": {
       "name": "DNA Template",
@@ -113,7 +422,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 1.933
+      "draft_usd_per_ml": 1.933,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 1.933
     },
     "template_petase": {
       "name": "DNA Template",
@@ -127,7 +439,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.078
+      "draft_usd_per_ml": 2.078,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 2.078
     },
     "template_reteplase": {
       "name": "DNA Template",
@@ -141,7 +456,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 6.418,
-      "draft_usd_per_ml": 2.284
+      "draft_usd_per_ml": 2.284,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 2.284
     },
     "base_buffer": {
       "name": "Base Buffer",
@@ -155,7 +473,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.22,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.22,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.22
     },
     "nuclease_free_water": {
       "name": "Nuclease-Free Water",
@@ -169,7 +490,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0703,
-      "draft_usd_per_ml": 0.0
+      "draft_usd_per_ml": 0.0,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.0
     },
     "potassium_glutamate": {
       "name": "Potassium Glutamate",
@@ -186,7 +510,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.071,
-      "draft_usd_per_ml": 0.07
+      "draft_usd_per_ml": 0.07,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.07
     },
     "magnesium_glutamate": {
       "name": "Magnesium Glutamate",
@@ -203,7 +530,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0627,
-      "draft_usd_per_ml": 0.065
+      "draft_usd_per_ml": 0.065,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.065
     },
     "hepes_koh": {
       "name": "HEPES-KOH pH 7.5",
@@ -219,7 +549,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.254,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.13,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.13
     },
     "ammonium_glutamate": {
       "name": "Ammonium Glutamate",
@@ -236,7 +569,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.72,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.72,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.72
     },
     "bis_tris_ph_6_5": {
       "name": "Bis-Tris pH 6.5",
@@ -252,7 +588,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "atp": {
       "name": "ATP",
@@ -268,7 +607,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 1.5388,
-      "draft_usd_per_ml": 1.539
+      "draft_usd_per_ml": 1.539,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 1.539
     },
     "ctp": {
       "name": "CTP",
@@ -284,7 +626,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 27.9374,
-      "draft_usd_per_ml": 27.937
+      "draft_usd_per_ml": 27.937,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 27.937
     },
     "gtp": {
       "name": "GTP",
@@ -300,7 +645,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 39.3431,
-      "draft_usd_per_ml": 39.343
+      "draft_usd_per_ml": 39.343,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 39.343
     },
     "utp": {
       "name": "UTP",
@@ -316,7 +664,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 37.8462,
-      "draft_usd_per_ml": 37.846
+      "draft_usd_per_ml": 37.846,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 37.846
     },
     "aa_mix_17": {
       "name": "17 Amino Acid Mix",
@@ -324,13 +675,35 @@
       "stock_label": "0.05M",
       "stock_mM": 50.0,
       "components_per_formula_unit": {},
-      "components_status": "unresolved",
+      "components_status": "identities_documented_per_constituent_concentrations_unresolved",
       "model_species": null,
       "model_coverage": "unsupported",
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0938,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.083,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.083,
+      "documented_constituents": [
+        "arginine",
+        "isoleucine",
+        "aspartate",
+        "alanine",
+        "asparagine",
+        "histidine",
+        "proline",
+        "serine",
+        "threonine",
+        "valine",
+        "leucine",
+        "phenylalanine",
+        "tryptophan",
+        "methionine",
+        "lysine",
+        "glycine",
+        "glutamine"
+      ]
     },
     "tyrosine": {
       "name": "Tyrosine pH 12",
@@ -346,7 +719,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0075,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.011,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.011
     },
     "cysteine": {
       "name": "Cysteine",
@@ -362,7 +738,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.023,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.024,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.024
     },
     "sodium_pyruvate": {
       "name": "Sodium Pyruvate",
@@ -376,7 +755,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0936,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.164,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.164
     },
     "maltose": {
       "name": "Maltose",
@@ -390,7 +772,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.01995,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.02,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.02
     },
     "ribose": {
       "name": "Ribose",
@@ -404,7 +789,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.183,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.18,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.18
     },
     "maltodextrin_17": {
       "name": "Maltodextrin 17",
@@ -418,7 +806,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.1224,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.122,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.122
     },
     "folinic_acid": {
       "name": "Folinic Acid",
@@ -432,7 +823,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 4.78,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 8.978,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 8.978
     },
     "nad": {
       "name": "NAD",
@@ -448,7 +842,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 7.0992,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 33.348,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 33.348
     },
     "camp": {
       "name": "cAMP",
@@ -464,7 +861,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 7.4797,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 7.48,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 7.48
     },
     "spermidine": {
       "name": "Spermidine",
@@ -480,7 +880,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 1.1835,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 1.045,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 1.045
     },
     "oxidized_glutathione": {
       "name": "Oxidized Glutathione (GSSG)",
@@ -496,7 +899,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.733196,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.73,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.73
     },
     "reduced_glutathione": {
       "name": "Reduced Glutathione (GSH)",
@@ -512,7 +918,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.165338,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.17,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.17
     },
     "dithiothreitol": {
       "name": "Dithiothreitol (DTT)",
@@ -528,7 +937,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "putrescine_dihydrochloride": {
       "name": "Putrescine Dihydrochloride",
@@ -544,7 +956,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.4669,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.435,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.435
     },
     "coa": {
       "name": "Coenzyme A",
@@ -560,7 +975,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 157.3437,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 104.0,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 104.0
     },
     "brij_35": {
       "name": "Brij-35",
@@ -574,7 +992,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0266,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.027,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.027
     },
     "peg_8000": {
       "name": "PEG-8000",
@@ -588,7 +1009,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "dmso": {
       "name": "Dimethyl Sulfoxide (DMSO)",
@@ -602,7 +1026,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.2028,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.203,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.203
     },
     "pyruvate_oxidase": {
       "name": "Pyruvate oxidase (1.5U/mg)",
@@ -616,7 +1043,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 48.15,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 48.15,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 48.15
     },
     "catalase": {
       "name": "Catalase",
@@ -630,7 +1060,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 5,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 5.0,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 5.0
     },
     "sodium_hexametaphosphate": {
       "name": "Sodium Hexametaphosphate",
@@ -646,7 +1079,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0044,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.004,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.004
     },
     "dilithium_acetyl_phosphate": {
       "name": "Dilithium Acetyl Phosphate",
@@ -662,7 +1098,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.273,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.273,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.273
     },
     "amp": {
       "name": "AMP",
@@ -678,7 +1117,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.6994,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.699,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.699
     },
     "cmp": {
       "name": "CMP",
@@ -694,7 +1136,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 1.2704,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 1.27,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 1.27
     },
     "gmp": {
       "name": "GMP",
@@ -710,7 +1155,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.5334,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.533,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.533
     },
     "ump": {
       "name": "UMP",
@@ -726,7 +1174,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.8394,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.839,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.839
     },
     "adenosine": {
       "name": "Adenosine",
@@ -742,7 +1193,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0202,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.002,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.002
     },
     "guanosine": {
       "name": "Guanosine",
@@ -758,7 +1212,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0303,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.012,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.012
     },
     "cytidine": {
       "name": "Cytidine",
@@ -774,7 +1231,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0738,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.047,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.047
     },
     "uridine": {
       "name": "Uridine",
@@ -790,7 +1250,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0268,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.003,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.003
     },
     "thymidine": {
       "name": "Thymidine",
@@ -806,7 +1269,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.108,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.108,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.108
     },
     "adenine": {
       "name": "Adenine",
@@ -822,7 +1288,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0095,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.01,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.01
     },
     "guanine": {
       "name": "Guanine",
@@ -838,7 +1307,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0034,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.003,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.003
     },
     "cytosine": {
       "name": "Cytosine",
@@ -854,7 +1326,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0339,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.034,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.034
     },
     "uracil": {
       "name": "Uracil",
@@ -870,7 +1345,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.00325,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.002,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.002
     },
     "thymine": {
       "name": "Thymine",
@@ -886,7 +1364,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0069,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.007,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.007
     },
     "dsbc_ecoli": {
       "name": "DsbC (E. coli, 25.5 kDa)",
@@ -902,7 +1383,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 5631.72,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 5632.0,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 5632.0
     },
     "glucose": {
       "name": "Glucose",
@@ -916,7 +1400,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.002784,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.00222,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.00222
     },
     "potassium_phosphate_dibasic": {
       "name": "Potassium phosphate dibasic",
@@ -933,7 +1420,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0144,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.035,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.035
     },
     "potassium_phosphate_monobasic": {
       "name": "Potassium phosphate monobasic",
@@ -950,7 +1440,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0041,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.01,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.01
     },
     "potassium_phosphate_ratio_dibasic_monobasic": {
       "name": "Potassium phosphate 1.6:1 dibasic:monobasic (molar ratio)",
@@ -966,7 +1459,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0104,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.024,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.024
     },
     "potassium_phosphate_ratio_monobasic_dibasic": {
       "name": "Potassium phosphate 1.6:1 monobasic:dibasic (molar ratio)",
@@ -982,13 +1478,16 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0081,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.018,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.018
     },
     "phosphoenolpyruvic_acid_cyclohexylammonium_salt": {
       "name": "Phosphoenolpyruvic acid cyclohexylammonium salt",
       "source_id": "phosphoenolpyruvic_acid_cyclohexylammonium_salt",
-      "stock_label": "0.5M",
-      "stock_mM": 500.0,
+      "stock_label": "0.1M",
+      "stock_mM": 100.0,
       "components_per_formula_unit": {
         "phosphoenolpyruvic_acid_cyclohexylammonium_salt": 1
       },
@@ -998,7 +1497,13 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 2.2,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 2.202,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 2.202,
+      "cached_stock_mM": 500.0,
+      "vendor_catalog": "Fisher P07581G",
+      "stock_concentration_source": "supplied_draft"
     },
     "nicotinamide": {
       "name": "Nicotinamide",
@@ -1014,7 +1519,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.001478,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.002,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.002
     },
     "pep_mono": {
       "name": "PEP mono (0.1M stock)",
@@ -1030,7 +1538,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 2.2019,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "potassium_oxalate": {
       "name": "Potassium Oxalate",
@@ -1046,7 +1557,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.031688,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "three_pga": {
       "name": "3-Phosphoglycerate (3-PGA)",
@@ -1062,7 +1576,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": null,
+      "listed_in_supplied_draft": false,
+      "selected_price_source": null,
+      "supplied_draft_usd_per_ml": null
     },
     "oxaloacetic_acid": {
       "name": "Oxaloacetic acid",
@@ -1078,7 +1595,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.9245,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.925,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.925
     },
     "succinic_acid": {
       "name": "Succinic acid",
@@ -1094,7 +1614,10 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0043,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.004,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.004
     },
     "potassium_formate": {
       "name": "Potassium formate",
@@ -1110,7 +1633,225 @@
       "cached_in_stock": true,
       "availability_status": "unconfirmed_cached_snapshot",
       "cached_usd_per_ml": 0.0042,
-      "draft_usd_per_ml": null
+      "draft_usd_per_ml": 0.004,
+      "listed_in_supplied_draft": true,
+      "selected_price_source": "supplied_draft",
+      "supplied_draft_usd_per_ml": 0.004
     }
-  }
+  },
+  "sources": [
+    {
+      "url": "https://coopetition.htgaa.org/cfps",
+      "artifact": "competition.json",
+      "sha256": "715be309d3a2eabddbb96cdb94dd10221530dfa416531a374b98117adcf1c0d1",
+      "status": "local_cache_capture_date_unknown"
+    },
+    {
+      "title": "CFPS coopetition [draft]",
+      "url": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+      "received_date": "2026-10-05",
+      "status": "user_supplied_draft_not_confirmed_operative_rules",
+      "locator": "Full text pasted by user; structured facts transcribed from the named sections"
+    }
+  ],
+  "selected_accounting_source": {
+    "title": "CFPS coopetition [draft]",
+    "url": "https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit",
+    "received_date": "2026-10-05",
+    "status": "user_supplied_draft_not_confirmed_operative_rules",
+    "locator": "Full text pasted by user; structured facts transcribed from the named sections"
+  },
+  "base_unresolved_components": [
+    {
+      "name": "18 amino acid mix",
+      "reported_final_mM": 1.0,
+      "reason": "per-constituent identities and concentrations not explicitly reconciled"
+    }
+  ],
+  "unquantified_counterions": [
+    "potassium from KOH titration",
+    "acetic acid/acetate from amino-acid stocks"
+  ],
+  "lysate_profiles": {
+    "standard": {
+      "strain": "E. coli BL21 Star (DE3)",
+      "T7_induced": true,
+      "DTT_in_preparation": true,
+      "targets": [
+        "sfgfp",
+        "petase"
+      ]
+    },
+    "disulfide": {
+      "strain": "E. coli BL21 Star (DE3)",
+      "T7_induced": true,
+      "DTT_in_preparation": false,
+      "alkylation": "500 uM iodoacetamide followed by 500 uM cysteine quench",
+      "targets": [
+        "reteplase"
+      ],
+      "cost_usd_per_ml": 4.0,
+      "submission_note": "target-specific lysate preparation; do not invent a second reagent field in the submission schema"
+    }
+  },
+  "target_profiles": {
+    "sfgfp": {
+      "protein_target": "sfgfp-strep-m9134733",
+      "plasmid_id": "m9134733",
+      "protein_id": "m9142078",
+      "mw_g_mol": 27015,
+      "length_aa": 240,
+      "lysate_profile": "standard",
+      "incubation": [
+        {
+          "temperature_C": 30,
+          "hours": 20
+        }
+      ],
+      "assay": {
+        "readout": "endpoint fluorescence",
+        "calibration": "purified matching sfGFP standards on each plate",
+        "conversion": "g/L = uM * MW(g/mol) / 1e6, followed by recorded dilution correction",
+        "observation": "mature fluorescent protein, not automatically total translated protein"
+      }
+    },
+    "petase": {
+      "protein_target": "TfCut2",
+      "plasmid_id": "m9307404",
+      "protein_id": "m9360457",
+      "mw_g_mol": 33157,
+      "length_aa": 309,
+      "lysate_profile": "standard",
+      "incubation": [
+        {
+          "temperature_C": 30,
+          "hours": 20
+        }
+      ],
+      "assay": {
+        "substrate": "p-nitrophenol hexanoate",
+        "substrate_final_uM": 400,
+        "readout": "OD405",
+        "source_raw_endpoint_field": "OD405 multiplied by 1000 for curve fitting",
+        "progress_product": "p-nitrophenol",
+        "nominal_reaction_dilution": 600,
+        "assay_volume_uL": 60,
+        "pre_assay_heat": {
+          "temperature_C": 60,
+          "minutes": 10
+        },
+        "reads": 15,
+        "read_duration_minutes": 30,
+        "standard_curve": "reverse product/substrate mixture at constant 400 uM total",
+        "rate_output": "raw OD405/h; initial linear window derived from top experimental wells and applied plate-wide",
+        "endpoint_selection": "latest target-control time below OD3.5; earliest if all saturate, latest if none saturate",
+        "limitations": [
+          "esterase proxy, not a direct PET depolymerization assay",
+          "nominal dilution must be checked against executed transfers",
+          "enzyme-unit and economic conversion unspecified"
+        ]
+      }
+    },
+    "reteplase": {
+      "protein_target": "vtPA",
+      "plasmid_id": "m9307400",
+      "protein_id": "m9307103",
+      "mw_g_mol": 44136,
+      "length_aa": 399,
+      "lysate_profile": "disulfide",
+      "incubation": [
+        {
+          "temperature_C": 30,
+          "hours": 10
+        },
+        {
+          "temperature_C": 4,
+          "hours": 2
+        },
+        {
+          "temperature": "ambient",
+          "hours": 8
+        }
+      ],
+      "assay": {
+        "substrate": "IPR-AMC",
+        "substrate_final_uM": 25,
+        "readout": "fluorescence excitation345nm/emission445nm bottom read",
+        "progress_product": "AMC",
+        "reaction_fraction": 0.5,
+        "assay_volume_uL": 40,
+        "reads": 15,
+        "read_duration_hours_approx": 8,
+        "buffer_stock": "50 mM Tris-HCl pH8, 150 mM NaCl, 0.1% Tween20",
+        "standard_curve": "reverse AMC/IPR-AMC mixture at constant 25 uM total",
+        "rate_output": "raw RFU/h; adaptive linear window from column4 A-L target control",
+        "time_axis": "actual read wall-clock time relative to substrate addition",
+        "limitations": [
+          "activity proxy for disulfide-compatible folding, not a direct count of correct disulfides",
+          "no-reteplase background control required",
+          "enzyme-unit and economic conversion unspecified"
+        ]
+      }
+    }
+  },
+  "draft_ambiguities": [
+    {
+      "id": "objective_direction",
+      "sections": [
+        "Executive Summary",
+        "Competition design"
+      ],
+      "source_wording": "maximize the specific cost ($/g or $/unit)",
+      "project_assumption": "minimize specific cost; explicit economic interpretation, not confirmed rule"
+    },
+    {
+      "id": "additional_reagent_allowance",
+      "sections": [
+        "Executive Summary",
+        "Additional reagents"
+      ],
+      "source_wording": "[20] versus [10 or 20]",
+      "unresolved": "collective allowance per approach per round is bracketed; commercial availability and lead time apply"
+    },
+    {
+      "id": "experimental_control_layout",
+      "sections": [
+        "Preparing Your Plate Submission",
+        "Destination (CFPS Reaction) Plate Layouts"
+      ],
+      "source_wording": "80 designs x 4 fills columns 5-24; later description also places 8 positive controls there",
+      "unresolved": "80-design allocation versus additional interspersed controls requires authoritative validator"
+    },
+    {
+      "id": "base_amino_acids",
+      "sections": [
+        "CFPS Reagents",
+        "Final Reaction Composition"
+      ],
+      "source_wording": "17-AA supplemental mix; base table says 18-AA mix with cysteine separately",
+      "unresolved": "identity and per-constituent concentration of base 18-AA mixture, including tyrosine, need confirmation"
+    },
+    {
+      "id": "activity_scoring_units",
+      "sections": [
+        "Data analysis",
+        "Competition design"
+      ],
+      "unresolved": "raw OD405/h and RFU/h are not defined enzyme units; official rate-to-economic-score conversion is unspecified"
+    },
+    {
+      "id": "sfGFP_HiBiT_statement",
+      "sections": [
+        "Target Proteins"
+      ],
+      "unresolved": "prose says each target includes HiBiT, but supplied sfGFP sequence ends in Strep tag without the PETase/reteplase HiBiT sequence; preserve supplied sequences"
+    },
+    {
+      "id": "standard_dilution_labels",
+      "sections": [
+        "Final Reaction Composition (Standard / Negative Control Wells)"
+      ],
+      "unresolved": "4X to 1X label does not follow from 2 uL into 20 uL; use executed standard definitions and assay dilution metadata"
+    }
+  ]
 }

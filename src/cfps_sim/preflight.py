@@ -1,11 +1,11 @@
 """Source-aware recipe chemistry and readiness gates; no implied calibration."""
 from .economics import number, cost_recipe
-from .recipe import validate
+from .recipe import TEMPLATES, validate
 
 
 def audit_recipe(recipe, registry, prices=None, base_final_mM=None):
     checked = validate(recipe)
-    totals, unsupported, unresolved, absent = {}, [], [], []
+    totals, unsupported, unresolved, absent, unlisted = {}, [], [], [], []
     for name, volume in checked["volumes_nl"].items():
         if not volume:
             continue
@@ -13,6 +13,8 @@ def audit_recipe(recipe, registry, prices=None, base_final_mM=None):
         if stock is None:
             absent.append(name)
             continue
+        if stock.get("listed_in_supplied_draft") is False:
+            unlisted.append(name)
         concentration = stock.get("stock_mM")
         components = stock.get("components_per_formula_unit", {})
         if concentration is None or not components:
@@ -29,6 +31,7 @@ def audit_recipe(recipe, registry, prices=None, base_final_mM=None):
     if base is not None:
         for chemical, value in base.items():
             totals[chemical] = totals.get(chemical, 0) + number(value, chemical)
+    base_unresolved = registry.get("base_unresolved_components", []) if base_final_mM is None else []
     conflicts = [row for row in registry.get("price_conflicts", [])
                  if checked["volumes_nl"].get(row["stock"], 0)]
     blockers = []
@@ -36,8 +39,14 @@ def audit_recipe(recipe, registry, prices=None, base_final_mM=None):
         blockers.append("inventory_and_execution_constraints_unconfirmed")
     if base is None:
         blockers.append("base_buffer_composition_unknown")
-    if conflicts:
+    if any(not row.get("resolution") for row in conflicts):
         blockers.append("conflicting_price_sources")
+    if base_unresolved:
+        blockers.append("base_amino_acid_constituents_unresolved")
+    if unlisted:
+        blockers.append("stocks_not_listed_in_supplied_draft")
+    if registry.get("draft_ambiguities"):
+        blockers.append("draft_rules_require_reconciliation")
     if absent:
         blockers.append("stocks_absent_from_registry")
     if set(unresolved) - {"lysate", "base_buffer", "nuclease_free_water", "template_sfgfp", "template_petase", "template_reteplase"}:
@@ -47,12 +56,17 @@ def audit_recipe(recipe, registry, prices=None, base_final_mM=None):
         blockers.append("complete_price_ledger_missing")
     if prices is None or prices.get("provenance", {}).get("status") != "confirmed":
         blockers.append("operative_price_ledger_unconfirmed")
-    target = next(name.removeprefix("template_") for name in checked["volumes_nl"] if name.startswith("template_") and checked["volumes_nl"][name])
+    target = next(name.removeprefix("template_") for name in TEMPLATES if checked["volumes_nl"].get(name, 0))
     return {"target": target, "volumes_nl": checked["volumes_nl"], "known_final_mM": totals,
             "base_composition_supplied": base is not None,
+            "base_composition_source": "explicit_user_override" if base_final_mM is not None else "registry",
+            "base_unresolved_components": base_unresolved, "unlisted_stocks": sorted(unlisted),
             "unresolved_stocks": sorted(unresolved), "absent_stocks": sorted(absent),
             "unsupported_model_effects": sorted(unsupported), "price_conflicts": conflicts,
-            "cost": ledger, "submission_ready": not blockers, "blockers": blockers,
+            "cost": ledger, "submission_ready": not blockers,
+            "lysate_profile": registry.get("target_profiles", {}).get(target, {}).get("lysate_profile"),
+            "target_execution_profile": registry.get("target_profiles", {}).get(target),
+            "draft_ambiguities": registry.get("draft_ambiguities", []), "blockers": blockers,
             "note": "Analytical totals, not free-ion concentrations. Unknown lysate pools are excluded."
             " Formula stoichiometry does not model binding, pH, or activity."}
 
@@ -76,6 +90,8 @@ def model_initial_conditions(audit, lysate_background_mM, other_initial):
     aliases.update({name: f"aa_{aa}" for aa, name in aa_names.items()})
     if not audit["base_composition_supplied"]:
         raise ValueError("Explicit base composition is required")
+    if audit.get("base_unresolved_components"):
+        raise ValueError("Resolve base amino-acid constituents before mapping initial pools")
     unresolved = set(audit["unresolved_stocks"]) - {"lysate", "base_buffer", "nuclease_free_water", "template_sfgfp", "template_petase", "template_reteplase"}
     if unresolved or audit["absent_stocks"]:
         raise ValueError("Resolve all dispensed chemical stocks before mapping initial pools")

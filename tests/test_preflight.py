@@ -19,8 +19,8 @@ def test_counterions_base_and_conflicts():
     assert report['known_final_mM']['glutamate'] == pytest.approx(100)
     assert report['known_final_mM']['atp'] == pytest.approx(1.5)
     assert not report['submission_ready']
-    assert 'conflicting_price_sources' in report['blockers']
-    assert report['cost']['total_cost_usd'] is None
+    assert 'operative_price_ledger_unconfirmed' in report['blockers']
+    assert report['cost']['total_cost_usd'] == pytest.approx(0.02492395)
     assert 'magnesium_glutamate' in report['unsupported_model_effects']
     with pytest.raises(ValueError, match='backgrounds'):
         model_initial_conditions(report, {}, {})
@@ -32,9 +32,11 @@ def test_unknown_base_and_unregistered_stocks_block():
     recipe['volumes_nl']['nuclease_free_water'] -= 25
     registry = json.loads((ROOT/'data/registry/inventory.draft.json').read_text())
     report = audit_recipe(recipe, registry)
-    assert 'base_buffer_composition_unknown' in report['blockers']
+    assert 'base_amino_acid_constituents_unresolved' in report['blockers']
+    assert report['known_final_mM']['potassium'] == pytest.approx(287.5)
+    assert report['known_final_mM']['glutamate'] == pytest.approx(305.2)
     assert report['absent_stocks'] == ['unknown_stock']
-    with pytest.raises(ValueError, match='base composition'):
+    with pytest.raises(ValueError, match='base amino-acid'):
         model_initial_conditions(report, {}, {})
 
 
@@ -67,3 +69,17 @@ def test_mapping_requires_complete_explicit_background_and_other_states():
     assert mapped['recipe_blockers']
     with pytest.raises(ValueError, match='other_initial'):
         model_initial_conditions(audit, backgrounds, {})
+
+
+def test_target_specific_lysate_schedule_and_assays():
+    registry = json.loads((ROOT/'data/registry/inventory.draft.json').read_text())
+    recipe = json.loads((ROOT/'examples/recipe.json').read_text())
+    recipe['volumes_nl']['template_reteplase'] = recipe['volumes_nl'].pop('template_sfgfp')
+    report = audit_recipe(recipe, registry)
+    assert report['lysate_profile'] == 'disulfide'
+    assert [step['hours'] for step in report['target_execution_profile']['incubation']] == [10, 2, 8]
+    assert report['target_execution_profile']['assay']['substrate_final_uM'] == 25
+    assert registry['target_profiles']['petase']['assay']['nominal_reaction_dilution'] == 600
+    assert registry['stocks']['phosphoenolpyruvic_acid_cyclohexylammonium_salt']['stock_mM'] == 100
+    assert registry['stocks']['pep_mono']['listed_in_supplied_draft'] is False
+    assert any(row['id'] == 'experimental_control_layout' for row in report['draft_ambiguities'])
