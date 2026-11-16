@@ -190,7 +190,11 @@ The measured-data benchmark downloads ten pinned Borkowski author tables
 (1,017 formulation means) into ignored `data/raw/borkowski2020`, verifies each
 Git blob hash, and records SHA-256 provenance. Raw tables are not redistributed.
 The benchmark uses source feature scales and relative yield, without an assumed
-conversion to mass or competition reagents. Plates 1–7 train the model; plate 8
+conversion to mass or competition reagents. The same group also built cell-free
+analog adders and four-input perceptrons, and four authors are shared with the
+formulation-optimization paper behind these tables
+([DOI](https://doi.org/10.1038/s41467-019-11889-0)); formulation predictability is
+the prerequisite both lines of work depend on. Plates 1–7 train the model; plate 8
 selects linear/quadratic ridge and regularization; plate 9 calibrates intervals;
 plate 10 tests predictions. Shared recipes are purged from earlier splits, and
 all preprocessing is fitted on training data. Final fitting uses training and

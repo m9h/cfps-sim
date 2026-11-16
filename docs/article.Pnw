@@ -924,6 +924,22 @@ source scales without inferring equivalence to competition stocks or converting
 the response into mass. Individual well observations, replicate counts, and
 independent lysate batch identifiers are not supplied by these tables.
 
+The provenance of this dataset is worth stating, because it shapes what the
+benchmark can and cannot settle. The same group also built cell-free analog
+adders and four-input perceptrons, combining metabolic transducers into weighted
+sums and applying model-predicted weights to classify metabolite combinations in
+both whole-cell and cell-free systems\cite{pandi}. Four authors are shared
+between that study and the formulation-optimization paper whose tables we use
+here\cite{pandi,borkowski}. The two efforts share a prerequisite rather than a
+mechanism: a circuit that encodes weights as concentrations is exactly as exposed
+to batch variability and resource competition as bulk yield is, so formulation
+predictability is upstream of both. That is the same dependency identified by the
+lysate-characterization and crosstalk-modeling work discussed in the
+introduction\cite{styczynski_dynamics,styczynski_crosstalk_model}. Our use of
+these tables is narrower than either program: we fit a retrospective baseline to
+published formulation means, and we do not reproduce the authors' active-learning
+policy, their computational circuits, or any claim about cost savings.
+
 CUDA PyTorch fits linear and quadratic ridge candidates. Plates 1--7 train the
 models, plate 8 selects feature order and regularization by mean absolute error,
 plate 9 calibrates absolute-residual intervals, and plate 10 tests predictions.
@@ -1280,6 +1296,10 @@ lot records and documentation. \url{https://sepiabio.com/products/opencfps-core-
 active-learning-guided cell-free production. Pinned repository revision listed
 in the benchmark manifest. \url{https://github.com/brsynth/active_learning_cell_free}.
 
+\bibitem{pandi} A. Pandi, M. Koch, P. L. Voyvodic, P. Soudier, J. Bonnet,
+M. Kushwaha, and J.-L. Faulon. Metabolic perceptrons for neural computing in
+biological systems. Nature Communications, 10, 3880 (2019).
+\url{https://doi.org/10.1038/s41467-019-11889-0}.
 \bibitem{borkowski} O. Borkowski et al. Large scale active-learning-guided
 exploration for in vitro protein production optimization. Nature Communications,
 11, 1872 (2020). \url{https://doi.org/10.1038/s41467-020-15798-5}.
