@@ -281,6 +281,55 @@ Replicated experiments must decide whether the proposed modules improve sfGFP
 expression or transfer to enzyme activity. This is our design proposal, rather
 than a result demonstrated by the POSTECH study.
 
+\subsection{Comparing the two programs: define the system or measure it}
+The Georgia Tech and POSTECH programs described above address the same
+obstacle---the undefined composition of crude lysate---by opposite strategies, and
+the contrast is more instructive for this project than either program alone.
+POSTECH removes the unknown by producing and purifying translation factors and
+assembling a defined expression system, continuing the reconstituted tradition
+\cite{chae,shimizu}. The Styczynski lab retains crude lysate and measures the
+unknown, characterizing the cell-free proteome and metabolome and their dependence
+on preparation protocol and host strain\cite{styczynski_systems}. Our competition
+fixes a supplied lysate, so reconstitution is unavailable to us; we are confined to
+the characterization strategy, which is why recipe accounting reports analytical
+totals and refuses to convert unmeasured endogenous pools into initial conditions.
+
+The most concrete point of contact is linear DNA. POSTECH restored lost sfGFP
+expression by producing energy-regeneration components from redesigned linear
+templates\cite{chae,chae_preprint}, and those components are produced in
+lysate-based CFPS. That is precisely the regime reviewed by McSweeney and
+Styczynski, in which native lysate nucleases degrade linear expression templates
+and limit yield unless stabilized\cite{styczynski_linear}. The review therefore
+supplies a mechanistic account of why a linear-template redesign is a substantive
+intervention rather than a formality. This connection rests on the present summary
+of Chae et al.; the template-stability details of that study have not been
+independently confirmed here.
+
+The two programs also converge on energy regeneration. POSTECH's group-exchange
+diagnostic localized expression loss to the energy-regeneration
+group\cite{chae}, while cell-free metabolomics reports substantial central-carbon
+and amino-acid activity and endogenous metabolism that was fairly resilient to
+targeted enzyme supplementation\cite{styczynski_dynamics}. Energy chemistry is the
+module our model treats most crudely: ATP regeneration does not regenerate GTP,
+CTP, or UTP, charging costs are lumped into ADP equivalents, and phosphate, AMP,
+and pyrophosphate are absent. Two independent lines of evidence pointing at the
+same module is a reason to prioritize the energy-pathway choice in the milestones,
+not a validation of any particular pathway.
+
+Finally, the comparison tempers our own module-exchange proposal. Changes to lysate
+preparation altered protein yield and temporal metabolic profiles while general
+metabolic trends were conserved\cite{styczynski_dynamics}. A recipe-module swap
+that moves yield therefore need not produce a legible change in measured metabolic
+state, so metabolite readouts may be less diagnostic than the analogy to
+component-group exchange suggests. Planned module-swap experiments should state in
+advance which readout would distinguish the competing explanations.
+
+These are conceptual and methodological relationships. The Styczynski studies use
+in-house Escherichia coli lysates with their own lysis protocols, and the POSTECH
+platform is benchmarked against a commercial kit; neither examined the supplied
+competition lysate or our three targets. No quantitative result from either
+program transfers to our reactions.
+
 \subsection{What measured biofoundry optimization has achieved}
 Automated optimization has already produced substantial improvements, although
 the readout and starting benchmark determine what each number means.
