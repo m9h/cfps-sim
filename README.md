@@ -615,6 +615,47 @@ current multi-target competition.
   Synthesis with Bayesian Optimization* (2026).
   [DOI](https://doi.org/10.1021/acssynbio.6c00179).
 
+### Lysate variability and endogenous metabolism
+
+The [Styczynski lab](https://sites.gatech.edu/styczynski/) (Georgia Tech) has
+published a connected thread on what a lysate contains and how preparation
+changes performance. It is the measured counterpart to this project's largest
+documented gap: endogenous pools, which recipe accounting excludes rather than
+infers. The article's reading guide discusses each in context.
+
+- Piorino & Styczynski, *Complex dependence of E. coli-based cell-free expression
+  on sonication energy during lysis* (2023). The energy giving maximal output
+  depends on the expression template (plasmid concentration, promoter, origin);
+  the authors conclude sonication protocols cannot be standardized to one optimum.
+  [DOI](https://doi.org/10.1021/acssynbio.3c00312).
+- Miguez et al., *Metabolic dynamics in E. coli-based cell-free systems* (2021).
+  Temporal metabolomics showing significant central-carbon and amino-acid activity;
+  lysate preparation mattered more than preincubation, and endogenous metabolism
+  was resilient to targeted enzyme supplementation.
+  [DOI](https://doi.org/10.1021/acssynbio.1c00167).
+- Miguez, McNerney & Styczynski, *Metabolic profiling of E. coli cell-free
+  expression systems for process optimization* (2019). Lysate processing changes
+  metabolite makeup; proposes ways to standardize lysate activity.
+  [DOI](https://doi.org/10.1021/acs.iecr.9b03565).
+- Sridharan, Piorino & Styczynski, *Systems biology-based analysis of cell-free
+  systems* (2022). Review of cell-free proteome and metabolome characterization,
+  including dependence on preparation protocol and host strain.
+  [DOI](https://doi.org/10.1016/j.copbio.2022.102703).
+- Han et al., *A mathematical model of cell-free transcription-translation with
+  plasmid crosstalk* (2025). ODE model with competition for transcription,
+  translation and degradation resources plus toxic-molecule buildup — the closest
+  published precedent to the model here, including mechanisms ours omits.
+  [DOI](https://doi.org/10.1093/synbio/ysaf011).
+- Piorino et al., *Plasmid crosstalk in cell-free expression systems* (2023). The
+  direction of crosstalk depends on plasmid concentration and transcriptional
+  machinery. Out of scope for one template per reaction, but it motivates
+  resource-competition residual models.
+  [DOI](https://doi.org/10.1021/acssynbio.3c00412).
+- McSweeney & Styczynski, *Effective use of linear DNA in cell-free expression
+  systems* (2021). Native lysate nucleases degrade linear templates; relevant to
+  the Popcorn exchange path, which we have not tested with linear DNA.
+  [DOI](https://doi.org/10.3389/fbioe.2021.715328).
+
 This repository contains citation links; publisher PDFs and conversation exports
 are not bundled. Local downloads can be stored in the ignored `papers/downloads`
 directory. Paper review should extract equations, units, parameter ranges,
