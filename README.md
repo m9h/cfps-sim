@@ -1,15 +1,93 @@
-# cfps-sim
+<div align="center">
 
-A first computational stack for lysate-based cell-free protein synthesis (CFPS):
-recipe accounting, a reduced CUDA PyTorch model with SBML export, and a
-BoTorch experiment-selection demonstration. Numerical execution requires a CUDA GPU; Modal provides a remote GPU runner.
+# 🧬 cfps-sim
 
-**Status:** runnable research scaffold. The kinetic constants are illustrative,
-the model is uncalibrated, and the BoTorch example uses synthetic observations.
-It does not predict competition winners. Recipe validation and simulation are
-separate workflows. Initial-pool mapping now requires explicit base chemistry and lysate backgrounds; a calibrated recipe-response model remains future work.
+**Recipe accounting, a reduced GPU kinetic model, and Bayesian experiment design<br>for lysate-based cell-free protein synthesis (CFPS).**
 
-## Install with uv
+[![CI](https://github.com/m9h/cfps-sim/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/m9h/cfps-sim/actions/workflows/checks.yml)
+![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)
+![PyTorch](https://img.shields.io/badge/PyTorch-CUDA%20float64-EE4C2C?logo=pytorch&logoColor=white)
+![BoTorch](https://img.shields.io/badge/BoTorch-acquisition-6f42c1)
+![SBML](https://img.shields.io/badge/export-SBML-2ea44f)
+![uv](https://img.shields.io/badge/env-uv%20locked-DE5FE9?logo=uv&logoColor=white)
+![Modal](https://img.shields.io/badge/GPU-Modal%20A100-00C853)
+![Status](https://img.shields.io/badge/status-research%20scaffold-orange)
+
+[Quick start](#-quick-start) ·
+[Commands](#-command-reference) ·
+[Economics](#-production-economics) ·
+[Model](#-model-boundaries) ·
+[GPU](#-gpu-computation-and-numerical-accuracy) ·
+[CI](#-continuous-integration) ·
+[Article (PDF)](docs/article.pdf) ·
+[Papers](#-papers)
+
+</div>
+
+A first computational stack for lysate-based CFPS: recipe accounting, a reduced
+CUDA PyTorch model with SBML export, and a BoTorch experiment-selection
+demonstration. Numerical execution requires a CUDA GPU; Modal provides a remote
+GPU runner.
+
+> [!WARNING]
+> **Status: runnable research scaffold.** The kinetic constants are illustrative,
+> the model is uncalibrated, and the BoTorch example uses synthetic observations.
+> It does not predict competition winners. Recipe validation and simulation are
+> separate workflows. Initial-pool mapping now requires explicit base chemistry and
+> lysate backgrounds; a calibrated recipe-response model remains future work.
+
+## 🗺️ What is in the box
+
+```mermaid
+flowchart LR
+    subgraph IN["📥 Inputs"]
+        R["Recipe JSON<br/>volumes in nL"]
+        P["Price ledger<br/>USD per mL"]
+        C["Constructs<br/>JSON / GenBank"]
+        Y["Yield observation<br/>g/L or U/mL"]
+        B["Borkowski 2020<br/>measured plates"]
+    end
+    subgraph HOST["💻 Host (no GPU needed)"]
+        V["validate / preflight<br/>chemistry and readiness gates"]
+        E["cost / score<br/>USD per g, USD per U"]
+        I["construct inspect<br/>sequence demands"]
+        S["SBML serialization"]
+    end
+    subgraph GPU["⚡ CUDA GPU (local or Modal A100)"]
+        M["simulate<br/>Dormand–Prince ODE"]
+        F["calibrate<br/>damped Gauss–Newton"]
+        O["bo-demo / bo-cost-demo<br/>BoTorch acquisition"]
+        K["benchmark<br/>ridge baseline"]
+        X["experiments<br/>model challenges"]
+    end
+    R --> V --> E
+    P --> E
+    Y --> E
+    C --> I --> M
+    M --> S
+    M --> F
+    M --> X
+    E -.->|"known reaction cost"| O
+    B --> K
+
+    classDef input fill:#e3eff9,stroke:#24384a,color:#24384a;
+    classDef host fill:#e5f2e7,stroke:#24384a,color:#24384a;
+    classDef gpu fill:#fff1d6,stroke:#24384a,color:#24384a;
+    class R,P,C,Y,B input;
+    class V,E,I,S host;
+    class M,F,O,K,X gpu;
+```
+
+| Area | What it does today | What it does **not** do |
+| --- | --- | --- |
+| 🧪 **Recipe accounting** | Checks volumes, increments, fixed inputs; reports known final mM | Infer endogenous lysate pools, free ions, pH or activity |
+| 💵 **Economics** | Dispensed-reagent ledger, `USD/g` and `USD/U` from declared observations | Labor, assays, purification, plates, compute; official scoring |
+| 🧬 **Constructs** | Versioned sfGFP / TfCut2 (PETase) / reteplase plasmids with checksums, GenBank exchange | DNA optimization or sequence-score-to-rate calibration |
+| ⚙️ **Kinetic model** | Reduced resource ODE on CUDA `float64`, SBML export | Calibrated predictions; enzyme folding and activity models |
+| 🎯 **Experiment design** | BoTorch acquisition on synthetic data, cost-aware objective | Dispensing-feasible competition candidate sets |
+| 📊 **Benchmark** | Leakage-controlled ridge baseline on 1,017 measured formulation means | Reproduce the authors' policy or validate recipe ranking |
+
+## 🚀 Quick start
 
 On macOS, install uv with Homebrew if needed:
 
@@ -20,23 +98,62 @@ cd cfps-sim
 uv sync --frozen --extra bo --extra cloud
 ```
 
+```sh
+uv run cfps-sim validate examples/recipe.json     # 💻 host
+uv run cfps-sim simulate --output results/demo    # ⚡ CUDA
+uv run --extra bo cfps-sim bo-cost-demo           # ⚡ CUDA
+uv run pytest                                     # 💻 host subset; GPU tests skip without CUDA
+```
+
 uv uses the Python 3.11 version specified in `.python-version`; it can download
 that interpreter if necessary. `uv.lock` pins dependencies. Native wheels are
 used where available; no global Python packages are needed. COPASI is an optional
 GUI for inspecting the exported SBML, not a runtime requirement.
-Simulation, calibration, and BoTorch acquisition require CUDA-enabled PyTorch
-and a visible NVIDIA GPU. Recipe accounting, sequence inspection, and SBML
-serialization can run on the development host. The numerical backend raises
-an error when CUDA is unavailable; it does not silently change execution devices.
 
-```sh
-uv run cfps-sim validate examples/recipe.json
-uv run cfps-sim simulate --output results/demo
-uv run --extra bo cfps-sim bo-cost-demo
-uv run pytest
+> [!IMPORTANT]
+> Simulation, calibration, and BoTorch acquisition require CUDA-enabled PyTorch
+> and a visible NVIDIA GPU. Recipe accounting, sequence inspection, and SBML
+> serialization can run on the development host. The numerical backend raises
+> an error when CUDA is unavailable; it does not silently change execution devices.
+
+## 🧰 Command reference
+
+| Command | Runs on | Purpose |
+| --- | :---: | --- |
+| `cfps-sim validate RECIPE` | 💻 | Volume, increment and fixed-input checks; known final mM |
+| `cfps-sim preflight RECIPE [--prices P] [--registry R] [--base B]` | 💻 | Audit chemistry and unresolved execution gates; **exits 2 while blocked** |
+| `cfps-sim cost RECIPE PRICES` | 💻 | Dispensed-reagent ledger; missing prices stay missing |
+| `cfps-sim score RECIPE PRICES OBSERVATION` | 💻 | `USD/g` or `USD/U` from a declared yield observation |
+| `cfps-sim construct inspect CONSTRUCT [--aa-pools POOLS]` | 💻 | Sequence demands and a static amino-acid ceiling |
+| `cfps-sim construct export-genbank` / `import-genbank` | 💻 | Exchange versioned constructs as GenBank |
+| `cfps-sim simulate [--construct C] [--minutes N] [--output DIR]` | ⚡ | Integrate the model; write `trajectory.csv`, `model.xml`, `metadata.json` |
+| `cfps-sim experiments [--construct C] [--seed N]` | ⚡ | Knockouts, conservation, sensitivity, grids, synthetic calibration study |
+| `cfps-sim calibrate STUDY OBSERVATIONS` | ⚡ | Fit supported concentration observations with declared provenance |
+| `cfps-sim benchmark` | ⚡ | Retrospective baseline on pinned measured CFPS data |
+| `cfps-sim bo-demo` / `bo-cost-demo` | ⚡ | Yield-surface smoke test / cost-aware acquisition on synthetic data |
+
+💻 = development host · ⚡ = requires CUDA (local GPU or `modal run modal_app.py`)
+
+<details>
+<summary><b>📁 Repository layout</b></summary>
+
+```text
+src/cfps_sim/        package: recipe, economics, preflight, construct, model, fitting, bo, benchmark, experiments, cli
+tests/               pytest suite (GPU tests carry the `gpu` marker)
+scripts/             docs build, benchmark fetch, registry/construct import, review prep, CI smoke test
+examples/            example recipe, price ledgers (draft and illustrative), synthetic yield
+constructs/          versioned competition plasmids (JSON + GenBank) and schema notes
+data/registry/       reconciled stock registry and supplied competition draft
+experiments/         local calibration proposal and data schema
+benchmarks/          pinned source manifest for the Borkowski 2020 tables
+reports/             recorded GPU benchmark result and pre-experiment review
+docs/                executable article (Pweave source and built PDF)
+modal_app.py         Modal A100 runner
 ```
 
-## Pre-experiment evidence and readiness
+</details>
+
+## 🚦 Pre-experiment evidence and readiness
 
 The registry reconciles 66 cached stock entries with the full draft supplied on
 October 5, 2026. `data/registry/competition.supplied-draft.json` records the
@@ -78,6 +195,21 @@ plate 10 tests predictions. Shared recipes are purged from earlier splits, and
 all preprocessing is fitted on training data. Final fitting uses training and
 validation plates only.
 
+| Plates | Role |
+| --- | --- |
+| 1–7 | Train the model |
+| 8 | Select linear/quadratic ridge and regularization |
+| 9 | Calibrate intervals |
+| 10 | Test predictions |
+
+
+| Held-out plate 10 (A100, `reports/borkowski2020.gpu.json`) | Value | Reading |
+| --- | ---: | --- |
+| MAE, selected quadratic ridge (α = 10) | 0.581 | 🟢 better than the baseline |
+| MAE, training-mean baseline | 1.011 | reference |
+| Spearman rank correlation | −0.315 | 🔴 ranks recipes the wrong way round |
+| Coverage of nominal 90% intervals | 61.8% | 🔴 under-covers |
+
 The A100 result in `reports/borkowski2020.gpu.json` has MAE 0.581 versus 1.011
 for a training-mean baseline, but Spearman correlation −0.315 and only 61.8%
 coverage for nominal 90% intervals. This warns against using this baseline for
@@ -86,10 +218,16 @@ coverage is an empirical check, not a guarantee. The benchmark neither reproduce
 the authors' original policy nor validates Ginkgo predictions or cost savings.
 Fetch the data before a remote benchmark or executable article build.
 
-## Production economics
+## 💵 Production economics
 
-The project assumes **minimize specific production cost**; the draft repeatedly
-says "maximize" $/g and requires clarification. Under our economic interpretation: `USD/g = reaction cost / (titer in g/L × reaction volume in L)`.
+> [!NOTE]
+> The project assumes **minimize specific production cost**; the draft repeatedly
+> says "maximize" \$/g and requires clarification.
+
+Under our economic interpretation:
+
+$$\text{USD/g} = \frac{\text{reaction cost}}{\text{titer (g/L)} \times \text{reaction volume (L)}}$$
+
 The ledger charges all dispensed stocks, including fixed lysate, base buffer,
 DNA, and explicit water. Missing prices are reported and block a complete score.
 It currently covers dispensed reagent costs, not labor, assays, purification,
@@ -103,7 +241,7 @@ uv run --extra bo cfps-sim bo-cost-demo
 ```
 
 The first command now succeeds: the supplied draft lists the base buffer at
-$0.220/mL, giving $0.02492395 for this illustrative reaction. Complete draft
+\$0.220/mL, giving \$0.02492395 for this illustrative reaction. Complete draft
 arithmetic does not establish official scoring approval. The separate illustrative
 ledger and yield file remain synthetic demonstrations; neither is an official
 score or a demonstrated productive recipe. `score` accepts explicit, source-matched
@@ -120,7 +258,7 @@ implemented recipe-to-model mapping. Highest yield and lowest USD/g can select
 different points. Report both raw yield and cost, retain the cost/yield Pareto
 front, and rank competition candidates by their target-specific economic score.
 
-## Local calibration and competition execution
+## 🔬 Local calibration and competition execution
 
 `experiments/local-calibration.json` proposes local experiments using matching
 Ginkgo CFPS or bulk standard lysate for sfGFP/TfCut2 and CFPS Disulfide/DSB lysate
@@ -128,6 +266,15 @@ for reteplase. Purchased lots may differ from competition lots. Sepia extract
 and b.next PURE systems provide comparison and mechanism-isolation tracks with
 separate effective parameters. No purchase, contact or experiment submission
 has been made.
+
+| Target | Lysate | Incubation | Assay |
+| --- | --- | --- | --- |
+| 🟢 **sfGFP** | Ginkgo CFPS or bulk standard | 20 h at 30 C | Fluorescence (simulation supported) |
+| 🧴 **TfCut2** (PETase) | Ginkgo CFPS or bulk standard | 20 h at 30 C | p-nitrophenol hexanoate esterase activity, nominal 600-fold dilution, 60 C/10 min pre-assay treatment |
+| 🩸 **Reteplase** | CFPS Disulfide/DSB | 10 h at 30 C, 2 h at 4 C, 8 h ambient | IPR-AMC cleavage |
+
+All three use the existing versioned circular plasmids at 5 nM and 25% lysate.
+The paragraphs below carry the caveats that the table cannot.
 
 Match the existing versioned circular plasmids at 5 nM, 25% lysate and the
 source assay definitions. sfGFP and TfCut2 incubate 20 h at 30 C. Reteplase uses
@@ -148,7 +295,7 @@ the 18-AA base mixture, and a standard-dilution labeling inconsistency are
 preserved in the contract. The linked `autonomous-cfps` repository returned 404
 from public access; our preflight is not its authoritative plate validator.
 
-## Executable article
+## 📄 Executable article
 
 `docs/article.Pnw` documents the model, assumptions, recipe constraints,
 optimization, and GPU workflow. Its figure and numerical recipe summary are
@@ -178,7 +325,7 @@ neither is calibrated fluorescence. Without `--construct`, sequence counts remai
 illustrative placeholders. With a supplied sfGFP construct, the model uses its
 CDS-derived amino-acid counts and assumed-transcript NTP counts.
 
-## DNA constructs and Popcorn exchange
+## 🧬 DNA constructs and Popcorn exchange
 
 The three competition plasmids are saved as versioned JSON and GenBank artifacts
 in `constructs/competition/`, with source provenance and sequence checksums. Their
@@ -208,7 +355,7 @@ all three targets; simulation currently accepts sfGFP only because enzyme foldin
 and activity observation models are still required. Simulation also writes
 `metadata.json` with sequence demands and explicit model assumptions.
 
-## GPU computation and numerical accuracy
+## ⚡ GPU computation and numerical accuracy
 
 The implemented backend uses PyTorch CUDA for the ODE solver, parameter fitting,
 Gaussian processes, and acquisition evaluation. State tensors and GP calculations
@@ -218,6 +365,15 @@ Adaptive Dormand–Prince integration uses `rtol=1e-10` and
 `rtol=1e-12`, `atol=1e-16`. These are numerical error controls, not guarantees
 of predictive accuracy. Conservation, nonnegativity, missing-resource controls,
 and tolerance refinement must pass on the target GPU.
+
+| Numerical control | Setting |
+| --- | --- |
+| Precision | `float64` state tensors and GP calculations |
+| Integrator | Adaptive Dormand–Prince (torchdiffeq), `torch.compile`-fused fluxes |
+| Production tolerances | `rtol=1e-10`, `atol=1e-14` |
+| Refinement check | `rtol=1e-12`, `atol=1e-16` |
+| Calibration | Bounded damped Gauss–Newton in log-parameter space, two starts |
+| Fit rejection | Jacobian disagreement above 0.1% between two perturbation sizes |
 
 Calibration uses bounded damped Gauss–Newton in log-parameter space. Residuals,
 finite-difference Jacobians, and linear solves stay on CUDA. Two starts check
@@ -239,7 +395,7 @@ and [torchdiffeq](https://github.com/rtqichen/torchdiffeq) describe the numerica
 backend. A JAX GPU/TPU implementation would be a separate future backend; none
 is implemented or validated here.
 
-## Run on Modal GPU
+## ☁️ Run on Modal GPU
 
 ```sh
 uv run --extra cloud modal setup
@@ -254,17 +410,52 @@ uv run --extra cloud modal run modal_app.py --retrieve fc-...
 The runner requests an A100 GPU and builds the locked Linux environment.
 Results go to `results/modal/`; `--build-docs` also replaces `docs/article.pdf`
 with the GPU-generated article. The on-demand function has a one-hour timeout.
-[Modal GPU compute](https://modal.com/docs/guide/gpu) is billed to the authenticated
-account. A CUDA-enabled RunPod host can run the same locked package and commands;
+
+> [!CAUTION]
+> [Modal GPU compute](https://modal.com/docs/guide/gpu) is billed to the authenticated
+> account.
+
+A CUDA-enabled RunPod host can run the same locked package and commands;
 no provider-specific RunPod integration is included.
 
 All 18 tests passed on a Modal A100 GPU on September 30, 2026, including
 conservation, solver refinement, parameter recovery, holdout isolation, and
 acquisition checks. These validate software behavior; measured biological
-accuracy remains unestablished. Hosted GitHub CI runs host checks and skips GPU
-tests; use the GPU verification command for the complete suite.
+accuracy remains unestablished. The suite has since grown to 23 tests
+(16 host, 7 GPU); rerun the GPU verification command above for the complete suite.
+Hosted GitHub CI covers the host subset only, as described below.
 
-## Recipe accounting
+## ✅ Continuous integration
+
+Hosted GitHub runners have no CUDA GPU, so [CI](.github/workflows/checks.yml)
+verifies everything that is meant to work on a development host and confirms
+that numerical commands refuse to run rather than fall back to CPU.
+
+| Job | Runs | Catches |
+| --- | --- | --- |
+| 🧹 **Lint and lockfile** | `uv lock --check`, Ruff (`E9`, `F`), JSON parse of every tracked `.json` | Stale lockfile, undefined names, unused imports, broken registries or examples |
+| 🧪 **Host tests** | Ubuntu on Python 3.11 and 3.12, macOS on 3.11: module imports, `pytest -m "not gpu"`, [`scripts/ci_smoke.sh`](scripts/ci_smoke.sh) | Regressions in recipe, economics, preflight and construct code on every supported interpreter |
+| 📦 **Build and install wheel** | `uv build`, install the wheel in a clean venv, run the entry point outside the checkout | Packaging mistakes hidden by the editable install |
+| ✅ **CI passed** | Aggregates the jobs above | A single required status for branch protection |
+
+The smoke script runs `validate`, `cost` and `score`, asserts that `preflight`
+still exits 2 with `submission_ready: false`, round-trips all three competition
+constructs through GenBank with unchanged sequence checksums, and checks that
+`simulate` fails with the CUDA error on a GPU-less host. Run the same checks locally:
+
+```sh
+uvx ruff check .
+uv run pytest -m "not gpu"
+bash scripts/ci_smoke.sh
+```
+
+> [!NOTE]
+> A green CI run says nothing about the seven GPU tests (solver refinement,
+> conservation, parameter recovery, holdout isolation, acquisition) or the
+> executable article. Those need `modal run modal_app.py --verify --build-docs`
+> or a local CUDA host.
+
+## 🧪 Recipe accounting
 
 The example uses saved competition constraints: 20,000 nL total, 25 nL increments,
 5,000 nL lysate, 2,000 nL base buffer, and one 2,000 nL DNA template. Reconfirm
@@ -277,7 +468,7 @@ polymers, activity units, counterions, and volume fractions need explicit mappin
 they must not be silently interpreted as molar stocks. Unknown reagents are listed
 in the output rather than inferred.
 
-## Computational experiments and calibration
+## 🧫 Computational experiments and calibration
 
 ```sh
 uv run cfps-sim experiments --output results/experiments --seed 2026
@@ -301,7 +492,31 @@ The article also covers T7 resource allocation, chemical/kinetic databases, and
 lessons from Ben Blaiszik's Argonne/Chicago data ecosystem and the October
 21–22, 2026 [Open Scientific Intelligence Hackathon](https://llmhackathon.github.io/).
 
-## Model boundaries
+## 🧱 Model boundaries
+
+```mermaid
+flowchart LR
+    DNA(["DNA template"]) -->|"transcription<br/>k_tx"| mRNA(["mRNA"])
+    mRNA -->|"translation<br/>k_tl"| Prot(["Protein<br/>(immature)"])
+    Prot -->|"maturation<br/>k_mat"| GFP(["GFP<br/>(mature)"])
+    mRNA -.->|"decay k_mrna"| X1["degraded"]
+    Mach["Machinery"] -.->|"decay k_decay"| X2["inactive"]
+    Mach -.->|"catalyses"| mRNA
+    Mach -.->|"catalyses"| Prot
+    NTP["ATP · GTP · CTP · UTP"] ==>|"consumed"| mRNA
+    EN["ATP · GTP"] ==>|"2 per residue"| Prot
+    AA["Amino acids<br/>pooled or 20 individual"] ==>|"consumed"| Prot
+    Fuel["Fuel"] ==>|"regen: ADP → ATP only"| EN
+
+    classDef product fill:#e5f2e7,stroke:#24384a,color:#24384a;
+    classDef resource fill:#fff1d6,stroke:#24384a,color:#24384a;
+    classDef core fill:#e3eff9,stroke:#24384a,color:#24384a;
+    classDef sink fill:#f2f2f2,stroke:#999999,color:#666666;
+    class GFP,Prot product;
+    class NTP,EN,AA,Fuel resource;
+    class DNA,mRNA,Mach core;
+    class X1,X2 sink;
+```
 
 The reduced model includes individual NTP consumption in transcription, mRNA
 decay, amino-acid and ATP/GTP use in translation, fuel-dependent ATP regeneration,
@@ -318,7 +533,7 @@ Parameters and default placeholder sequence composition live in `src/cfps_sim/mo
 Construct-aware simulations replace sequence demands, while retaining uncalibrated
 kinetics. Their SBML exports retain the initial conditions and actual sequence counts.
 
-## Implementation milestones
+## 🛣️ Implementation milestones
 
 1. Audit well-level recipes, batch/replicate identities, target sequences, assay
    timing, stock semantics, base buffer, and platform constraints.
@@ -333,7 +548,7 @@ kinetics. Their SBML exports retain the initial conditions and actual sequence c
    batch acquisition with controls and replicates; compare campaign strategies.
 6. Add separate PETase/reteplase folding and assay observation models.
 
-## Papers
+## 📚 Papers
 
 The competition also builds on the OpenAI–Ginkgo autonomous-lab study. The
 article introduction connects that work to the Fall 2026 HTBAA course and the
