@@ -167,6 +167,32 @@ showing how CFPS can support deployable functions beyond bulk protein production
 extract for robust cell-free protein synthesis}\cite{kwon} established accessible
 sonication-based extract preparation. For this project, it highlights why lysate
 preparation and batch identity belong in the metadata.
+\item[Piorino and Styczynski (2023).] \emph{Complex dependence of E. coli-based
+cell-free expression on sonication energy during lysis}\cite{styczynski_sonication}
+reports that the sonication energy giving maximal output depends on the expression
+template itself, including plasmid concentration, promoter, and origin of
+replication. The authors conclude that sonication protocols cannot be standardized
+to a single optimum and that better extract-characterization metrics are needed.
+Read it as a caution against treating any lysate as an interchangeable input.
+\item[Miguez et al. (2021).] \emph{Metabolic dynamics in E. coli-based cell-free
+systems}\cite{styczynski_dynamics} measures temporal metabolite changes during
+cell-free reactions and reports significant activity in central carbon and amino-acid
+metabolism. Lysate preparation affected protein yield and metabolic profiles more
+than reaction preincubation did, and endogenous metabolic activity was fairly
+resilient to targeted enzyme supplementation. This is the clearest measured picture
+of the endogenous pools our model declines to infer.
+\item[Sridharan, Piorino, and Styczynski (2022).] \emph{Systems biology-based
+analysis of cell-free systems}\cite{styczynski_systems} reviews cell-free proteome
+and metabolome characterization, including dependence on preparation protocol and
+host strain, and the relationship between endogenous metabolism and system
+performance. It is the shortest route into what is and is not measured in a lysate.
+\item[Han et al. (2025).] \emph{A mathematical model of cell-free
+transcription--translation with plasmid crosstalk}\cite{styczynski_crosstalk_model}
+builds an ordinary differential equation model with competition for transcription,
+translation, and degradation resources plus toxic-molecule buildup, and reports
+experimental validation indicating that translation is negatively affected by
+macromolecular crowding. It is the closest published precedent to the model
+implemented here, and it includes mechanisms ours omits.
 \end{description}
 
 For computational development, pair these references with Horvath et al.'s
@@ -174,6 +200,45 @@ dynamic metabolic/expression model\cite{horvath}. For current experiment
 selection, read the OpenAI--Ginkgo study\cite{smith} and Nishimori et al.'s
 uncertainty-driven Bayesian optimization work\cite{nishimori}. These newer studies
 are included for their direct relevance, without a claim about readership rank.
+
+\subsection{Lysate variability and endogenous metabolism}
+Georgia Tech's Styczynski lab has published a connected body of work on what a
+lysate actually contains and how its preparation changes performance\cite{styczynski_lab}.
+This thread bears directly on the largest documented gap in our model: endogenous
+pools, which we exclude from recipe accounting rather than infer.
+
+Earlier metabolic profiling found that lysate processing changes the metabolite
+makeup of the lysate, and that lysate metabolite levels change over the course of
+a reaction whether or not a target product is made; the authors used that
+information to propose ways to standardize lysate activity\cite{styczynski_profiling}.
+A gas chromatography--mass spectrometry protocol for these measurements is
+published separately\cite{styczynski_metabolomics}. Taken together with the
+temporal metabolomics and sonication results above\cite{styczynski_dynamics,styczynski_sonication}, the implication for this project is that a supplied
+competition lysate is a reagent with its own active metabolism and its own
+preparation history, not an inert source of machinery. Our competition does not
+expose lysis protocol as a variable, so the actionable consequence is the one our
+contract already enforces: record lot and preparation metadata, and refuse to
+convert unmeasured endogenous pools into model initial conditions.
+
+For model development, the crosstalk work is the more immediate precedent. The
+experimental study reports that the direction of plasmid crosstalk depends on
+plasmid concentration and on the transcriptional machinery
+involved\cite{styczynski_crosstalk}, and the companion model represents competition
+for transcription, translation, and degradation resources together with
+toxic-molecule buildup\cite{styczynski_crosstalk_model}. Our reduced model
+represents none of these: it has a single template, no competing cassettes, no
+crowding term, and no inhibitory byproducts. The competition supplies one plasmid
+per reaction, so crosstalk itself is out of scope, but resource competition and
+byproduct inhibition are candidate mechanisms for the residual models listed in
+our milestones. Their model is also a useful calibration target because it was
+fitted to measured cell-free data, which ours has not been.
+
+Finally, the lab's review of linear expression templates describes how native
+lysate nucleases degrade linear DNA and limit yield, and surveys stabilization
+approaches\cite{styczynski_linear}. That is relevant to the Popcorn exchange path,
+where constructs can arrive as linear fragments rather than the circular plasmids
+the competition supplies. We have not tested linear templates, and our transcript
+boundaries remain an assumption either way.
 
 \subsection{POSTECH: modular optimization and the Build-a-Cell seminar}
 The Build-a-Cell schedule lists ``Joon Lee,'' POSTECH, on August 31, 2026,
@@ -1178,6 +1243,39 @@ intelligence-powered autonomous enzyme engineering. Nature Communications,
 \bibitem{karim_plasmids} A. S. Karim et al. Modular cell-free expression plasmids
 to accelerate biological design in cells. Synthetic Biology, 5, ysaa019 (2020).
 \url{https://doi.org/10.1093/synbio/ysaa019}.
+\bibitem{styczynski_lab} Styczynski Lab, Georgia Institute of Technology.
+Group research pages. \url{https://sites.gatech.edu/styczynski/}.
+\bibitem{styczynski_sonication} F. Piorino and M. P. Styczynski. Complex dependence
+of E. coli-based cell-free expression on sonication energy during lysis. ACS
+Synthetic Biology, 12, 3131--3136 (2023).
+\url{https://doi.org/10.1021/acssynbio.3c00312}.
+\bibitem{styczynski_dynamics} A. M. Miguez, Y. Zhang, F. Piorino, and
+M. P. Styczynski. Metabolic dynamics in Escherichia coli-based cell-free systems.
+ACS Synthetic Biology, 10, 2252--2265 (2021).
+\url{https://doi.org/10.1021/acssynbio.1c00167}.
+\bibitem{styczynski_profiling} A. M. Miguez, M. P. McNerney, and M. P. Styczynski.
+Metabolic profiling of Escherichia coli cell-free expression systems for process
+optimization. Industrial \& Engineering Chemistry Research, 58, 22472--22482 (2019).
+\url{https://doi.org/10.1021/acs.iecr.9b03565}.
+\bibitem{styczynski_metabolomics} A. M. Miguez, Y. Zhang, and M. P. Styczynski.
+Metabolomics analysis of cell-free expression systems using gas
+chromatography-mass spectrometry. Methods in Molecular Biology, 2433, 217--226 (2022).
+\url{https://doi.org/10.1007/978-1-0716-1998-8_13}.
+\bibitem{styczynski_systems} H. Sridharan, F. Piorino, and M. P. Styczynski.
+Systems biology-based analysis of cell-free systems. Current Opinion in
+Biotechnology, 75, 102703 (2022).
+\url{https://doi.org/10.1016/j.copbio.2022.102703}.
+\bibitem{styczynski_crosstalk} F. Piorino, A. T. Patterson, Y. Han, and
+M. P. Styczynski. Plasmid crosstalk in cell-free expression systems. ACS Synthetic
+Biology, 12, 2843--2856 (2023). \url{https://doi.org/10.1021/acssynbio.3c00412}.
+\bibitem{styczynski_crosstalk_model} Y. Han, A. T. Patterson, F. Piorino, and
+M. P. Styczynski. A mathematical model of cell-free transcription-translation with
+plasmid crosstalk. Synthetic Biology, 10, ysaf011 (2025).
+\url{https://doi.org/10.1093/synbio/ysaf011}.
+\bibitem{styczynski_linear} M. A. McSweeney and M. P. Styczynski. Effective use of
+linear DNA in cell-free expression systems. Frontiers in Bioengineering and
+Biotechnology, 9, 715328 (2021). Corrigendum: 10, 979285 (2022).
+\url{https://doi.org/10.3389/fbioe.2021.715328}.
 \bibitem{competition_rules} CFPS coopetition [draft]. Linked competition
 instructions, accessed September 29, 2026.
 \href{https://docs.google.com/document/d/1hFs2_vGpHP_hZ7UB3lRBsfVlN4xVPOoLy1Hu2INrBoo/edit}{Competition design and DNA template specifications}.
