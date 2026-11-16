@@ -1,0 +1,88 @@
+name: GPU verification (Modal)
+
+# Manual only: every run bills Modal A100 time to the account behind the
+# MODAL_TOKEN_ID / MODAL_TOKEN_SECRET repository secrets.
+on:
+  workflow_dispatch:
+    inputs:
+      build_docs:
+        description: Also rebuild docs/article.pdf on the GPU (slower; uploaded as an artifact)
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gpu-modal
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Full test suite on a Modal A100
+    runs-on: ubuntu-latest
+    # modal_app.py gives the remote function one hour; leave room for the image build.
+    timeout-minutes: 90
+    env:
+      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
+      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+    steps:
+      - name: Modal credentials are configured
+        run: |
+          if [ -z "$MODAL_TOKEN_ID" ] || [ -z "$MODAL_TOKEN_SECRET" ]; then
+            echo "::error::Set the MODAL_TOKEN_ID and MODAL_TOKEN_SECRET repository secrets (see README, Continuous integration)."
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          python-version: "3.11"
+          enable-cache: false
+      - name: Install locked environment
+        run: uv sync --frozen --extra cloud
+      # The executable article reads the measured benchmark tables, which are
+      # downloaded with hash verification rather than stored in Git.
+      - name: Fetch pinned benchmark tables
+        if: inputs.build_docs
+        run: uv run --frozen python scripts/fetch_benchmark.py
+      - name: Run GPU verification
+        run: >
+          uv run --frozen --extra cloud modal run modal_app.py --verify
+          ${{ inputs.build_docs && '--build-docs' || '' }}
+      - name: Summarize
+        if: always()
+        run: |
+          report=results/modal/verification.json
+          {
+            echo "## GPU verification"
+            echo
+            echo "Commit \`${GITHUB_SHA::7}\`, article rebuild: \`${{ inputs.build_docs }}\`"
+            echo
+            if [ -f "$report" ]; then
+              python3 - "$report" <<'PY'
+          import json, sys
+          checks = json.load(open(sys.argv[1]))["verification"]
+          print("| Check | Result |")
+          print("| --- | --- |")
+          print(f"| Full pytest suite on CUDA | passed |")
+          print(f"| Model challenge checks | {checks['challenges']['all_checks_pass']} |")
+          print(f"| Calibration optimizer success | {checks['calibration']['optimizer_success']} |")
+          PY
+            else
+              echo "No verification report was produced; see the job log."
+            fi
+          } >>"$GITHUB_STEP_SUMMARY"
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gpu-verification
+          path: results/modal/
+          if-no-files-found: ignore
+      - name: Upload rebuilt article
+        if: inputs.build_docs
+        uses: actions/upload-artifact@v7
+        with:
+          name: article-pdf
+          path: docs/article.pdf
+          if-no-files-found: error

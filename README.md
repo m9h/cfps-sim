@@ -424,7 +424,8 @@ conservation, solver refinement, parameter recovery, holdout isolation, and
 acquisition checks. These validate software behavior; measured biological
 accuracy remains unestablished. The suite has since grown to 23 tests
 (16 host, 7 GPU); rerun the GPU verification command above for the complete suite.
-Hosted GitHub CI covers the host subset only, as described below.
+Hosted GitHub CI covers the host subset only; a manually started workflow runs the
+complete suite on Modal, as described below.
 
 ## ✅ Continuous integration
 
@@ -453,8 +454,37 @@ bash scripts/ci_smoke.sh
 > [!NOTE]
 > A green CI run says nothing about the seven GPU tests (solver refinement,
 > conservation, parameter recovery, holdout isolation, acquisition) or the
-> executable article. Those need `modal run modal_app.py --verify --build-docs`
-> or a local CUDA host.
+> executable article. Those need the manual GPU workflow below,
+> `modal run modal_app.py --verify --build-docs`, or a local CUDA host.
+
+### ⚡ GPU verification on demand
+
+[`gpu.yml`](.github/workflows/gpu.yml) runs the complete suite, including the
+seven GPU tests, the model challenge checks and the synthetic calibration, on a
+Modal A100. It never runs automatically: start it from the Actions tab
+(**GPU verification (Modal)** → **Run workflow**) or from a terminal.
+
+```sh
+gh workflow run gpu.yml                    # full test suite and verification checks
+gh workflow run gpu.yml -f build_docs=true # also rebuild docs/article.pdf
+```
+
+The run uploads `results/modal/verification.json` as an artifact, and the
+rebuilt article as a second artifact when `build_docs` is set. The PDF is not
+committed for you; download it and commit it with the matching source change.
+
+One-time setup: create a token at [modal.com/settings](https://modal.com/settings)
+and store it as two repository secrets.
+
+```sh
+gh secret set MODAL_TOKEN_ID
+gh secret set MODAL_TOKEN_SECRET
+```
+
+> [!CAUTION]
+> Each run bills A100 time to the Modal account behind those secrets. Only
+> people with write access to this repository can start it, and the secrets are
+> not available to pull requests from forks.
 
 ## 🧪 Recipe accounting
 
