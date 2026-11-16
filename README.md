@@ -12,6 +12,7 @@
 ![uv](https://img.shields.io/badge/env-uv%20locked-DE5FE9?logo=uv&logoColor=white)
 ![Modal](https://img.shields.io/badge/GPU-Modal%20A100-00C853)
 ![Status](https://img.shields.io/badge/status-research%20scaffold-orange)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 [Quick start](#-quick-start) ·
 [Commands](#-command-reference) ·
@@ -588,3 +589,9 @@ This repository contains citation links; publisher PDFs and conversation exports
 are not bundled. Local downloads can be stored in the ignored `papers/downloads`
 directory. Paper review should extract equations, units, parameter ranges,
 data, and code availability before incorporating mechanisms.
+
+## ⚖️ License
+
+The code in this repository is released under the [MIT License](LICENSE).
+Third-party material keeps its own terms: the Borkowski author tables are
+downloaded on demand and not redistributed, and publisher PDFs are not bundled.
